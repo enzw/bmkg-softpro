@@ -52,12 +52,11 @@ class RegisteredUserController extends Controller
 
             event(new Registered($user));
 
-            // Disable auto login after success registration
-            // Auth::login($user);
+            Auth::login($user);
 
             DB::commit();
 
-            return redirect()->route('login')->with('success', 'Register berhasil. Silahkan masuk');
+            return redirect()->route('dashboard-pelayanan');
         } catch (Exception $error) {
             return redirect()->route('login')->with('error', 'Registrasi gagal. ' . $error->getMessage());
         }
