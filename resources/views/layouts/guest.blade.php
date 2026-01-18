@@ -19,7 +19,7 @@
 
 </head>
 
-<body class="font-sans antialiased text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900">
+<body class="mt-10 font-sans antialiased text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900">
     <div class="min-h-screen flex flex-col justify-center items-center px-4 py-10">
         <div class="mb-8">
             <a href="/" class="flex flex-col items-center gap-3">
@@ -28,9 +28,12 @@
             </a>
         </div>
 
-        <div class="w-full max-w-md px-6 py-8 bg-white dark:bg-gray-800 shadow-lg dark:shadow-xl overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
-            {{ $slot }}
-        </div>
+        @props(['wide' => false])
+
+<div class="w-full {{ $wide ? 'max-w-4xl' : 'max-w-md' }} px-6 py-8 bg-white dark:bg-gray-800 shadow-lg dark:shadow-xl overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+    {{ $slot }}
+</div>
+
     </div>
 </body>
 
