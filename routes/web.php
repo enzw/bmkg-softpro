@@ -15,6 +15,7 @@ use App\Http\Middleware\Admin;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DialogflowWebhookController;
 use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\DashboardPelayananController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +59,10 @@ Route::get('/kuisioner', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/dashboard-pelayanan', [DashboardPelayananController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard-pelayanan');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
