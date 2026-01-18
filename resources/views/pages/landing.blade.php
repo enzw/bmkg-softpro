@@ -26,33 +26,6 @@ dengan peraturan perundang-undangan yang berlaku, memastikan transparansi dan ke
 Selain itu, Stasiun Geofisika Sleman juga menyediakan layanan BGTS (BMKG Goes to School). ',
 ],
 ];
-
-$berita = [
-[
-'images' => '/images/jurnal.jpg',
-'dateCreated' => '2024-12-05 22:08:48',
-'title' => 'Jurnal Stasiun Geofisika Sleman',
-'excerpt' => 'Jurnal Stasiun Geofisika Sleman adalah platform yang dirancang untuk mengembangkan kemampuan menulis seluruh pegawai, serta mahasiswa yang melakukan kerja praktik atau magang. ',
-],
-[
-'images' => '/images/tabloid.png',
-'dateCreated' => '2024-12-1 22:08:48',
-'title' => 'Tabloid Bulanan Informasi geofisika',
-'excerpt' => 'Informasi geofisika mencakup laporan kegiatan Stasiun Geofisika setiap bulannya. Laporan ini meliputi berbagai aktivitas, seperti pemantauan gempa bumi, listrik udara, serta berbagai kegiatan lain yang dilakukan dalam kurun waktu satu bulan.',
-],
-[
-'images' => '/images/aktivitas.png',
-'dateCreated' => '2024-12-20 22:08:48',
-'title' => 'Aktivitas Gempa Bumi',
-'excerpt' => 'Informasi aktivitas gempabumi dalam kurun waktu 1 minggu. Berisi jumlah kejadian gempa, peta seismisitas dan statistikanya. Informasi ini akan selalu di update di media sosial stasiun Geofisika Sleman.',
-],
-[
-'images' => '/images/BGTS.jpeg',
-'dateCreated' => '2024-12-8 22:08:48',
-'title' => 'BMKG goes to School',
-'excerpt' => 'Update kegiatan Tim Mitigasi, contoh berikut adalah kegiatan BGTS (BMKG goes to School). Kegiatan meliputi sosialisasi materi gempabumi tsunami, quiz dan simulasi evakuasi mandiri saat terjadi gempabumi di sekolah',
-],
-];
 @endphp
 
 @section('content')
@@ -66,8 +39,7 @@ $berita = [
                 <i class="mr-2 text-green-500 fa-solid fa-bullhorn"></i> Download aplikasi BMKG sekarang
                 <i class="fa-solid fa-angle-right"></i>
             </a>
-
-            {{-- Hero title --}}
+                                                                                                                            
             <h2 class="max-w-5xl text-3xl font-black md:text-6xl">Pelayanan informasi Geofisika secara luas,
                 cepat, tepat, akurat dan mudah dipahami</h2>
         </div>
@@ -98,39 +70,72 @@ $berita = [
     <section id="latestNews" class="mt-10 latest-news">
         <div class="container px-4 mx-auto">
             <h3 class="mb-3 text-3xl font-bold">Berita Terkini</h3>
-            <div
-                class="grid grid-cols-1 p-5 rounded-lg md:grid-cols-2 lg:grid-cols-4 gap-x-3 gap-y-5 bg-gray-100/50 dark:bg-gray-700/50 backdrop-blur-lg">
-                @foreach ($berita as $artikel)
-                <div class="overflow-hidden bg-white rounded-md shadow-lg dark:bg-gray-700">
-                    <a href="/berita/{{ Str::kebab($artikel['title']) }}"><img src="{{ asset($artikel['images']) }}"
-                            class="w-full h-[200px] object-cover" alt="Title"></a>
 
-                    <div class="px-4 py-3 text">
-                        <h4 class="text-xl font-bold">
-                            <a href="/berita/{{ Str::kebab($artikel['title']) }}"
-                                class="overflow-hidden transition duration-200 hover:visited:text-green-700 dark:hover:visited:text-green-600">
-                                {{ $artikel['title'] }}
-                            </a>
-                        </h4>
-                        <small
-                            class="text-gray-400 dark:text-gray-500">{{ \Carbon\Carbon::parse($artikel['dateCreated'])->isoFormat('dddd, DD MMMM YYYY') }}</small>
-                        <p class="hidden md:inline-block dark:text-gray-400">{{ $artikel['excerpt'] }}</p>
+            <div id="news-loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-5">
+                @for ($i = 0; $i < 4; $i++)
+                    <div class="overflow-hidden bg-white rounded-md shadow dark:bg-gray-700 animate-pulse">
+                    <div class="w-full h-[200px] bg-gray-300 dark:bg-gray-600"></div>
+                    <div class="p-4 space-y-3">
+                        <div class="w-3/4 h-4 bg-gray-300 rounded dark:bg-gray-600"></div>
+                        <div class="w-1/2 h-3 bg-gray-200 rounded dark:bg-gray-500"></div>
                     </div>
-
-                    {{-- @dd(date('Y-m-d H:i:s')) --}}
-                </div>
-                @endforeach
             </div>
-
-            <a href="/berita"
-                class="block px-10 py-3 mx-auto mt-5 text-green-700 transition duration-200 border border-green-700 rounded-full max-w-max hover:bg-green-700 hover:text-white">
-                Berita lainnya
-            </a>
+            @endfor
         </div>
-    </section>
 
-    <div class="container mx-auto mt-10">
-        <hr class="dark:border-white/20">
-    </div>
+        <div id="news-real" class="hidden grid grid-cols-1 p-5 rounded-lg md:grid-cols-2 lg:grid-cols-4 gap-x-3 gap-y-5 bg-gray-100/50 dark:bg-gray-700/50 backdrop-blur-lg">
+            @foreach ($berita as $artikel)
+            <div class="overflow-hidden transition bg-white rounded-md shadow-lg dark:bg-gray-700 hover:shadow-xl">
+
+                <a href="{{ $artikel['url'] }}" target="_blank" class="block overflow-hidden">
+                    <img
+                        src="{{ $artikel['image'] ?: asset('images/placeholder.jpg') }}"
+                        class="w-full h-[200px] object-cover transition duration-300 hover:scale-105"
+                        alt="{{ $artikel['title'] }}"
+                        onerror="this.onerror=null; this.src='{{ asset('images/placeholder.jpg') }}';">
+                </a>
+
+                <div class="px-4 py-3">
+                    <h4 class="text-lg font-bold leading-tight line-clamp-2">
+                        <a href="{{ $artikel['url'] }}" target="_blank"
+                            class="block transition hover:text-green-700">
+                            {{ $artikel['title'] }}
+                        </a>
+                    </h4>
+
+                    @if(!empty($artikel['date']))
+                    <small class="block mt-1 text-sm text-gray-400">
+                        {{ $artikel['date'] }}
+                    </small>
+                    @endif
+                </div>
+
+            </div>
+            @endforeach
+        </div>
+
+        <a href="/berita"
+            class="block px-10 py-3 mx-auto mt-5 text-green-700 transition border border-green-700 rounded-full max-w-max hover:bg-green-700 hover:text-white">
+            Berita lainnya
+        </a>
+</div>
+</section>
+
+
+<div class="container mx-auto mt-10">
+    <hr class="dark:border-white/20">
+</div>
 </div>
 @endsection
+
+<script>
+    window.addEventListener('load', () => {
+        const loading = document.getElementById('news-loading');
+        const real = document.getElementById('news-real');
+
+        if (loading && real) {
+            loading.classList.add('hidden');
+            real.classList.remove('hidden');
+        }
+    });
+</script>

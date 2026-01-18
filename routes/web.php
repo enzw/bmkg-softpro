@@ -14,6 +14,7 @@ use App\Http\Controllers\SewaAlatController;
 use App\Http\Middleware\Admin;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DialogflowWebhookController;
+use App\Http\Controllers\BeritaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,13 +27,21 @@ use App\Http\Controllers\DialogflowWebhookController;
 |
 */
 
-Route::get('/', function () {
-    return view('pages.landing');
+Route::get('/api/berita', [BeritaController::class, 'scrapper']);
+
+Route::get('/berita', function () {
+    return view('pages.berita');
 });
 
 Route::get('/berita', function () {
     return view('pages.berita');
 })->name('berita');
+
+Route::get('/', [LayananController::class, 'index']);
+
+// Route::get('/', function () {
+//     return view('pages.landing');
+// });
 
 Route::get('/tentang-kami', function () {
     return view('pages.tentang-kami');
