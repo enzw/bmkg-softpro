@@ -13,10 +13,10 @@
                 <a href="{{ Auth::user() ? '/layanan' : '/#layanan' }}"
                     class="hover:bg-green-700 hover:text-white {{ request()->is('#layanan') ? 'bg-green-200 text-green-900 hover:text-white' : '' }} dark:text-white rounded-full visited:text-green-900 dark:visited:text-green-600 dark:visited:hover:text-white px-5 py-3 transition duration-200">Layanan</a>
             </li>
-            {{-- <li>
+            <li>
                 <a href="/berita"
                     class="hover:bg-green-700 hover:text-white {{ request()->is('berita*') ? 'bg-green-200 text-green-900 hover:text-white' : '' }} dark:text-white rounded-full visited:text-green-900 dark:visited:text-green-600 dark:visited:hover:text-white px-5 py-3 transition duration-200">Berita</a>
-            </li> --}}
+            </li>
             <li>
                 <a href="/kontak"
                     class="hover:bg-green-700 hover:text-white {{ request()->is('kontak*') ? 'bg-green-200 text-green-900 hover:text-white' : '' }} dark:text-white rounded-full visited:text-green-900 dark:visited:text-green-600 dark:visited:hover:text-white px-5 py-3 transition duration-200">
@@ -26,7 +26,7 @@
         </ul>
 
         @if (Auth::user())
-            <div class="hidden sm:flex sm:items-center ms-auto">
+            <div class="hidden sm:flex sm:items-center ms-auto gap-3">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button
@@ -49,7 +49,7 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
-                        <x-dropdown-link href="/admin/dashboard">
+                        <x-dropdown-link :href="Auth::user()->role === 'admin' ? '/admin/dashboard' : '/dashboard-pelayanan'">
                             Dashboard
                         </x-dropdown-link>
 

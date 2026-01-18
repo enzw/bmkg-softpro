@@ -52,16 +52,18 @@ Selain itu, Stasiun Geofisika Sleman juga menyediakan layanan BGTS (BMKG Goes to
                 class="grid grid-cols-1 p-5 rounded-lg md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-5 bg-gray-100/50 dark:bg-gray-700/50 backdrop-blur-lg">
                 {{-- @dd($layanan[0]['images']) --}}
                 @foreach ($layanan as $item)
-                <a href="{{ $item['url'] }}"
-                    class="overflow-hidden transition duration-200 bg-white rounded-md shadow-lg dark:bg-gray-700 hover:-translate-y-2 hover:shadow-xl">
-                    <img src="{{ asset($item['images']) }}" alt="{{ $item['nama'] }}" height="200">
-                    <div class="px-4 py-3 text">
+                <div class="overflow-hidden flex flex-col transition duration-200 bg-white rounded-md shadow-lg dark:bg-gray-700 hover:-translate-y-2 hover:shadow-xl">
+                    <img src="{{ asset($item['images']) }}" alt="{{ $item['nama'] }}" height="200" class="w-full h-48 object-cover">
+                    <div class="px-4 py-3 text flex flex-col flex-grow">
                         <h4 class="text-xl font-bold">
                             {{ $item['nama'] }}
                         </h4>
-                        <p class="hidden md:inline-block dark:text-gray-400">{{ $item['deskripsi'] }}</p>
+                        <p class="hidden md:inline-block dark:text-gray-400 text-sm flex-grow">{{ $item['deskripsi'] }}</p>
+                        <a href="{{ $item['url'] }}" class="mt-4 inline-block px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-300 text-center">
+                            Lihat Layanan
+                        </a>
                     </div>
-                </a>
+                </div>
                 @endforeach
             </div>
         </div>
