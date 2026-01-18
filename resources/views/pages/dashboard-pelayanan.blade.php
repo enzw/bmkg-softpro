@@ -3,7 +3,7 @@
 @section('content')
 <div class="min-h-screen bg-white dark:bg-gray-900">
     <div class="container px-4 mx-auto py-10">
-        <div class="mb-8">
+        <div class="mt-12 mb-8">
             <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
                 Dashboard Pelayanan
             </h1>
@@ -23,20 +23,15 @@
                         class="w-full h-full object-cover hover:scale-110 transition duration-300"
                     >
                 </div>
-
-                <!-- Content Section -->
                 <div class="p-6 flex flex-col flex-grow">
-                    <!-- Title -->
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                         {{ $item['nama'] }}
                     </h3>
 
-                    <!-- Description -->
                     <p class="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow">
                         {{ $item['deskripsi'] }}
                     </p>
 
-                    <!-- CTA Button -->
                     <a href="{{ $item['url'] }}" 
                         class="inline-block px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-300 transform hover:scale-105 text-center">
                         {{ $item['cta'] }}
@@ -46,7 +41,6 @@
             @endforeach
         </div>
 
-        <!-- Additional Info Section -->
         <div class="mt-12 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
             <h4 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
                 <i class="fas fa-info-circle mr-2"></i> Informasi Penting
