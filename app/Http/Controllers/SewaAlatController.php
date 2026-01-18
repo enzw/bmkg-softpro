@@ -29,6 +29,7 @@ class SewaAlatController extends Controller
     {
         $validated = $request->validate([
             'alat_id' => 'required',
+            'banyak_unit' => 'required|numeric|min:1',
             'sewa_mulai' => 'required|date',
             'sewa_berakhir' => 'required|date|after_or_equal:sewa_mulai',
             // 'surat_permohonan' => 'required|max:2048',
@@ -68,8 +69,8 @@ class SewaAlatController extends Controller
             SewaAlat::create($validated);
             return back()->with('success', 'Permohonan berhasil dibuat');
         } catch (Exception $error) {
-            report($error->getMessage());
-            return back()->with('error', 'Permohonan gagal dibuat');
+            \Log::error('Sewa Alat Error: ' . $error->getMessage());
+            return back()->with('error', 'Permohonan gagal dibuat: ' . $error->getMessage());
         }
     }
 

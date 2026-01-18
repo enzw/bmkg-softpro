@@ -22,7 +22,6 @@ class LayananController extends Controller
                 'https://yogyakarta.bmkg.go.id/?post_type=berita'
             );
 
-            // ambil semua CSS dari <style> (karena Elementor nyimpen image di sini)
             $allCss = '';
             $crawler->filter('style')->each(function ($style) use (&$allCss) {
                 $allCss .= $style->text();
@@ -32,13 +31,12 @@ class LayananController extends Controller
 
             $crawler->filter('.e-loop-item')->each(function ($node) use (&$berita, $allCss) {
 
-                if (count($berita) >= 4) return; // ambil 4 teratas aja
+                if (count($berita) >= 4) return;
                 if (!$node->filter('h2 a')->count()) return;
 
                 $titleNode = $node->filter('h2 a')->first();
                 $dateNode  = $node->filter('.elementor-post-info__item--type-date');
 
-                // ambil class unik e-loop-item-33417
                 $classAttr = $node->attr('class');
                 preg_match('/e-loop-item-\d+/', $classAttr, $loopMatch);
                 $loopClass = $loopMatch[0] ?? null;

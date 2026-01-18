@@ -82,6 +82,6 @@
                 ketentuan</a> yang berlaku
         </label> -->
 
-        <button type="submit" class="px-3 leading-10 text-white bg-green-600 rounded hover:bg-green-500">Kirim</button>
+        <button type="submit" class="px-6 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 font-semibold transition duration-200 w-full">Kirim</button>
     </form>
 </div>
