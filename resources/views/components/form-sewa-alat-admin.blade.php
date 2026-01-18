@@ -1,3 +1,10 @@
+<style>
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(2);
+    cursor: pointer;
+}
+</style>
+
 <div class="relative text-gray-900 bg-white shadow-sm dark:text-gray-100 dark:bg-gray-800 h-max lg:sticky lg:top-12">
 
     @if (session('success'))
@@ -96,6 +103,17 @@
                     class="flex-1 block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
                     rows="3" name="keterangan" :value="old('keterangan')">{{ $is_edit ? $permohonan->keterangan : '' }}</textarea>
                 <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
+            </div>
+
+            <div class="flex flex-col flex-1">
+                <x-input-label for="surat_permohonan">Surat Permohonan (PDF, JPG, PNG) - Opsional</x-input-label>
+                <input id="surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+                    class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600" />
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Maksimal ukuran file: 2MB</p>
+                @if ($is_edit && $permohonan->surat_permohonan)
+                    <p class="text-xs text-green-600 dark:text-green-400 mt-1">File saat ini: {{ basename($permohonan->surat_permohonan) }}</p>
+                @endif
+                <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
             </div>
         </div>
 

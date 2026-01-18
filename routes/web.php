@@ -106,6 +106,7 @@ Route::middleware('auth')->group(function () {
         Route::redirect('/', 'dashboard');
         Route::get('dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::resource('sewa-alat', AdminSewaAlatController::class);
+        Route::get('sewa-alat/{sewa_alat}/download', [AdminSewaAlatController::class, 'download'])->name('sewa-alat.download');
         Route::resource('history-megabot', DialogflowWebhookController::class);
         Route::resource('pelayanan-jasa', AdminPermohonanMagangController::class);
         Route::resource('permohonan-kunjungan', AdminKlaimAsuransiController::class);
