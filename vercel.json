@@ -1,9 +1,4 @@
 {
-    "version": 2,
-    "functions": {
-        "api/index.php": {
-            "runtime": "vercel-php@0.7.5"
-        }
   "version": 2,
   "functions": {
     "api/index.php": {
@@ -15,28 +10,6 @@
       "src": "/images/(.*)",
       "dest": "/public/images/"
     },
-    "routes": [
-        {
-            "src": "/images/(.*)",
-            "dest": "/public/images/"
-        },
-        {
-            "src": "/css/(.*)",
-            "dest": "/public/css/"
-        },
-        {
-            "src": "/js/(.*)",
-            "dest": "/public/js/"
-        },
-        {
-            "src": "/build/(.*)",
-            "dest": "/public/build/"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/api/index.php"
-        }
-    ]
     {
       "src": "/css/(.*)",
       "dest": "/public/css/"
@@ -55,4 +28,3 @@
     }
   ]
 }
-
