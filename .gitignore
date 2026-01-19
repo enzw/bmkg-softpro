@@ -17,3 +17,5 @@ yarn-error.log
 /.vscode
 .env
 /permohonan
+.vercel
+.env*.local

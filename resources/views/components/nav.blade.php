@@ -9,29 +9,38 @@
             </a>
         </div>
 
-        <!-- Desktop Menu absolute tengah -->
         <ul class="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center">
+
             <li>
-                <a href="/tentang-kami" class="hover:bg-green-700 hover:text-white {{ request()->is('tentang-kami*') ? 'bg-green-200 text-green-900 hover:text-white' : '' }} dark:text-white rounded-full px-5 py-3 transition duration-200">
+                <a href="/tentang-kami"
+                    class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('tentang-kami*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
                     Tentang
                 </a>
             </li>
+
             <li>
-                <a href="{{ Auth::user() ? '/layanan' : '/#layanan' }}" class="hover:bg-green-700 hover:text-white dark:text-white rounded-full px-5 py-3 transition duration-200">
+                <a href="{{ Auth::user() ? '/dashboard-pelayanan' : '/#layanan' }}"
+                    class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('layanan*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
                     Layanan
                 </a>
             </li>
+
             <li>
-                <a href="/berita" class="hover:bg-green-700 hover:text-white {{ request()->is('berita*') ? 'bg-green-200 text-green-900 hover:text-white' : '' }} dark:text-white rounded-full px-5 py-3 transition duration-200">
+                <a href="/berita"
+                    class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('berita*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
                     Berita
                 </a>
             </li>
+
             <li>
-                <a href="/kontak" class="hover:bg-green-700 hover:text-white {{ request()->is('kontak*') ? 'bg-green-200 text-green-900 hover:text-white' : '' }} dark:text-white rounded-full px-5 py-3 transition duration-200">
+                <a href="/kontak"
+                    class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('kontak*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
                     Hubungi kami
                 </a>
             </li>
+
         </ul>
+
 
         <!-- Area kanan -->
         <div class="flex flex-1 justify-end items-center gap-3">
@@ -39,7 +48,8 @@
             @if (Auth::user())
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 dark:bg-green-700 rounded-full hover:bg-green-700 dark:hover:bg-green-800 transition duration-200">
+                        <button
+                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 dark:bg-green-700 rounded-full hover:bg-green-700 dark:hover:bg-green-800 transition duration-200">
                             {{ Auth::user()->name }}
                         </button>
                     </x-slot>
@@ -52,7 +62,8 @@
 
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
+                            <x-dropdown-link :href="route('logout')"
+                                onclick="event.preventDefault(); this.closest('form').submit();">
                                 Log Out
                             </x-dropdown-link>
                         </form>
@@ -60,16 +71,19 @@
                 </x-dropdown>
             @else
                 <div class="hidden md:flex gap-3">
-                    <a href="/login" class="px-5 py-3 text-green-700 dark:text-green-400 rounded-full hover:bg-green-700/20 dark:hover:bg-green-700/30 transition duration-200 font-medium">
+                    <a href="/login"
+                        class="px-5 py-3 text-green-700 dark:text-green-400 rounded-full hover:bg-green-700/20 dark:hover:bg-green-700/30 transition duration-200 font-medium">
                         Login
                     </a>
-                    <a href="/register" class="px-5 py-3 text-white bg-green-600 dark:bg-green-700 border border-green-600 dark:border-green-700 rounded-full hover:bg-green-700 dark:hover:bg-green-800 transition duration-200 font-medium">
+                    <a href="/register"
+                        class="px-5 py-3 text-white bg-green-600 dark:bg-green-700 border border-green-600 dark:border-green-700 rounded-full hover:bg-green-700 dark:hover:bg-green-800 transition duration-200 font-medium">
                         Register
                     </a>
                 </div>
             @endif
 
-            <button id="burgerBtn" type="button" class="block px-3 py-1 rounded dark:text-white md:hidden focus:ring-1 ring-green-700">
+            <button id="burgerBtn" type="button"
+                class="block px-3 py-1 rounded dark:text-white md:hidden focus:ring-1 ring-green-700">
                 <i class="fa-solid fa-bars"></i>
             </button>
         </div>
@@ -79,26 +93,30 @@
     <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-gray-900 w-full px-4 pb-6">
         <ul class="flex flex-col gap-3 mt-4">
             <li><a href="/tentang-kami" class="px-5 py-3 rounded-full dark:text-white">Tentang</a></li>
-            <li><a href="{{ Auth::user() ? '/layanan' : '/#layanan' }}" class="px-5 py-3 rounded-full dark:text-white">Layanan</a></li>
+            <li><a href="{{ Auth::user() ? '/layanan' : '/#layanan' }}"
+                    class="px-5 py-3 rounded-full dark:text-white">Layanan</a></li>
             <li><a href="/berita" class="px-5 py-3 rounded-full dark:text-white">Berita</a></li>
             <li><a href="/kontak" class="px-5 py-3 rounded-full dark:text-white">Hubungi kami</a></li>
 
             @if (Auth::user())
                 <li class="border-t border-gray-700 mt-4 pt-4">
-                    <button id="mobileDropdownBtn" class="w-full text-left px-5 py-3 rounded-full dark:text-white flex justify-between items-center">
+                    <button id="mobileDropdownBtn"
+                        class="w-full text-left px-5 py-3 rounded-full dark:text-white flex justify-between items-center">
                         {{ Auth::user()->name }}
                         <i class="fa-solid fa-chevron-down text-sm"></i>
                     </button>
 
                     <div id="mobileDropdownMenu" class="hidden flex flex-col mt-2 gap-2">
                         <a href="{{ route('profile.edit') }}" class="px-5 py-2 rounded dark:text-white">Profile</a>
-                        <a href="{{ Auth::user()->role === 'admin' ? '/admin/dashboard' : '/dashboard-pelayanan' }}" class="px-5 py-2 rounded dark:text-white">
+                        <a href="{{ Auth::user()->role === 'admin' ? '/admin/dashboard' : '/dashboard-pelayanan' }}"
+                            class="px-5 py-2 rounded dark:text-white">
                             Dashboard
                         </a>
 
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button onclick="event.preventDefault(); this.closest('form').submit();" class="px-5 py-2 text-left rounded dark:text-white">
+                            <button onclick="event.preventDefault(); this.closest('form').submit();"
+                                class="px-5 py-2 text-left rounded dark:text-white">
                                 Log Out
                             </button>
                         </form>
@@ -106,20 +124,21 @@
                 </li>
             @else
                 <li><a href="/login" class="px-5 py-3 rounded-full dark:text-white">Login</a></li>
-                <li><a href="/register" class="px-5 py-3 rounded-full text-white bg-green-700 border border-green-700">Register</a></li>
+                <li><a href="/register"
+                        class="px-5 py-3 rounded-full text-white bg-green-700 border border-green-700">Register</a></li>
             @endif
         </ul>
     </div>
 </nav>
 
 <script>
-document.getElementById("burgerBtn").addEventListener("click", function () {
-    document.getElementById("mobileMenu").classList.toggle("hidden");
-});
+    document.getElementById("burgerBtn").addEventListener("click", function() {
+        document.getElementById("mobileMenu").classList.toggle("hidden");
+    });
 
-@if(Auth::user())
-document.getElementById("mobileDropdownBtn").addEventListener("click", function () {
-    document.getElementById("mobileDropdownMenu").classList.toggle("hidden");
-});
-@endif
+    @if (Auth::user())
+        document.getElementById("mobileDropdownBtn").addEventListener("click", function() {
+            document.getElementById("mobileDropdownMenu").classList.toggle("hidden");
+        });
+    @endif
 </script>
