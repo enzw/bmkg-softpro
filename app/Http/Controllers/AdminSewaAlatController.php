@@ -51,22 +51,42 @@ class AdminSewaAlatController extends Controller
             'banyak_unit' => 'required|numeric',
             'sewa_mulai' => 'required|date',
             'sewa_berakhir' => 'required|date|after_or_equal:sewa_mulai',
-            // 'surat_permohonan' => 'required|max:2048',
+            'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'keterangan' => 'nullable',
         ]);
 
-        $file = $request->file('surat_permohonan');
-        $file_name = 'sewa-alat_user:' . $request->user()->id . '_date:' . Carbon::now() . '.' . $file->getClientOriginalExtension();
-        $path_permohonan = $file->storeAs('permohonan/sewa-alat', $file_name);
+        // Handle file upload if present
+        if ($request->hasFile('surat_permohonan')) {
+            try {
+                $directory = 'permohonan/sewa-alat';
+                if (!Storage::disk('local')->exists($directory)) {
+                    Storage::disk('local')->makeDirectory($directory, 0755, true);
+                }
+                
+                $file = $request->file('surat_permohonan');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 'local');
+                
+                if ($path) {
+                    $validated['surat_permohonan'] = $path;
+                    \Log::info('File uploaded successfully: ' . $path);
+                } else {
+                    \Log::error('File upload returned false');
+                }
+            } catch (Exception $fileError) {
+                \Log::error('File upload error: ' . $fileError->getMessage());
+                return redirect()->route('admin.sewa-alat.create')->with('error', 'Gagal upload file: ' . $fileError->getMessage());
+            }
+        }
+
         $validated['user_id'] = Auth::id();
-        $validated['surat_permohonan'] = $path_permohonan;
 
         try {
             SewaAlat::create($validated);
             return redirect()->route('admin.sewa-alat.create')->with('success', 'Permohonan berhasil dibuat');
         } catch (Exception $error) {
-            report($error->getMessage());
-            return redirect()->route('admin.sewa-alat.create')->with('error', 'Permohonan gagal dibuat');
+            \Log::error('Admin Sewa Alat Error: ' . $error->getMessage());
+            return redirect()->route('admin.sewa-alat.create')->with('error', 'Permohonan gagal dibuat: ' . $error->getMessage());
         }
     }
 
@@ -100,41 +120,97 @@ class AdminSewaAlatController extends Controller
      */
     public function update(Request $request, SewaAlat $sewa_alat)
     {
+        // Validasi input
         $validated = $request->validate([
             'alat_id' => 'required',
             'banyak_unit' => 'required|numeric',
             'status' => 'required',
             'sewa_mulai' => 'required|date',
             'sewa_berakhir' => 'required|date|after_or_equal:sewa_mulai',
-            // 'surat_permohonan' => 'nullable|max:2048',
+            'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
             'keterangan' => 'nullable',
         ]);
 
-        // $validated['user_id'] = Auth::id();
-
-        if (array_key_exists('surat_permohonan', $validated)) {
-            Storage::delete($sewa_alat->surat_permohonan);
-
-            $file = $request->file('surat_permohonan');
-            $file_name = 'sewa-alat_user:' . $request->user()->id . '_date:' . Carbon::now() . '.' . $file->getClientOriginalExtension();
-            $path_permohonan = $file->storeAs('permohonan/sewa-alat', $file_name);
-            $validated['surat_permohonan'] = $path_permohonan;
-        }
-
         try {
+            // Cek apakah user upload file baru
+            if ($request->hasFile('surat_permohonan')) {
+                try {
+                    // Hapus file lama kalau ada
+                    if ($sewa_alat->surat_permohonan && Storage::disk('local')->exists($sewa_alat->surat_permohonan)) {
+                        Storage::disk('local')->delete($sewa_alat->surat_permohonan);
+                    }
+
+                    // Simpan file baru
+                    $directory = 'permohonan/sewa-alat';
+                    if (!Storage::disk('local')->exists($directory)) {
+                        Storage::disk('local')->makeDirectory($directory, 0755, true);
+                    }
+                    
+                    $file = $request->file('surat_permohonan');
+                    $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                    $path = $file->storeAs($directory, $fileName, 'local');
+                    
+                    if ($path) {
+                        $validated['surat_permohonan'] = $path;
+                        \Log::info('File uploaded successfully: ' . $path);
+                    } else {
+                        \Log::error('File upload returned false');
+                    }
+                } catch (Exception $fileError) {
+                    \Log::error('File upload error: ' . $fileError->getMessage());
+                    return redirect()->route('admin.sewa-alat.edit', $sewa_alat->id)->with('error', 'Gagal upload file: ' . $fileError->getMessage());
+                }
+            }
+
+            // Update data ke database
             $sewa_alat->update($validated);
-            return redirect()->route('admin.sewa-alat.index')->with('success', 'Permohonan berhasil diupdate');
-        } catch (Exception $error) {
-            report($error->getMessage());
-            return redirect()->route('admin.sewa-alat.edit')->with('error', 'Permohonan gagal diupdate');
+
+            return redirect()->route('admin.sewa-alat.index')
+                ->with('success', 'Permohonan berhasil diupdate');
+        } catch (\Exception $error) {
+            \Log::error('Update SewaAlat Error: ' . $error->getMessage());
+            return redirect()->route('admin.sewa-alat.edit', $sewa_alat->id)
+                ->with('error', 'Permohonan gagal diupdate: ' . $error->getMessage());
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(SewaAlat $sewa_alat)
     {
-        //
+        try {
+            // hanya hapus kalau field gak null dan file ada
+            if ($sewa_alat->surat_permohonan && Storage::disk('local')->exists($sewa_alat->surat_permohonan)) {
+                Storage::disk('local')->delete($sewa_alat->surat_permohonan);
+            }
+
+            // hapus data DB
+            $sewa_alat->delete();
+
+            return back()->with('success', 'Permohonan berhasil dibatalkan');
+        } catch (\Exception $error) {
+            \Log::error('Sewa Alat Destroy Error: ' . $error->getMessage());
+            return back()->with('error', 'Permohonan gagal dibatalkan');
+        }
+    }
+
+    public function download(SewaAlat $sewa_alat)
+    {
+        if (!$sewa_alat->surat_permohonan) {
+            return back()->with('error', 'File permohonan tidak tersedia');
+        }
+
+        if (!Storage::disk('local')->exists($sewa_alat->surat_permohonan)) {
+            return back()->with('error', 'File permohonan tidak ditemukan di sistem');
+        }
+
+        try {
+            // Extract original extension from stored path
+            $extension = pathinfo($sewa_alat->surat_permohonan, PATHINFO_EXTENSION);
+            $downloadName = 'surat-permohonan.' . $extension;
+            
+            return Storage::disk('local')->download($sewa_alat->surat_permohonan, $downloadName);
+        } catch (Exception $error) {
+            \Log::error('Download Error: ' . $error->getMessage());
+            return back()->with('error', 'Gagal mengunduh file: ' . $error->getMessage());
+        }
     }
 }

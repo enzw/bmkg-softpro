@@ -47,8 +47,8 @@
                                         data.status = `{{ $item->status }}`;
                                         data.total = `{{ $total }}`;
                                         edit = `{{ route('admin.sewa-alat.edit', ['sewa_alat' => $item]) }}`;
-                                        action = `{{ route('sewa-alat.destroy', ['sewa_alat' => $item]) }}`;
-                                        download = `{{ route('sewa-alat.download-permohonan', ['sewa_alat' => $item]) }}`;
+                                        action = `{{ route('admin.sewa-alat.destroy', ['sewa_alat' => $item]) }}`;
+                                        download = `{{ route('admin.sewa-alat.download', ['sewa_alat' => $item]) }}`;
 
                                         @if ($item->expedisi != null && $item->resi != null) data.expedisi = `{{ $item->expedisi }}`;
                                             data.resi = `{{ $item->resi }}`; @endif

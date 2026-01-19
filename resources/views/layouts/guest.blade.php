@@ -19,22 +19,21 @@
 
 </head>
 
-<body class="font-sans antialiased text-gray-900">
-    <div
-        class="min-h-screen flex flex-col sm:justify-center items-center !pt-[140px] !pb-[100px] sm:pt-0 bg-[linear-gradient(rgba(0,0,0,0.4),rgba(10,30,0,0.6)),url('/public/images/slides/8.jpg')] bg-cover bg-no-repeat bg-fixed bg-center">
-        <div>
+<body class="mt-10 font-sans antialiased text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900">
+    <div class="min-h-screen flex flex-col justify-center items-center px-4 py-10">
+        <div class="mb-8">
             <a href="/" class="flex flex-col items-center gap-3">
-                {{-- <x-application-logo class="w-20 h-20 text-gray-500 fill-current" /> --}}
-                <img src="{{ asset('/images/logo-bmkg.png') }}" alt="BMKG" width="100" height="100">
-                <span class="text-2xl font-bold text-white">Stasiun Geofisika Yogyakarta</span>
+                <img src="{{ asset('/images/logo-bmkg.png') }}" alt="BMKG" width="80" height="80">
+                <span class="text-xl font-bold text-gray-900 dark:text-white text-center">Stasiun Geofisika Yogyakarta</span>
             </a>
         </div>
 
-        <div @class([ 'w-full px-6 py-4 mt-6 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg' , 'sm:max-w-md'=> request()->route()->named('login'),
-            'sm:max-w-screen-md' => request()->route()->named('register'),
-            ])>
-            {{ $slot }}
-        </div>
+        @props(['wide' => false])
+
+<div class="w-full {{ $wide ? 'max-w-4xl' : 'max-w-md' }} px-6 py-8 bg-white dark:bg-gray-800 shadow-lg dark:shadow-xl overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+    {{ $slot }}
+</div>
+
     </div>
 </body>
 

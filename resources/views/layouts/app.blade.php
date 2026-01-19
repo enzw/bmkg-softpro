@@ -125,7 +125,6 @@
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
         @include('layouts.navigation')
 
-        <!-- Page Heading -->
         @if (isset($header))
         <header class="py-6 bg-white shadow dark:bg-gray-800">
             <div class="flex items-center px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">

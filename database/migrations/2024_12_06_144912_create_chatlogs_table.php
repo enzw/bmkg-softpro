@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('chat_logs', function (Blueprint $table) {
+        Schema::create('chatlogs', function (Blueprint $table) {
             $table->id();
             $table->string('question');
             $table->string('answer');
             $table->timestamps();
+            $table->string('session_id');
+            $table->string('intent');
         });
     }
 
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chat_logs');
+        Schema::dropIfExists('chatlogs');
     }
 };

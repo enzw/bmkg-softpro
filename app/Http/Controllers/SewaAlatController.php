@@ -29,17 +29,37 @@ class SewaAlatController extends Controller
     {
         $validated = $request->validate([
             'alat_id' => 'required',
+            'banyak_unit' => 'required|numeric|min:1',
             'sewa_mulai' => 'required|date',
             'sewa_berakhir' => 'required|date|after_or_equal:sewa_mulai',
-            // 'surat_permohonan' => 'required|max:2048',
+            'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'keterangan' => 'nullable',
         ]);
 
-        // $file = $request->file('surat_permohonan');
-        // $file_name = 'sewa-alat_user:' . $request->user()->id . '_date:' . Carbon::now() . '.' . $file->getClientOriginalExtension();
-        // $path_permohonan = $file->storeAs('public/permohonan/sewa-alat', $file_name);
+        if ($request->hasFile('surat_permohonan')) {
+            try {
+                $directory = 'permohonan/sewa-alat';
+                if (!Storage::disk('local')->exists($directory)) {
+                    Storage::disk('local')->makeDirectory($directory, 0755, true);
+                }
+                
+                $file = $request->file('surat_permohonan');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 'local');
+                
+                if ($path) {
+                    $validated['surat_permohonan'] = $path;
+                    \Log::info('File uploaded successfully: ' . $path);
+                } else {
+                    \Log::error('File upload returned false');
+                }
+            } catch (Exception $fileError) {
+                \Log::error('File upload error: ' . $fileError->getMessage());
+                return back()->with('error', 'Gagal upload file: ' . $fileError->getMessage());
+            }
+        }
+
         $validated['user_id'] = Auth::id();
-        // $validated['surat_permohonan'] = $path_permohonan;
 
         $alat_id = $validated['alat_id'];
         $sewa_mulai = $validated['sewa_mulai'];
@@ -59,33 +79,57 @@ class SewaAlatController extends Controller
             })
             ->first();
 
-        // If there is an existing rental, return a response indicating unavailability
-        // if ($ada_sewa && $alat->unit < $validated['banyak_unit']) {
-        //     return back()->with('error', 'Barang tidak tersedia pada tanggal tersebut.');
-        // }
-
         try {
             SewaAlat::create($validated);
             return back()->with('success', 'Permohonan berhasil dibuat');
         } catch (Exception $error) {
-            report($error->getMessage());
-            return back()->with('error', 'Permohonan gagal dibuat');
+            \Log::error('Sewa Alat Error: ' . $error->getMessage());
+            return back()->with('error', 'Permohonan gagal dibuat: ' . $error->getMessage());
         }
     }
 
     public function destroy(SewaAlat $sewa_alat)
     {
         try {
-            Storage::delete($sewa_alat->surat_permohonan);
+            if ($sewa_alat->surat_permohonan) {
+                Storage::disk('local')->delete($sewa_alat->surat_permohonan);
+            }
             $sewa_alat->delete();
             return back()->with('success', 'Permohonan berhasil dibatalkan');
         } catch (Exception $error) {
-            return back()->with('error', 'Permohonan gagal dibatalkan');
+            \Log::error('Sewa Alat Destroy Error: ' . $error->getMessage());
+            return back()->with('error', 'Permohonan gagal dibatalkan: ' . $error->getMessage());
         }
     }
 
     public function download(SewaAlat $sewa_alat)
     {
-        return Storage::download($sewa_alat->surat_permohonan, 'surat-permohonan');
+        // Authorize - user can only download their own files
+        if ($sewa_alat->user_id !== Auth::id()) {
+            return back()->with('error', 'Anda tidak memiliki akses ke file ini');
+        }
+
+        if (!$sewa_alat->surat_permohonan) {
+            return back()->with('error', 'File permohonan tidak tersedia');
+        }
+
+        \Log::info('Download attempt - File path: ' . $sewa_alat->surat_permohonan);
+        
+        if (!Storage::disk('local')->exists($sewa_alat->surat_permohonan)) {
+            \Log::error('File not found at path: ' . $sewa_alat->surat_permohonan);
+            return back()->with('error', 'File permohonan tidak ditemukan di sistem');
+        }
+
+        try {
+            // Extract original extension from stored path
+            $extension = pathinfo($sewa_alat->surat_permohonan, PATHINFO_EXTENSION);
+            $downloadName = 'surat-permohonan.' . $extension;
+            
+            \Log::info('Downloading file: ' . $sewa_alat->surat_permohonan . ' as ' . $downloadName);
+            return Storage::disk('local')->download($sewa_alat->surat_permohonan, $downloadName);
+        } catch (Exception $error) {
+            \Log::error('Download Error: ' . $error->getMessage() . ' | Trace: ' . $error->getTraceAsString());
+            return back()->with('error', 'Gagal mengunduh file: ' . $error->getMessage());
+        }
     }
 }

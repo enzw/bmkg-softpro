@@ -14,6 +14,8 @@ use App\Http\Controllers\SewaAlatController;
 use App\Http\Middleware\Admin;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DialogflowWebhookController;
+use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\DashboardPelayananController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,13 +28,21 @@ use App\Http\Controllers\DialogflowWebhookController;
 |
 */
 
-Route::get('/', function () {
-    return view('pages.landing');
+Route::get('/api/berita', [BeritaController::class, 'scrapper']);
+
+Route::get('/berita', function () {
+    return view('pages.berita');
 });
 
 Route::get('/berita', function () {
     return view('pages.berita');
 })->name('berita');
+
+Route::get('/', [LayananController::class, 'index']);
+
+// Route::get('/', function () {
+//     return view('pages.landing');
+// });
 
 Route::get('/tentang-kami', function () {
     return view('pages.tentang-kami');
@@ -49,6 +59,10 @@ Route::get('/kuisioner', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/dashboard-pelayanan', [DashboardPelayananController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard-pelayanan');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -92,6 +106,7 @@ Route::middleware('auth')->group(function () {
         Route::redirect('/', 'dashboard');
         Route::get('dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::resource('sewa-alat', AdminSewaAlatController::class);
+        Route::get('sewa-alat/{sewa_alat}/download', [AdminSewaAlatController::class, 'download'])->name('sewa-alat.download');
         Route::resource('history-megabot', DialogflowWebhookController::class);
         Route::resource('pelayanan-jasa', AdminPermohonanMagangController::class);
         Route::resource('permohonan-kunjungan', AdminKlaimAsuransiController::class);

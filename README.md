@@ -3,7 +3,7 @@
   BMKG Yogyakarta
 </h1>
 
-<p align="center">Projek kelompok mata kuliah Sofware Project 2024</p>
+<p align="center">Praktik Kerja Lapangan 2026</p>
 
 ---------------------------------------------
 
@@ -13,18 +13,14 @@
 - Tailwind CSS
 
 ## Start project:
-- Clone repo: `git clone https://github.com/ycrus/bmkg-softpro.git`
+- Clone repo: `git clone https://github.com/enzw/bmkg-softpro/.git`
 - Install composer packages: `composer install`
 - Install node packages: `npm i`
 - Edit `.env` (sesuaikan database, dll)
-- Migrate database: `php artisan migrate:fresh`
+- Migrate database: `php artisan migrate:fresh --seed`
 - Optimize project: `php artisan optimize`
 - Start projet! `php artisan serve`
 - Buka terminal baru `npm run dev`
 
 ## Kelompok:
-- Afif Whelly Artissandi
-- Wuri Handayani
-- 
-- Rachel Meisya Halmahera
-- Yohanes Crusc Yunianto Tinitih
+- Gwe sendiri
