@@ -10,19 +10,21 @@ class DashboardPelayananController extends Controller
     {
         $layanan = [
             [
-                'id' => 'sewa-alat',
                 'images' => '/images/alat.png',
-                'nama' => 'Sewa Alat',
+                'nama' => 'Jasa Sewa Alat MKG',
                 'url' => '/layanan/sewa-alat',
-                'deskripsi' => 'Sewa alat di Stasiun Geofisika Sleman memungkinkan pengguna atau pelanggan untuk memanfaatkan berbagai peralatan canggih yang tersedia sesuai kebutuhan mereka. Proses peminjaman alat dilakukan dengan mudah dan efisien, sesuai dengan tarif yang telah ditetapkan oleh pihak stasiun.',
-                'cta' => 'Lihat Layanan',
+                'deskripsi' => 'Sewa alat di Stasiun Geofisika Sleman memungkinkan pengguna atau pelanggan untuk
+                memanfaatkan berbagai peralatan canggih yang tersedia sesuai kebutuhan mereka. Proses peminjaman
+                alat dilakukan dengan mudah dan efisien, sesuai dengan tarif yang telah ditetapkan oleh pihak stasiun. ',
+                'cta' => 'Sewa Alat',
             ],
             [
-                'id' => 'pelayanan-jasa',
                 'images' => '/images/layanan.jpg',
-                'nama' => 'Pelayanan Jasa',
+                'nama' => 'Pelayanan Informasi Geofisika',
                 'url' => '/layanan/pelayanan-jasa',
-                'deskripsi' => 'Stasiun Geofisika juga menyediakan layanan informasi terkait gempa bumi, tsunami, dan listrik udara. Informasi ini dapat dimanfaatkan untuk berbagai keperluan, termasuk klaim asuransi. Semua tarif layanan telah disesuaikan dengan peraturan perundang-undangan yang berlaku, memastikan transparansi dan kepatuhan terhadap hukum.',
+                'deskripsi' => 'Stasiun Geofisika juga menyediakan layanan informasi terkait gempa bumi, tsunami, dan listrik udara.
+                Informasi ini dapat dimanfaatkan untuk berbagai keperluan, termasuk klaim asuransi. Semua tarif layanan telah disesuaikan
+                dengan peraturan perundang-undangan yang berlaku, memastikan transparansi dan kepatuhan terhadap hukum.',
                 'cta' => 'Ajukan Permohonan',
             ],
             [

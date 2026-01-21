@@ -4,7 +4,7 @@
 $layanan = [
 [
 'images' => '/images/alat.png',
-'nama' => 'Sewa Alat',
+'nama' => 'Jasa Sewa Alat MKG',
 'url' => '/layanan/sewa-alat',
 'deskripsi' => 'Sewa alat di Stasiun Geofisika Sleman memungkinkan pengguna atau pelanggan untuk
 memanfaatkan berbagai peralatan canggih yang tersedia sesuai kebutuhan mereka. Proses peminjaman
@@ -12,7 +12,7 @@ alat dilakukan dengan mudah dan efisien, sesuai dengan tarif yang telah ditetapk
 ],
 [
 'images' => '/images/layanan.jpg',
-'nama' => 'Pelayanan Jasa',
+'nama' => 'Pelayanan Informasi Geofisika',
 'url' => '/layanan/pelayanan-jasa',
 'deskripsi' => 'Stasiun Geofisika juga menyediakan layanan informasi terkait gempa bumi, tsunami, dan listrik udara.
 Informasi ini dapat dimanfaatkan untuk berbagai keperluan, termasuk klaim asuransi. Semua tarif layanan telah disesuaikan
@@ -20,7 +20,7 @@ dengan peraturan perundang-undangan yang berlaku, memastikan transparansi dan ke
 ],
 [
 'images' => '/images/kunjungan.jpg',
-'nama' => 'Permohonan Kunjungan',
+'nama' => 'Konsultasi',
 'url' => '/layanan/permohonan-kunjungan',
 'deskripsi' => 'Stasiun Geofisika Sleman menerima kunjungan edukatif dari berbagai tingkat pendidikan, mulai dari Taman Kanak-Kanak (TK) hingga perguruan tinggi.
 Selain itu, Stasiun Geofisika Sleman juga menyediakan layanan BGTS (BMKG Goes to School). ',

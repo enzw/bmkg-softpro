@@ -74,7 +74,7 @@ Route::middleware('auth')->group(function () {
      | ---------------------------------------------------------------------
      */
     Route::prefix('layanan')->group(function () {
-        Route::get('/', [LayananController::class, 'index'])->name('layanan');
+        Route::get('/', [DashboardPelayananController::class, 'index'])->name('layanan');
 
         Route::name('sewa-alat.')
             ->prefix('sewa-alat')
