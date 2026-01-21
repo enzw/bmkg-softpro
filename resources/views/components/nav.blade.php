@@ -19,7 +19,11 @@
             </li>
 
             <li>
-                <a href="{{ Auth::user() ? '/dashboard-pelayanan' : '/#layanan' }}"
+                <a href="{{ Auth::check() && Auth::user()->role === 'admin'
+                    ? '/#layanan'
+                    : (Auth::check()
+                        ? '/dashboard-pelayanan'
+                        : '/#layanan') }}"
                     class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('layanan*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
                     Layanan
                 </a>
