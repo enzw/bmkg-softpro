@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\LayananService;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpClient\HttpClient;
 
@@ -58,8 +59,11 @@ class LayananController extends Controller
             $berita = [];
         }
 
+        $layanan = LayananService::getLayanan();
+
         return view('pages.landing', [
-            'berita' => $berita
+            'berita' => $berita,
+            'layanan' => $layanan
         ]);
     }
 }

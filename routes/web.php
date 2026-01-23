@@ -61,7 +61,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/dashboard-pelayanan', [DashboardPelayananController::class, 'index'])
-    ->middleware(['auth', 'verified'])->name('dashboard-pelayanan');
+    ->middleware(['auth', 'verified', 'auth.notadmin'])->name('dashboard-pelayanan');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -72,7 +72,7 @@ Route::middleware('auth')->group(function () {
      | PROTECTED ROUTES
      | ---------------------------------------------------------------------
      */
-    Route::prefix('layanan')->group(function () {
+    Route::middleware('auth.notadmin')->prefix('layanan')->group(function () {
         Route::get('/', [DashboardPelayananController::class, 'index'])->name('layanan');
 
         Route::name('sewa-alat.')

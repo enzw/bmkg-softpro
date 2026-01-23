@@ -15,9 +15,9 @@ class MagangController extends Controller
      */
     public function index()
     {
-        $permohonan = Magang::all();
+        $permohonan = Magang::where('user_id', Auth::id())->get();
         $data = [
-            'title' => 'Permohonan Magang',
+            'title' => 'Permohonan Pelayanan Jasa',
             'permohonan' => $permohonan,
         ];
 
@@ -38,19 +38,22 @@ class MagangController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'universitas' => 'nullable',
-            'fakultas' => 'nullable',
-            'prodi' => 'nullable',
+            'jenis_layanan' => 'required|string',
+            'nama_lengkap' => 'required|string|max:255',
+            'no_whatsapp' => 'required|string|max:20',
+            'email' => 'required|email',
+            'keterangan' => 'nullable|string',
         ]);
 
         $validated['user_id'] = Auth::id();
+        $validated['status'] = 'Menunggu';
 
         try {
             Magang::create($validated);
-            return back()->with('success', 'Permohonan magang berhasil dibuat');
+            return back()->with('success', 'Permohonan pelayanan jasa berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
-            return back()->with('error', 'Permohonan magang gagal dibuat');
+            return back()->with('error', 'Permohonan pelayanan jasa gagal dibuat: ' . $error->getMessage());
         }
     }
 
@@ -81,23 +84,20 @@ class MagangController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Magang $permohonan_magang)
+    public function destroy(Magang $pelayanan_jasa)
     {
-        if ($permohonan_magang->surat_ijin_magang) {
-            Storage::delete($permohonan_magang->surat_ijin_magang);
-        }
-
         try {
-            $permohonan_magang->delete();
-            return back()->with('success', 'Permohonan magang berhasil dihapus');
+            $pelayanan_jasa->delete();
+            return back()->with('success', 'Permohonan pelayanan jasa berhasil dihapus');
         } catch (Exception $error) {
             report($error->getMessage());
-            return back()->with('error', 'Permohonan magang gagal dihapus');
+            return back()->with('error', 'Permohonan pelayanan jasa gagal dihapus: ' . $error->getMessage());
         }
     }
 
-    public function download(Magang $permohonan_magang)
+    public function download(Magang $pelayanan_jasa)
     {
-        Storage::download($permohonan_magang->surat_ijin_magang);
+        // This method can be used for downloading documents if needed in the future
+        return back()->with('error', 'Download tidak tersedia untuk saat ini');
     }
 }

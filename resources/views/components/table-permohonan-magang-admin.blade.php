@@ -148,10 +148,5 @@
 
                     <button type="button" class="p-3 rouded" @click="showModalBatalPermohonan = false">Tidak</button>
                     <button type="submit" class="p-3 text-center text-white bg-red-400 rounded hover:bg-red-500">Ya,
-                        Batalkan</butt>
-                </form>
-            </div>
-        </div>
-    </div>
-    <!-- /Modal Confirm Delete -->
+    
 </div>
