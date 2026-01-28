@@ -1,4 +1,4 @@
-<footer class="pt-10 dark:bg-gray-800 dark:text-white">
+<footer class="pt-16 pb-8 dark:bg-gray-800 dark:text-white">
     <div class="container grid grid-cols-2 grid-rows-2 gap-5 px-4 mx-auto md:grid-cols-6 md:grid-rows-1">
         <div class="flex col-span-2 gap-5 md:col-span-3 lg:col-span-3">
             <img src="{{ asset('/images/logo-bmkg.png') }}" alt="BMKG Geofisika Yogyakarta" class="h-[100px]">
@@ -34,7 +34,7 @@
         </div>
     </div>
 
-    <div class="py-5 mt-10 text-sm text-center text-white bg-gray-800 dark:bg-gray-900">
+    <div class="py-8 mt-10 text-sm text-center text-white bg-gray-800 dark:bg-gray-900">
         <div class="container max-w-lg px-4 mx-auto">
             <p class="mt-2 text-gray-400">
                 Copyright &copy; <?php echo date('Y'); ?> - All Rights Reserved

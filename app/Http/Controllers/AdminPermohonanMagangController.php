@@ -40,28 +40,20 @@ class AdminPermohonanMagangController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'universitas' => 'nullable',
-            'fakultas' => 'nullable',
-            'prodi' => 'nullable',
+            'jenis_layanan' => 'required',
+            'nama_lengkap' => 'required',
+            'no_whatsapp' => 'required',
+            'email' => 'required|email',
+            'keterangan' => 'nullable',
+            'status' => 'nullable',
         ]);
-
-        // $validated['user_id'] = Auth::id();
-
-        if (array_key_exists('surat_permohonan', $validated)) {
-            Storage::delete($request->surat_permohonan);
-
-            $file = $request->file('surat_permohonan');
-            $file_name = 'permohonan-magang_user:' . $request->user()->id . '_date:' . Carbon::now() . '.' . $file->getClientOriginalExtension();
-            $path_permohonan = $file->storeAs('permohonan/permohonan-magang', $file_name);
-            $validated['surat_permohonan'] = $path_permohonan;
-        }
 
         try {
             Magang::create($validated);
-            return redirect()->route('admin.pelayanan-jasa.create')->with('success', 'Permohonan berhasil dibuat');
+            return redirect()->route('admin.pelayanan-jasa.index')->with('success', 'Permohonan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
-            return redirect()->route('admin.pelayanan-jasa.create')->with('error', 'Permohonan gagal dibuat');
+            return redirect()->route('admin.pelayanan-jasa.create')->with('error', 'Permohonan gagal dibuat: ' . $error->getMessage());
         }
     }
 
@@ -96,34 +88,20 @@ class AdminPermohonanMagangController extends Controller
     public function update(Request $request, Magang $permohonan_magang)
     {
         $validated = $request->validate([
-            'universitas' => 'required',
-            'fakultas' => 'required',
-            'prodi' => 'required',
-            'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date|after_or_equal:sewa_mulai',
-            'status' => 'required',
-            // 'surat_permohonan' => 'nullable|max:2048',
-            // 'keterangan' => 'nullable',
+            'jenis_layanan' => 'required',
+            'nama_lengkap' => 'required',
+            'no_whatsapp' => 'required',
+            'email' => 'required|email',
+            'keterangan' => 'nullable',
+            'status' => 'nullable',
         ]);
-
-        // $validated['user_id'] = Auth::id();
-
-        if (array_key_exists('surat_permohonan', $validated)) {
-            Storage::delete($permohonan_magang->surat_permohonan);
-
-            $file = $permohonan_magang->file('surat_permohonan');
-            $file_name = 'permohonan-magang_user:' . $request->user()->id . '_date:' . Carbon::now() . '.' . $file->getClientOriginalExtension();
-            $path_permohonan = $file->storeAs('permohonan/permohonan-magang', $file_name);
-            $validated['surat_permohonan'] = $path_permohonan;
-            $validated['status'] = $request->input('status');
-        }
 
         try {
             $permohonan_magang->update($validated);
             return redirect()->route('admin.pelayanan-jasa.index')->with('success', 'Permohonan berhasil diupdate');
         } catch (Exception $error) {
             report($error->getMessage());
-            return redirect()->route('admin.pelayanan-jasa.edit')->with('error', 'Permohonan gagal diupdate');
+            return redirect()->route('admin.pelayanan-jasa.index')->with('error', 'Permohonan gagal diupdate: ' . $error->getMessage());
         }
     }
 

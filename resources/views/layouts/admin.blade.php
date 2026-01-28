@@ -1,38 +1,50 @@
-<x-app-layout>
-    @section('styles')
-    <link href="https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
-    @yield('styles-page')
-    @endsection
-    <x-slot name="header">
-        <h2 class="flex items-center text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-            Selamat Datang, {{ Auth::user()->name }}
-        </h2>
-    </x-slot>
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>@yield('title' . ' - Admin BMKG Geofisika Yogyakarta', 'Admin BMKG Geofisika Yogyakarta')</title>
 
-    <div class="py-3 lg:py-5">
-        <div class="grid grid-cols-1 mx-auto gap-y-3 lg:gap-x-5 lg:grid-cols-4 max-w-7xl sm:px-6 lg:px-8">
-            @include('components.admin-sidebar')
+    <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}">
 
-            <div class="flex flex-col col-span-3 gap-3 p-6 bg-white rounded-lg dark:bg-gray-800">
-                <div class="flex items-center mb-4">
-                    <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                        {{ $title ?? 'Title' }}
-                    </h2>
-                    @isset($button)
-                    <div class="ml-auto">
-                        {{ $button }}
-                    </div>
-                    @endisset
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:400,600|antic-didone:400&display=swap" rel="stylesheet" />
+
+    {{-- asset --}}
+    @vite(['public/css/app.css', 'public/js/app.js'])
+
+    <style>
+        :root {
+            font-family: 'Inter', sans-serif
+        }
+    </style>
+</head>
+
+<body>
+    @include('components.nav')
+    <div class="min-h-screen bg-white dark:bg-gray-900 pb-40">
+        <div class="container px-4 mx-auto py-10">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Sidebar -->
+                <div class="pt-12 lg:col-span-1">
+                    <x-admin-sidebar />
                 </div>
-                {{ $slot }}
+
+                <!-- Main Content -->
+                <div class="lg:col-span-3">
+                    <div class="pt-12">
+                        @yield('content')
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    @section('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/gridjs/dist/gridjs.umd.js"></script>
+    {{-- Font Awesome --}}
+    {{-- <script src="https://kit.fontawesome.com/1191ef92be.js" crossorigin="anonymous"></script> --}}
+</body>
 
-    @yield('scripts-page')
-    @endsection
-</x-app-layout>
+</html>

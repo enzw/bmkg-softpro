@@ -51,10 +51,10 @@ class AsuransiController extends Controller
 
         try {
             Asuransi::create($validated);
-            return back()->with('success', 'Permohonan klaim asuransi berhasil dibuat');
+            return back()->with('success', 'Permohonan kunjungan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
-            return back()->with('error', 'Permohonan klaim asuransi gagal dibuat');
+            return back()->with('error', 'Permohonan kunjungan gagal dibuat');
         }
     }
 
@@ -85,15 +85,15 @@ class AsuransiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Asuransi $klaim_asuransi)
+    public function destroy(Asuransi $permohonan_kunjungan)
     {
         try {
             // Storage::delete($permohonan_asuransi->surat_permohonan_klaim);
-            $klaim_asuransi->delete();
-            return back()->with('success', 'Permohonan klaim asuransi berhasil dihapus');
+            $permohonan_kunjungan->delete();
+            return back()->with('success', 'Permohonan kunjungan berhasil dihapus');
         } catch (Exception $error) {
             report($error->getMessage());
-            return back()->with('error', 'Permohonan klaim asuransi gagal dihapus');
+            return back()->with('error', 'Permohonan kunjungan gagal dihapus');
         }
     }
 

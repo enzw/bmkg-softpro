@@ -47,10 +47,10 @@ class PetaSebaranController extends Controller
 
         try {
             PetaSebaran::create($validated);
-            return back()->with('success', 'Permohonan klaim asuransi berhasil dibuat');
+            return back()->with('success', 'Permohonan kunjungan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
-            return back()->with('error', 'Permohonan klaim asuransi gagal dibuat');
+            return back()->with('error', 'Permohonan kunjungan gagal dibuat');
         }
     }
 
@@ -86,10 +86,10 @@ class PetaSebaranController extends Controller
         try {
             // Storage::delete($permohonan_asuransi->surat_permohonan_klaim);
             $klaim_asuransi->delete();
-            return back()->with('success', 'Permohonan klaim asuransi berhasil dihapus');
+            return back()->with('success', 'Permohonan kunjungan berhasil dihapus');
         } catch (Exception $error) {
             report($error->getMessage());
-            return back()->with('error', 'Permohonan klaim asuransi gagal dihapus');
+            return back()->with('error', 'Permohonan kunjungan gagal dihapus');
         }
     }
 

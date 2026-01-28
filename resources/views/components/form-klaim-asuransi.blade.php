@@ -38,7 +38,7 @@
                     <option value="Go To School">Go To School</option>
                     <option value="Go To BMKG">Go To BMKG</option>
                 </select>
-            <x-input-error :messages="$errors->get('lokasi')" class="mt-2" />
+            <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
         </div>
 
         <div>
@@ -49,34 +49,33 @@
         </div>
         
         <div>
-        <x-input-label class="w-full" for="longitude">Nama Lengkap</x-input-label>
-                <x-text-input id="longitude" class="block w-full mt-1" type="text" name="longitude"
-                    :value="old('longitude')" required />
-                <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
+            <x-input-label for="latitude">Nama Lengkap</x-input-label>
+            <x-text-input id="latitude" class="block w-full mt-1" type="text" name="latitude"
+                :value="old('latitude')" required />
+            <x-input-error :messages="$errors->get('latitude')" class="mt-2" />
         </div>
 
         <div>
-            <x-input-label for="lokasi">Nomor Whatsapp</x-input-label>
-            <x-text-input id="lokasi" class="block w-full mt-1" type="text" name="lokasi" :value="old('lokasi')"
+            <x-input-label for="longitude">Nomor Whatsapp</x-input-label>
+            <x-text-input id="longitude" class="block w-full mt-1" type="text" name="longitude" :value="old('longitude')"
                 required />
-            <x-input-error :messages="$errors->get('lokasi')" class="mt-2" />
+            <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
         </div>
        
 
         <div class="flex gap-3">
             <div class="relative flex-1">
-                <x-input-label class="w-full" for="latitude">Jumlah Rombongan</x-input-label>
-                <x-text-input id="latitude" class="block w-full mt-1" type="text" name="latitude"
-                    :value="old('latitude')" required />
-                <x-input-error :messages="$errors->get('latitude')" class="mt-2" />
+                <x-input-label class="w-full" for="lokasi">Jumlah Rombongan</x-input-label>
+                <x-text-input id="lokasi" class="block w-full mt-1" type="text" name="lokasi"
+                    :value="old('lokasi')" required />
+                <x-input-error :messages="$errors->get('lokasi')" class="mt-2" />
             </div>
 
             <div class="relative flex-1">
-            <x-input-label class="w-full" for="tanggal">Rencana Kunjungan</x-input-label>
-            <x-text-input id="tanggal" class="block w-full mt-1" type="date" name="tanggal"
-                :value="old('tanggal')" placeholder="Tanggal Kejadian" required />
-            <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
-               
+                <x-input-label class="w-full" for="tanggal">Rencana Kunjungan</x-input-label>
+                <x-text-input id="tanggal" class="block w-full mt-1" type="date" name="tanggal"
+                    :value="old('tanggal')" placeholder="Tanggal Kejadian" required />
+                <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
             </div>
         </div>
 

@@ -57,13 +57,13 @@
                                     {{ $item->tanggal }}
                                 </td>
                                 <td class="p-3 align-top max-w-[200px]">
-                                    {{ $item->lokasi }}
-                                </td>
-                                <td class="p-3 align-top max-w-[200px]">
                                     {{ $item->longitude }}
                                 </td>
                                 <td class="p-3 align-top max-w-[200px]">
                                     {{ $item->latitude }}
+                                </td>
+                                <td class="p-3 align-top max-w-[200px]">
+                                    {{ $item->lokasi }}
                                 </td>
                                
                                 <td>
@@ -160,11 +160,11 @@
                     <form :action="batal" method="post" class="flex gap-3 w-full *:flex-1 mt-5">
                         @csrf @method('delete')
 
-                        <button type="button" class="p-3 rouded"
+                        <button type="button" class="p-3 rounded"
                             @click="showModalBatalPermohonan = false">Tidak</button>
                         <button type="submit"
                             class="p-3 text-center text-white bg-red-400 rounded hover:bg-red-500">Ya,
-                            Batalkan</butt>
+                            Batalkan</button>
                     </form>
                 </div>
             </div>
