@@ -12,12 +12,12 @@
         <a href="{{ route('admin.sewa-alat.index') }}" @class([ 'p-4 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 rounded-lg' , 'bg-green-200 hover:bg-green-300 dark:bg-green-600 dark:text-white dark:hover:bg-green-700 dark:hover:text-white'=> request()->routeIs(
             'admin.sewa-alat.*'),
             ])><i
-                class="fa-solid fa-boxes-packing"></i> Sewa Alat
+                class="fa-solid fa-boxes-packing"></i> Jasa Sewa Alat MKG
         </a>
         <a href="{{ route('admin.pelayanan-jasa.index') }}" @class([ 'p-4 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 rounded-lg' , 'bg-green-200 hover:bg-green-300 dark:bg-green-600 dark:text-white dark:hover:bg-green-700 dark:hover:text-white'=> request()->routeIs(
             'admin.pelayanan-jasa.index'),
             ])><i
-                class="fa-regular fa-address-card"></i> Pelayanan Jasa
+                class="fa-regular fa-address-card"></i> Pelayanan Informasi Geofisika
         </a>
 
         <a href="{{ route('admin.permohonan-kunjungan.index') }}" @class([ 'p-4 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 rounded-lg' , 'bg-green-200 hover:bg-green-300 dark:bg-green-600 dark:text-white dark:hover:bg-green-700 dark:hover:text-white'=> request()->routeIs(

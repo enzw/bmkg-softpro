@@ -51,10 +51,10 @@ class AsuransiController extends Controller
 
         try {
             Asuransi::create($validated);
-            return back()->with('success', 'Permohonan klaim asuransi berhasil dibuat');
+            return back()->with('success', 'Permohonan kunjungan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
-            return back()->with('error', 'Permohonan klaim asuransi gagal dibuat');
+            return back()->with('error', 'Permohonan kunjungan gagal dibuat');
         }
     }
 
@@ -85,15 +85,33 @@ class AsuransiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Asuransi $klaim_asuransi)
+    public function destroy(Asuransi $permohonan_kunjungan)
     {
         try {
-            // Storage::delete($permohonan_asuransi->surat_permohonan_klaim);
-            $klaim_asuransi->delete();
-            return back()->with('success', 'Permohonan klaim asuransi berhasil dihapus');
+            // Check permission: only uploader or admin can delete
+            $user = Auth::user();
+            $isAdmin = $user && ($user->role === 'admin' || $user->role === 'superuser');
+            $isOwner = $permohonan_kunjungan->user_id === $user?->id;
+            
+            if (!($isOwner || $isAdmin)) {
+                if (request()->wantsJson()) {
+                    return response()->json(['message' => 'Anda tidak memiliki akses untuk menghapus permohonan ini'], 403);
+                }
+                return back()->with('error', 'Anda tidak memiliki akses untuk menghapus permohonan ini');
+            }
+            
+            $permohonan_kunjungan->delete();
+            
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan kunjungan berhasil dihapus']);
+            }
+            return back()->with('success', 'Permohonan kunjungan berhasil dihapus');
         } catch (Exception $error) {
             report($error->getMessage());
-            return back()->with('error', 'Permohonan klaim asuransi gagal dihapus');
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan kunjungan gagal dihapus: ' . $error->getMessage()], 500);
+            }
+            return back()->with('error', 'Permohonan kunjungan gagal dihapus');
         }
     }
 

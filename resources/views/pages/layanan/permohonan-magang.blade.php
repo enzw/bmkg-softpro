@@ -1,22 +1,40 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="flex items-center text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-            <a href="/layanan"
-                class="w-[40px] h-[40px] grid md:hidden place-content-center text-gray-400 hover:text-green-600 rounded border border-gray-400 dark:border-gray-600 mr-3">
-                <i class="text-sm fas fa-angle-left"></i>
-            </a>
-            <span class="hidden md:inline">
-                <a href="/layanan" class="text-gray-400 hover:text-green-600">Layanan</a>
-                <i class="mx-2 text-sm fa-solid fa-angle-right"></i>
-            </span>
-            <span>Pelayanan Jasa</span>
-        </h2>
-    </x-slot>
+@extends('layouts.main')
 
-    <div class="py-3 lg:py-6">
-        <div class="grid grid-cols-1 mx-auto gap-y-3 lg:gap-x-3 lg:grid-cols-3 max-w-7xl sm:px-6 lg:px-8">
-            @include('components.form-permohonan-magang')
-            @include('components.table-permohonan-magang', ['permohonan' => $permohonan])
+@section('content')
+<div class="min-h-screen bg-white dark:bg-gray-900">
+    <div class="container px-4 mx-auto py-10">
+        <div class="mt-12 mb-8">
+            <div class="flex items-center gap-3 mb-4">
+                <a href="/layanan" class="text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400">
+                    Layanan
+                </a>
+                <i class="text-sm text-gray-400 fa-solid fa-angle-right"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                Pelayanan Informasi Geofisika
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400">
+                Silakan isi formulir untuk mengajukan permohonan Pelayanan Informasi Geofisika.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-1">
+                @include('components.form-permohonan-magang')
+            </div>
+            <div class="lg:col-span-2">
+                @include('components.table-permohonan-magang', ['permohonan' => $permohonan])
+            </div>
+        </div>
+
+        <div class="mt-12 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <h4 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                <i class="fas fa-info-circle mr-2"></i> Informasi Penting
+            </h4>
+            <p class="text-blue-800 dark:text-blue-200 text-sm">
+                Semua permohonan pelayanan jasa akan diproses oleh tim kami. Anda dapat memantau status permohonan Anda di tabel yang tertera di atas.
+            </p>
         </div>
     </div>
-</x-app-layout>
+</div>
+@endsection

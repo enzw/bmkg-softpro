@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\JasaKonsultasi;
+use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class JasaKonsultasiController extends Controller
 {
@@ -12,7 +15,13 @@ class JasaKonsultasiController extends Controller
      */
     public function index()
     {
-        //
+        $permohonan = JasaKonsultasi::where('user_id', Auth::id())->get();
+        $data = [
+            'title' => 'Permohonan Jasa Konsultasi',
+            'permohonan' => $permohonan,
+        ];
+
+        return view('pages.layanan.jasa-konsultasi.index', $data);
     }
 
     /**
@@ -20,7 +29,11 @@ class JasaKonsultasiController extends Controller
      */
     public function create()
     {
-        //
+        $data = [
+            'title' => 'Buat Permohonan Jasa Konsultasi',
+        ];
+
+        return view('pages.layanan.jasa-konsultasi.create', $data);
     }
 
     /**
@@ -28,7 +41,45 @@ class JasaKonsultasiController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nama_lengkap' => 'required|string|max:255',
+            'no_whatsapp' => 'required|string|max:20',
+            'email' => 'required|email',
+            'keterangan' => 'nullable|string',
+            'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ]);
+
+        if ($request->hasFile('surat_permohonan')) {
+            try {
+                $directory = 'permohonan/jasa-konsultasi';
+                if (!Storage::disk('local')->exists($directory)) {
+                    Storage::disk('local')->makeDirectory($directory, 0755, true);
+                }
+                
+                $file = $request->file('surat_permohonan');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 'local');
+                
+                if ($path) {
+                    $validated['surat_permohonan'] = $path;
+                } else {
+                    return back()->with('error', 'Gagal upload file');
+                }
+            } catch (Exception $fileError) {
+                return back()->with('error', 'Gagal upload file: ' . $fileError->getMessage());
+            }
+        }
+
+        $validated['user_id'] = Auth::id();
+        $validated['status'] = 'Menunggu';
+
+        try {
+            JasaKonsultasi::create($validated);
+            return back()->with('success', 'Permohonan jasa konsultasi berhasil dibuat');
+        } catch (Exception $error) {
+            report($error->getMessage());
+            return back()->with('error', 'Permohonan jasa konsultasi gagal dibuat: ' . $error->getMessage());
+        }
     }
 
     /**
@@ -58,8 +109,23 @@ class JasaKonsultasiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(JasaKonsultasi $jasaKonsultasi)
+    public function destroy(JasaKonsultasi $jasa_konsultasi)
     {
-        //
+        try {
+            if ($jasa_konsultasi->surat_permohonan) {
+                Storage::disk('local')->delete($jasa_konsultasi->surat_permohonan);
+            }
+            $jasa_konsultasi->delete();
+            return back()->with('success', 'Permohonan jasa konsultasi berhasil dihapus');
+        } catch (Exception $error) {
+            report($error->getMessage());
+            return back()->with('error', 'Permohonan jasa konsultasi gagal dihapus: ' . $error->getMessage());
+        }
+    }
+
+    public function download(JasaKonsultasi $jasa_konsultasi)
+    {
+        // This method can be used for downloading documents if needed in the future
+        return back()->with('error', 'Download tidak tersedia untuk saat ini');
     }
 }
