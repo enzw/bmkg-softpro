@@ -88,11 +88,29 @@ class AsuransiController extends Controller
     public function destroy(Asuransi $permohonan_kunjungan)
     {
         try {
-            // Storage::delete($permohonan_asuransi->surat_permohonan_klaim);
+            // Check permission: only uploader or admin can delete
+            $user = Auth::user();
+            $isAdmin = $user && ($user->role === 'admin' || $user->role === 'superuser');
+            $isOwner = $permohonan_kunjungan->user_id === $user?->id;
+            
+            if (!($isOwner || $isAdmin)) {
+                if (request()->wantsJson()) {
+                    return response()->json(['message' => 'Anda tidak memiliki akses untuk menghapus permohonan ini'], 403);
+                }
+                return back()->with('error', 'Anda tidak memiliki akses untuk menghapus permohonan ini');
+            }
+            
             $permohonan_kunjungan->delete();
+            
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan kunjungan berhasil dihapus']);
+            }
             return back()->with('success', 'Permohonan kunjungan berhasil dihapus');
         } catch (Exception $error) {
             report($error->getMessage());
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan kunjungan gagal dihapus: ' . $error->getMessage()], 500);
+            }
             return back()->with('error', 'Permohonan kunjungan gagal dihapus');
         }
     }

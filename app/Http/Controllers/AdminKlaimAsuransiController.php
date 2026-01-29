@@ -139,6 +139,20 @@ class AdminKlaimAsuransiController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $asuransi = Asuransi::findOrFail($id);
+            $asuransi->delete();
+            
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan berhasil dihapus']);
+            }
+            return back()->with('success', 'Permohonan berhasil dihapus');
+        } catch (Exception $error) {
+            \Log::error('Admin Klaim Asuransi Destroy Error: ' . $error->getMessage());
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan gagal dihapus: ' . $error->getMessage()], 500);
+            }
+            return back()->with('error', 'Permohonan gagal dihapus: ' . $error->getMessage());
+        }
     }
 }

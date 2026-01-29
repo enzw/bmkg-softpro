@@ -88,16 +88,38 @@ class SewaAlatController extends Controller
         }
     }
 
-    public function destroy(SewaAlat $sewa_alat)
+    public function destroy($id)
     {
         try {
+            // Find the sewa_alat record by ID
+            $sewa_alat = SewaAlat::findOrFail($id);
+            
+            // Check permission: only uploader or admin can delete
+            $user = Auth::user();
+            $isAdmin = $user && ($user->role === 'admin' || $user->role === 'superuser');
+            $isOwner = $sewa_alat->user_id === $user?->id;
+            
+            if (!($isOwner || $isAdmin)) {
+                if (request()->wantsJson()) {
+                    return response()->json(['message' => 'Anda tidak memiliki akses untuk menghapus permohonan ini'], 403);
+                }
+                return back()->with('error', 'Anda tidak memiliki akses untuk menghapus permohonan ini');
+            }
+            
             if ($sewa_alat->surat_permohonan) {
                 Storage::disk('local')->delete($sewa_alat->surat_permohonan);
             }
             $sewa_alat->delete();
+            
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan berhasil dibatalkan']);
+            }
             return back()->with('success', 'Permohonan berhasil dibatalkan');
         } catch (Exception $error) {
             \Log::error('Sewa Alat Destroy Error: ' . $error->getMessage());
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan gagal dibatalkan: ' . $error->getMessage()], 500);
+            }
             return back()->with('error', 'Permohonan gagal dibatalkan: ' . $error->getMessage());
         }
     }

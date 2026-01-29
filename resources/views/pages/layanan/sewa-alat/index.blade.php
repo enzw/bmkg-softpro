@@ -26,15 +26,6 @@
                 @include('components.table-sewa-alat-permohonan', ['permohonan' => $permohonan])
             </div>
         </div>
-
-        <div class="mt-12 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-            <h4 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                <i class="fas fa-info-circle mr-2"></i> Informasi Penting
-            </h4>
-            <p class="text-blue-800 dark:text-blue-200 text-sm">
-                Semua permohonan sewa alat akan diproses oleh tim kami. Anda dapat memantau status permohonan Anda di tabel yang tertera di atas.
-            </p>
-        </div>
     </div>
 </div>
 @endsection

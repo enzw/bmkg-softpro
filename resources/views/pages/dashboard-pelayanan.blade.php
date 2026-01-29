@@ -73,17 +73,31 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
-                                        @if ($item['status'] === 'approved' || $item['status'] === 'Approved')
+                                        @php
+                                            $status = $item['status'] ?? 'Menunggu';
+                                            // Approved/Accepted statuses
+                                            $approvedStatuses = ['approved', 'Approved', 'Diterima', 'Disetujui', 'Alat Siap Diambil', 'Alat Dibawa', 'Dikirim'];
+                                            // Rejected statuses
+                                            $rejectedStatuses = ['rejected', 'Rejected', 'Ditolak'];
+                                            // Processing statuses
+                                            $processingStatuses = ['Diproses', 'Selesai'];
+                                        @endphp
+                                        
+                                        @if (in_array($status, $approvedStatuses))
                                             <span class="inline-flex px-3 py-1 text-sm font-semibold text-green-800 bg-green-100 dark:bg-green-900/30 dark:text-green-300 rounded-full">
-                                                <i class="fas fa-check-circle mr-2"></i> Disetujui
+                                                <i class="fas fa-check-circle mr-2"></i> {{ $status }}
                                             </span>
-                                        @elseif ($item['status'] === 'rejected' || $item['status'] === 'Rejected')
+                                        @elseif (in_array($status, $rejectedStatuses))
                                             <span class="inline-flex px-3 py-1 text-sm font-semibold text-red-800 bg-red-100 dark:bg-red-900/30 dark:text-red-300 rounded-full">
-                                                <i class="fas fa-times-circle mr-2"></i> Ditolak
+                                                <i class="fas fa-times-circle mr-2"></i> {{ $status }}
+                                            </span>
+                                        @elseif (in_array($status, $processingStatuses))
+                                            <span class="inline-flex px-3 py-1 text-sm font-semibold text-blue-800 bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 rounded-full">
+                                                <i class="fas fa-spinner mr-2"></i> {{ $status }}
                                             </span>
                                         @else
                                             <span class="inline-flex px-3 py-1 text-sm font-semibold text-yellow-800 bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-300 rounded-full">
-                                                <i class="fas fa-clock mr-2"></i> Menunggu
+                                                <i class="fas fa-clock mr-2"></i> {{ $status }}
                                             </span>
                                         @endif
                                     </td>

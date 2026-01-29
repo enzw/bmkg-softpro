@@ -15,12 +15,17 @@ class Magang extends Model
 
     protected $fillable = [
         'user_id',
-        'jenis_layanan',
         'nama_lengkap',
         'no_whatsapp',
         'email',
-        'keterangan',
+        'universitas',
+        'fakultas',
+        'prodi',
+        'tanggal_mulai',
+        'tanggal_selesai',
         'status',
+        'surat_permohonan',
+        'surat_ijin_magang',
     ];
 
     public function user()

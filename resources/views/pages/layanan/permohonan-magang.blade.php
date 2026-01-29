@@ -11,10 +11,10 @@
                 <i class="text-sm text-gray-400 fa-solid fa-angle-right"></i>
             </div>
             <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                Pelayanan Jasa
+                Pelayanan Informasi Geofisika
             </h1>
             <p class="text-gray-600 dark:text-gray-400">
-                Silakan isi formulir untuk mengajukan permohonan pelayanan jasa.
+                Silakan isi formulir untuk mengajukan permohonan Pelayanan Informasi Geofisika.
             </p>
         </div>
 

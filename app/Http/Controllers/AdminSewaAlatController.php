@@ -185,9 +185,15 @@ class AdminSewaAlatController extends Controller
             // hapus data DB
             $sewa_alat->delete();
 
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan berhasil dibatalkan']);
+            }
             return back()->with('success', 'Permohonan berhasil dibatalkan');
         } catch (\Exception $error) {
             \Log::error('Sewa Alat Destroy Error: ' . $error->getMessage());
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan gagal dibatalkan: ' . $error->getMessage()], 500);
+            }
             return back()->with('error', 'Permohonan gagal dibatalkan');
         }
     }

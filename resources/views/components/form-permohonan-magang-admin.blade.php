@@ -13,6 +13,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
     @php
     $permohonan = $permohonan ?? null;
+    $jenis_layanan = $is_edit ? ($permohonan->jenis_layanan ?? old('jenis_layanan', '')) : old('jenis_layanan', '');
     @endphp
 
     @if (session('success'))
@@ -37,7 +38,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         </div>
     @endif
 
-    <form action="{{ $is_edit ? route('admin.pelayanan-jasa.update', ['pelayanan_jasa' => $permohonan]) : route('admin.pelayanan-jasa.store') }}" method="POST" class="grid grid-cols-1 gap-4" enctype="multipart/form-data">
+    <form action="{{ $is_edit ? url('admin/pelayanan-jasa/' . $permohonan->id) : route('admin.pelayanan-jasa.store') }}" method="POST" class="grid grid-cols-1 gap-4" enctype="multipart/form-data" id="form-layanan">
         @csrf
         @if ($is_edit)
         @method('put')
@@ -46,43 +47,124 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <div>
             <x-input-label for="jenis_layanan">Jenis Layanan</x-input-label>
             <select name="jenis_layanan" id="jenis_layanan"
-                class="block w-full mt-1 truncate border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                class="block w-full mt-1 truncate border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                onchange="updateFormFields()">
                 <option value="">Pilih layanan...</option>
-                <option value="Layanan Klaim Asuransi" @selected($is_edit ? old('jenis_layanan', $permohonan->jenis_layanan) == 'Layanan Klaim Asuransi' : false)>Layanan Klaim Asuransi</option>
-                <option value="Layanan Data" @selected($is_edit ? old('jenis_layanan', $permohonan->jenis_layanan) == 'Layanan Data' : false)>Layanan Data</option>
-                <option value="Layanan Pemetaan" @selected($is_edit ? old('jenis_layanan', $permohonan->jenis_layanan) == 'Layanan Pemetaan' : false)>Layanan Pemetaan</option>
-                <option value="Layanan Survey" @selected($is_edit ? old('jenis_layanan', $permohonan->jenis_layanan) == 'Layanan Survey' : false)>Layanan Survey</option>
-                <option value="Layanan Konsultasi" @selected($is_edit ? old('jenis_layanan', $permohonan->jenis_layanan) == 'Layanan Konsultasi' : false)>Layanan Konsultasi</option>
+                <option value="Magang" @selected($jenis_layanan == 'Magang')>Magang</option>
+                <option value="Layanan Klaim Asuransi" @selected($jenis_layanan == 'Layanan Klaim Asuransi')>Layanan Klaim Asuransi</option>
+                <option value="Layanan Data" @selected($jenis_layanan == 'Layanan Data')>Layanan Data</option>
+                <option value="Layanan Pemetaan" @selected($jenis_layanan == 'Layanan Pemetaan')>Layanan Pemetaan</option>
+                <option value="Layanan Survey" @selected($jenis_layanan == 'Layanan Survey')>Layanan Survey</option>
+                <option value="Layanan Konsultasi" @selected($jenis_layanan == 'Layanan Konsultasi')>Layanan Konsultasi</option>
             </select>
             <x-input-error :messages="$errors->get('jenis_layanan')" class="mt-2" />
         </div>
 
-        <div>
-            <x-input-label for="nama_lengkap">Nama Lengkap</x-input-label>
-            <x-text-input id="nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
-                :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap) : old('nama_lengkap')" required />
-            <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
+        <!-- MAGANG Fields -->
+        <div id="magang-fields" style="display: {{ $jenis_layanan == 'Magang' ? 'block' : 'none' }}">
+            <div>
+                <x-input-label for="nama_lengkap">Nama Lengkap</x-input-label>
+                <x-text-input id="nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
+                    :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap')" />
+                <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
+            </div>
+            <div>
+                <x-input-label for="no_whatsapp">No WhatsApp</x-input-label>
+                <x-text-input id="no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
+                    :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
+                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
+            </div>
+            <div>
+                <x-input-label for="email">Email</x-input-label>
+                <x-text-input id="email" class="block w-full mt-1" type="email" name="email" 
+                    :value="$is_edit ? old('email', $permohonan->email ?? '') : old('email')" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            </div>
+            <div>
+                <x-input-label for="universitas">Universitas</x-input-label>
+                <x-text-input id="universitas" class="block w-full mt-1" type="text" name="universitas" 
+                    :value="$is_edit ? old('universitas', $permohonan->universitas ?? '') : old('universitas')" />
+                <x-input-error :messages="$errors->get('universitas')" class="mt-2" />
+            </div>
+            <div>
+                <x-input-label for="fakultas">Fakultas</x-input-label>
+                <x-text-input id="fakultas" class="block w-full mt-1" type="text" name="fakultas" 
+                    :value="$is_edit ? old('fakultas', $permohonan->fakultas ?? '') : old('fakultas')" />
+                <x-input-error :messages="$errors->get('fakultas')" class="mt-2" />
+            </div>
+            <div>
+                <x-input-label for="prodi">Program Studi</x-input-label>
+                <x-text-input id="prodi" class="block w-full mt-1" type="text" name="prodi" 
+                    :value="$is_edit ? old('prodi', $permohonan->prodi ?? '') : old('prodi')" />
+                <x-input-error :messages="$errors->get('prodi')" class="mt-2" />
+            </div>
+            <div class="flex gap-3">
+                <div class="flex-1">
+                    <x-input-label for="tanggal_mulai">Tanggal Mulai</x-input-label>
+                    <x-text-input id="tanggal_mulai" class="block w-full mt-1" type="date" name="tanggal_mulai"
+                        :value="$is_edit ? old('tanggal_mulai', $permohonan->tanggal_mulai ?? '') : old('tanggal_mulai')" />
+                    <x-input-error :messages="$errors->get('tanggal_mulai')" class="mt-2" />
+                </div>
+                <div class="flex-1">
+                    <x-input-label for="tanggal_selesai">Tanggal Selesai</x-input-label>
+                    <x-text-input id="tanggal_selesai" class="block w-full mt-1" type="date" name="tanggal_selesai"
+                        :value="$is_edit ? old('tanggal_selesai', $permohonan->tanggal_selesai ?? '') : old('tanggal_selesai')" />
+                    <x-input-error :messages="$errors->get('tanggal_selesai')" class="mt-2" />
+                </div>
+            </div>
         </div>
 
-        <div>
-            <x-input-label for="no_whatsapp">No WhatsApp</x-input-label>
-            <x-text-input id="no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
-                :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp) : old('no_whatsapp')" required />
-            <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
+        <!-- ASURANSI Fields -->
+        <div id="asuransi-fields" style="display: {{ $jenis_layanan == 'Asuransi' ? 'block' : 'none' }}">
+            <div>
+                <x-input-label for="perusahaan">Nama Instansi</x-input-label>
+                <x-text-input id="perusahaan" class="block w-full mt-1" type="text" name="perusahaan" 
+                    :value="$is_edit ? old('perusahaan', $permohonan->perusahaan ?? '') : old('perusahaan')" />
+                <x-input-error :messages="$errors->get('perusahaan')" class="mt-2" />
+            </div>
+            <div>
+                <x-input-label for="kejadian">Jenis Kunjungan</x-input-label>
+                <x-text-input id="kejadian" class="block w-full mt-1" type="text" name="kejadian" 
+                    :value="$is_edit ? old('kejadian', $permohonan->kejadian ?? '') : old('kejadian')" />
+                <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
+            </div>
+            <div>
+                <x-input-label for="tanggal_asuransi">Tanggal Kunjungan</x-input-label>
+                <x-text-input id="tanggal_asuransi" class="block w-full mt-1" type="date" name="tanggal" 
+                    :value="$is_edit ? old('tanggal', $permohonan->tanggal ?? '') : old('tanggal')" />
+                <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
+            </div>
         </div>
 
-        <div>
-            <x-input-label for="email">Email</x-input-label>
-            <x-text-input id="email" class="block w-full mt-1" type="email" name="email" 
-                :value="$is_edit ? old('email', $permohonan->email) : old('email')" required />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        <!-- COMMON Fields (Data, Pemetaan, Survey, Konsultasi) -->
+        <div id="common-fields" style="display: {{ in_array($jenis_layanan, ['Data', 'Pemetaan', 'Survey', 'Konsultasi']) ? 'block' : 'none' }}">
+            <div>
+                <x-input-label for="nama_lengkap">Nama Lengkap</x-input-label>
+                <x-text-input id="nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
+                    :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap')" />
+                <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
+            </div>
 
-        <div>
-            <x-input-label for="keterangan">Keterangan / Deskripsi Kebutuhan</x-input-label>
-            <textarea id="keterangan" name="keterangan" rows="3"
-                class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan) : old('keterangan') }}</textarea>
-            <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
+            <div>
+                <x-input-label for="no_telepon">No Telepon</x-input-label>
+                <x-text-input id="no_telepon" class="block w-full mt-1" type="text" name="no_telepon" 
+                    :value="$is_edit ? old('no_telepon', $permohonan->no_telepon ?? '') : old('no_telepon')" />
+                <x-input-error :messages="$errors->get('no_telepon')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="email">Email</x-input-label>
+                <x-text-input id="email" class="block w-full mt-1" type="email" name="email" 
+                    :value="$is_edit ? old('email', $permohonan->email ?? '') : old('email')" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="deskripsi">Deskripsi Kebutuhan</x-input-label>
+                <textarea id="deskripsi" name="deskripsi" rows="3"
+                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('deskripsi', $permohonan->deskripsi ?? '') : old('deskripsi') }}</textarea>
+                <x-input-error :messages="$errors->get('deskripsi')" class="mt-2" />
+            </div>
         </div>
 
         @if ($is_edit)
@@ -91,11 +173,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <select name="status" id="status"
                 class="block w-full mt-1 truncate border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
                 <option value="">Pilih status...</option>
-                <option value="Menunggu" @selected(old('status', $permohonan->status) == 'Menunggu')>Menunggu</option>
-                <option value="Diterima" @selected(old('status', $permohonan->status) == 'Diterima')>Diterima</option>
-                <option value="Ditolak" @selected(old('status', $permohonan->status) == 'Ditolak')>Ditolak</option>
-                <option value="Dikirim" @selected(old('status', $permohonan->status) == 'Dikirim')>Dikirim</option>
-                <option value="Selesai" @selected(old('status', $permohonan->status) == 'Selesai')>Selesai</option>
+                <option value="Menunggu" @selected(old('status', $permohonan->status ?? '') == 'Menunggu')>Menunggu</option>
+                <option value="Diproses" @selected(old('status', $permohonan->status ?? '') == 'Diproses')>Diproses</option>
+                <option value="Ditolak" @selected(old('status', $permohonan->status ?? '') == 'Ditolak')>Ditolak</option>
+                <option value="Selesai" @selected(old('status', $permohonan->status ?? '') == 'Selesai')>Selesai</option>
             </select>
             <x-input-error :messages="$errors->get('status')" class="mt-2" />
         </div>
@@ -106,50 +187,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             {{ $is_edit ? 'Perbarui' : 'Kirim' }} Permohonan
         </button>
     </form>
-</div>            <!-- <div>
-                <x-input-label for="prodi">Keterangan</x-input-label>
-                <textarea id="prodi"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                    name="prodi" :value="$is_edit ? old('prodi', $permohonan->prodi) : old('prodi')"></textarea>
-                <x-input-error :messages="$errors->get('prodi')" class="mt-2" />
-            </div> -->
+</div>
 
-            <!-- <div class="flex gap-3">
-                <div class="relative flex-1">
-                    <x-input-label class="w-full" for="tanggal_mulai">Tanggal Mulai</x-input-label>
-                    <x-text-input id="tanggal_mulai" class="block w-full mt-1" type="date" name="tanggal_mulai"
-                        :value="$is_edit ? old('tanggal_mulai', $permohonan->tanggal_mulai) : old('tanggal_mulai')" placeholder="Dari tanggal" required />
-                    <x-input-error :messages="$errors->get('tanggal_mulai')" class="mt-2" />
-                </div>
+<script>
+function updateFormFields() {
+    const jenis_layanan = document.getElementById('jenis_layanan').value;
+    const magangFields = document.getElementById('magang-fields');
+    const asuransiFields = document.getElementById('asuransi-fields');
+    const commonFields = document.getElementById('common-fields');
     
-                <div class="relative flex-1">
-                    <x-input-label class="w-full" for="tanggal_selesai">Tanggal Selesai</x-input-label>
-                    <x-text-input id="tanggal_selesai" class="block w-full mt-1" type="date" name="tanggal_selesai"
-                        :value="$is_edit ? old('tanggal_selesai', $permohonan->tanggal_selesai) : old('tanggal_selesai')" placeholder="Hingga tanggal" required />
-                    <x-input-error :messages="$errors->get('tanggal_selesai')" class="mt-2" />
-                </div>
-            </div> -->
-            @if ($is_edit)
-            <div>
-                <x-input-label for="status">Status</x-input-label>
-                <select name="status" id="status"
-                    class="block w-full mt-1 truncate border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
-                    @php
-                    $status = ['Menunggu','Diterima', 'Ditolak', 'Dikirim', 'Selesai'];
-                    @endphp
-                    <option value="">Pilih status...</option>
-                    @foreach ($status as $item)
-                    <option value="{{ $item }}" @selected($is_edit ? old('status', $permohonan->status) == $item : old('status') == $item)>{{ $item }}
-                    </option>
-                    @endforeach
-                </select>
-                <x-input-error :messages="$errors->get('status')" class="mt-2" />
-            </div>
-            @endif
-
-            <button type="submit"
-                class="px-3 mt-5 mr-auto leading-10 text-white bg-green-600 rounded w-max hover:bg-green-500">
-                {{ $is_edit ? 'Update' : 'Buat' }} Permohonan
-            </button>
-    </form>
+    magangFields.style.display = jenis_layanan === 'Magang' ? 'block' : 'none';
+    asuransiFields.style.display = jenis_layanan === 'Layanan Klaim Asuransi' ? 'block' : 'none';
+    commonFields.style.display = ['Layanan Data', 'Layanan Pemetaan', 'Layanan Survey', 'Layanan Konsultasi'].includes(jenis_layanan) ? 'block' : 'none';
+}
+</script>
 </div>

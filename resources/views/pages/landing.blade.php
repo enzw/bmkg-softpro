@@ -218,10 +218,6 @@
                 </div>
             </div>
         </section>
-
-        <div class="container mx-auto mt-10">
-            <hr class="dark:border-white/20">
-        </div>
     </div>
 @endsection
 

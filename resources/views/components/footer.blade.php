@@ -1,44 +1,64 @@
-<footer class="pt-16 pb-8 dark:bg-gray-800 dark:text-white">
-    <div class="container grid grid-cols-2 grid-rows-2 gap-5 px-4 mx-auto md:grid-cols-6 md:grid-rows-1">
-        <div class="flex col-span-2 gap-5 md:col-span-3 lg:col-span-3">
-            <img src="{{ asset('/images/logo-bmkg.png') }}" alt="BMKG Geofisika Yogyakarta" class="h-[100px]">
+<footer class="pt-16 pb-8 bg-gray-900 text-gray-300">
+    <div class="container px-6 mx-auto max-w-6xl">
 
-            <div>
-                <h4 class="mb-2 text-xl font-bold">Alamat</h4>
-                <div class="flex flex-col gap-5 md:flex-row">
-                    <p class="text-gray-400">
-                        Stasiun Geofisika Sleman <br>
-                        Jl. Wates KM 7 Jitengan, Balecatur, Gamping Sleman 55294</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 items-start md:justify-items-center">
 
-                    <p class="text-gray-400">
-                        (0274) 6498383 <br>
-                        089612643203 <br>
-                        stageof.yogya@bmkg.go.id</p>
+            <div class="flex items-start gap-5 max-w-sm">
+                <img src="{{ asset('/images/logo-bmkg.png') }}"
+                     alt="Logo BMKG Geofisika Yogyakarta"
+                     class="h-20 w-auto shrink-0">
+
+                <div class="space-y-3">
+                    <h4 class="text-white font-semibold text-lg">
+                        Stasiun Geofisika Sleman
+                    </h4>
+
+                    <p class="text-sm leading-relaxed text-gray-400">
+                        Jl. Wates KM 7 Jitengan, Balecatur <br>
+                        Gamping, Sleman 55294
+                    </p>
+
+                    <div class="text-sm text-gray-400 space-y-1">
+                        <p><a href="tel:+622746498383" class="hover:text-white transition">📞 (0274) 6498383</a></p>
+                        <p><a href="tel:+6289612643203" class="hover:text-white transition">📱 0896-1264-3203</a></p>
+                        <p><a href="mailto:stageof.yogya@bmkg.go.id" class="hover:text-white transition">✉️ stageof.yogya@bmkg.go.id</a></p>
+                    </div>
                 </div>
             </div>
+
+            <div class="text-center md:text-left">
+                <h4 class="text-white font-semibold text-lg mb-4">Media Sosial</h4>
+                <div class="flex flex-col space-y-3 text-gray-400">
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
+                       class="flex items-center gap-2 hover:text-white transition"
+                       aria-label="Instagram BMKG">
+                        <i class="fa-brands fa-instagram"></i> Instagram
+                    </a>
+
+                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
+                       class="flex items-center gap-2 hover:text-white transition"
+                       aria-label="Twitter BMKG">
+                        <i class="fa-brands fa-twitter"></i> Twitter / X
+                    </a>
+                </div>
+            </div>
+
+            <div class="text-center md:text-left">
+                <h4 class="text-white font-semibold text-lg mb-4">Sitemap</h4>
+                <nav class="flex flex-col space-y-3 text-gray-400">
+                    <a href="/" class="block hover:text-white transition">Beranda</a>
+                    <a href="/tentang-kami" class="block hover:text-white transition">Tentang Kami</a>
+                    <a href="/#layanan" class="block hover:text-white transition">Layanan</a>
+                    <a href="/berita" class="block hover:text-white transition">Berita</a>
+                    <a href="/#kontak" class="block hover:text-white transition">Kontak</a>
+                </nav>
+            </div>
+
         </div>
 
-        <div class="flex flex-col md:col-start-5">
-            <h4 class="mb-2 text-xl font-bold">Media Sosial</h4>
-            <a href="https://instagram.com" class="hover:text-black/50 visited:text-green-700"><i
-                    class="fa-brands fa-instagram"></i> Instagram</a>
-            <a href="https://twitter.com" class="hover:text-black/50 visited:text-green-700"><i
-                    class="fa-brands fa-twitter"></i> Twitter/X</a>
+        <div class="border-t border-gray-700 mt-14 pt-6 text-center text-sm text-gray-500">
+            © {{ date('Y') }} BMKG Geofisika Yogyakarta. Seluruh hak cipta dilindungi.
         </div>
-        <div class="flex flex-col">
-            <h4 class="mb-2 text-xl font-bold">Sitemap</h4>
-            <a href="/" class="hover:text-black/50 visited:text-green-700">Beranda</a>
-            <a href="/tentang-kami" class="hover:text-black/50 visited:text-green-700">Tentang kami</a>
-            <a href="/#layanan" class="hover:text-black/50 visited:text-green-700">Layanan</a>
-            <a href="/berita" class="hover:text-black/50 visited:text-green-700">Berita</a>
-        </div>
-    </div>
 
-    <div class="py-8 mt-10 text-sm text-center text-white bg-gray-800 dark:bg-gray-900">
-        <div class="container max-w-lg px-4 mx-auto">
-            <p class="mt-2 text-gray-400">
-                Copyright &copy; <?php echo date('Y'); ?> - All Rights Reserved
-            </p>
-        </div>
     </div>
 </footer>

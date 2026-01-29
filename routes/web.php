@@ -6,9 +6,17 @@ use App\Http\Controllers\AdminKlaimAsuransiController;
 use App\Http\Controllers\AdminPermohonanMagangController;
 use App\Http\Controllers\AdminPetaSebaranController;
 use App\Http\Controllers\AdminSewaAlatController;
+use App\Http\Controllers\AdminJasaKonsultasiController;
+use App\Http\Controllers\AdminPemetaanController;
+use App\Http\Controllers\AdminSurveyController;
+use App\Http\Controllers\AdminLayananDataController;
 use App\Http\Controllers\AsuransiController;
 use App\Http\Controllers\LayananController;
+use App\Http\Controllers\LayananDataController;
 use App\Http\Controllers\MagangController;
+use App\Http\Controllers\JasaKonsultasiController;
+use App\Http\Controllers\PemetaanController;
+use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SewaAlatController;
 use App\Http\Middleware\Admin;
@@ -88,9 +96,59 @@ Route::middleware('auth')->group(function () {
                 Route::get('/permohonan/{sewa_alat}/download', 'download')->name('download-permohonan'); // download permohonan
             });
 
+        // Update resource sewa-alat to support layanan prefix route
+        Route::put('/sewa-alat/{sewa_alat}', [SewaAlatController::class, 'update'])->name('sewa-alat.update');
+        Route::delete('/sewa-alat/{sewa_alat}', [SewaAlatController::class, 'destroy'])->name('sewa-alat.destroy');
+
+        Route::name('jasa-konsultasi.')
+            ->prefix('jasa-konsultasi')
+            ->controller(JasaKonsultasiController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/permohonan', 'create')->name('create');
+                Route::post('/permohonan/tambah', 'store')->name('store');
+                Route::delete('/permohonan/{jasa_konsultasi}/hapus', 'destroy')->name('destroy');
+                Route::get('/permohonan/{jasa_konsultasi}/download', 'download')->name('download');
+            });
+
+        Route::name('pemetaan.')
+            ->prefix('pemetaan')
+            ->controller(PemetaanController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/permohonan', 'create')->name('create');
+                Route::post('/permohonan/tambah', 'store')->name('store');
+                Route::delete('/permohonan/{pemetaan}/hapus', 'destroy')->name('destroy');
+                Route::get('/permohonan/{pemetaan}/download', 'download')->name('download');
+            });
+
+        Route::name('survey.')
+            ->prefix('survey')
+            ->controller(SurveyController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/permohonan', 'create')->name('create');
+                Route::post('/permohonan/tambah', 'store')->name('store');
+                Route::delete('/permohonan/{survey}/hapus', 'destroy')->name('destroy');
+                Route::get('/permohonan/{survey}/download', 'download')->name('download');
+            });
+
+        Route::name('layanan-data.')
+            ->prefix('layanan-data')
+            ->controller(LayananDataController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/permohonan', 'create')->name('create');
+                Route::post('/permohonan/tambah', 'store')->name('store');
+                Route::delete('/permohonan/{layanan_data}/hapus', 'destroy')->name('destroy');
+                Route::get('/permohonan/{layanan_data}/download', 'download')->name('download');
+            });
+
         Route::resource('pelayanan-jasa', MagangController::class);
         Route::get('permohonan-magang/{permohonan_magang}', [MagangController::class, 'download'])
             ->name('permohonan-magang.download');
+        Route::get('pelayanan-jasa/{id}/download-file/{fileName}', [MagangController::class, 'downloadFile'])
+            ->name('pelayanan-jasa.download-file');
 
         Route::resource('permohonan-kunjungan', AsuransiController::class);
         Route::get('klaim-asuransi/{klaim_asuransi}', [AsuransiController::class, 'download'])
@@ -110,6 +168,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('pelayanan-jasa', AdminPermohonanMagangController::class);
         Route::resource('permohonan-kunjungan', AdminKlaimAsuransiController::class);
         Route::resource('peta-sebaran', AdminPetaSebaranController::class);
+        Route::resource('jasa-konsultasi', AdminJasaKonsultasiController::class);
+        Route::resource('pemetaan', AdminPemetaanController::class);
+        Route::resource('survey', AdminSurveyController::class);
+        Route::resource('layanan-data', AdminLayananDataController::class);
         Route::get('/download-excel', function () {
             return Excel::download(new ChatExport, 'data.xlsx');
         });
