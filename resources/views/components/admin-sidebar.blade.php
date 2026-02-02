@@ -26,7 +26,7 @@
             <i class="fa-solid fa-bus"></i> Permohonan Kunjungan
         </a>
 
-        <a href="{{ route('admin.history-megabot.index') }}" @class([ 'p-4 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 rounded-lg' , 'bg-green-200 hover:bg-green-300 dark:bg-green-600 dark:text-white dark:hover:bg-green-700 dark:hover:text-white'=> request()->routeIs(
+        {{-- <a href="{{ route('admin.history-megabot.index') }}" @class([ 'p-4 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 rounded-lg' , 'bg-green-200 hover:bg-green-300 dark:bg-green-600 dark:text-white dark:hover:bg-green-700 dark:hover:text-white'=> request()->routeIs(
             'admin.history-megabot.*'),
             ])>
             <i class="fa-regular fa-message"></i> History Megabot
@@ -38,6 +38,6 @@
                 'admin.peta-sebaran.*'),
         ])><i class="fa-solid fa-map"></i>
             Peta Sebaran
-        </a>
+        </a> --}}
     </div>
 </aside>

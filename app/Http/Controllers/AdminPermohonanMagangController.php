@@ -33,8 +33,8 @@ class AdminPermohonanMagangController extends Controller
         
         $asuransiData = Asuransi::all()->map(function($item) {
             $item->jenis_layanan = 'Layanan Klaim Asuransi';
-            $item->nama_lengkap = $item->latitude ?? '-';
-            $item->no_whatsapp = $item->longitude ?? '-';
+            $item->nama_lengkap = $item->perusahaan ?? '-';
+            $item->no_whatsapp = $item->no_whatsapp ?? '-';
             $item->email = null;
             return $item;
         });
@@ -42,36 +42,36 @@ class AdminPermohonanMagangController extends Controller
         $datumData = LayananData::all()->map(function($item) {
             $item->jenis_layanan = 'Layanan Data';
             $item->nama_lengkap = $item->nama_lengkap ?? '-';
-            $item->no_whatsapp = $item->no_telepon ?? '-';
+            $item->no_whatsapp = $item->no_whatsapp ?? '-';
             $item->email = $item->email ?? null;
-            $item->keterangan = $item->deskripsi ?? null;
+            $item->keterangan = $item->keterangan ?? null;
             return $item;
         });
         
         $pemetaanData = Pemetaan::all()->map(function($item) {
-            $item->jenis_layanan = 'Layanan Pemetaan';
+            $item->jenis_layanan = 'Layanan Peta Sebaran';
             $item->nama_lengkap = $item->nama_lengkap ?? '-';
-            $item->no_whatsapp = $item->no_telepon ?? '-';
+            $item->no_whatsapp = $item->no_whatsapp ?? '-';
             $item->email = $item->email ?? null;
-            $item->keterangan = $item->deskripsi ?? null;
+            $item->keterangan = $item->keterangan ?? null;
             return $item;
         });
         
         $surveyData = Survey::all()->map(function($item) {
             $item->jenis_layanan = 'Layanan Survey';
             $item->nama_lengkap = $item->nama_lengkap ?? '-';
-            $item->no_whatsapp = $item->no_telepon ?? '-';
+            $item->no_whatsapp = $item->no_whatsapp ?? '-';
             $item->email = $item->email ?? null;
-            $item->keterangan = $item->deskripsi ?? null;
+            $item->keterangan = $item->keterangan ?? null;
             return $item;
         });
         
         $konsultasiData = JasaKonsultasi::all()->map(function($item) {
             $item->jenis_layanan = 'Layanan Konsultasi';
             $item->nama_lengkap = $item->nama_lengkap ?? '-';
-            $item->no_whatsapp = $item->no_telepon ?? '-';
+            $item->no_whatsapp = $item->no_whatsapp ?? '-';
             $item->email = $item->email ?? null;
-            $item->keterangan = $item->topik ?? null;
+            $item->keterangan = $item->keterangan ?? null;
             return $item;
         });
         
@@ -109,21 +109,95 @@ class AdminPermohonanMagangController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'universitas' => 'required',
-            'fakultas' => 'required',
-            'prodi' => 'required',
-            'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-            'status' => 'nullable',
-        ]);
+        $jenis_layanan = $request->input('jenis_layanan');
+        $validated = [];
 
         try {
-            Magang::create($validated);
-            return redirect()->route('admin.pelayanan-jasa.index')->with('success', 'Permohonan berhasil dibuat');
+            if ($jenis_layanan === 'Magang') {
+                $validated = $request->validate([
+                    'jenis_layanan' => 'required',
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'universitas' => 'required|string',
+                    'fakultas' => 'required|string',
+                    'prodi' => 'required|string',
+                    'tanggal_mulai' => 'required|date',
+                    'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+                ]);
+                $validated['user_id'] = auth()->id();
+                Magang::create($validated);
+                
+            } elseif ($jenis_layanan === 'Layanan Klaim Asuransi') {
+                $validated = $request->validate([
+                    'jenis_layanan' => 'required',
+                    'perusahaan' => 'required|string',
+                    'tanggal' => 'required|date',
+                    'lokasi' => 'required|string',
+                    'latitude' => 'required|string',
+                    'longitude' => 'required|string',
+                    'kejadian' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                ]);
+                $validated['user_id'] = auth()->id();
+                Asuransi::create($validated);
+                
+            } elseif ($jenis_layanan === 'Layanan Data') {
+                $validated = $request->validate([
+                    'jenis_layanan' => 'required',
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'keterangan' => 'required|string',
+                ]);
+                $validated['user_id'] = auth()->id();
+                LayananData::create($validated);
+                
+            } elseif ($jenis_layanan === 'Layanan Peta Sebaran') {
+                $validated = $request->validate([
+                    'jenis_layanan' => 'required',
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'keterangan' => 'required|string',
+                ]);
+                $validated['user_id'] = auth()->id();
+                Pemetaan::create($validated);
+                
+            } elseif ($jenis_layanan === 'Layanan Survey') {
+                $validated = $request->validate([
+                    'jenis_layanan' => 'required',
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'keterangan' => 'required|string',
+                ]);
+                $validated['user_id'] = auth()->id();
+                Survey::create($validated);
+                
+            } elseif ($jenis_layanan === 'Layanan Konsultasi') {
+                $validated = $request->validate([
+                    'jenis_layanan' => 'required',
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'keterangan' => 'required|string',
+                ]);
+                $validated['user_id'] = auth()->id();
+                JasaKonsultasi::create($validated);
+                
+            } else {
+                return redirect()->route('admin.pelayanan-jasa.create')
+                    ->with('error', 'Jenis layanan tidak valid');
+            }
+
+            return redirect()->route('admin.pelayanan-jasa.index')
+                ->with('success', 'Permohonan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
-            return redirect()->route('admin.pelayanan-jasa.create')->with('error', 'Permohonan gagal dibuat: ' . $error->getMessage());
+            return redirect()->route('admin.pelayanan-jasa.create')
+                ->withInput()
+                ->with('error', 'Permohonan gagal dibuat: ' . $error->getMessage());
         }
     }
 
@@ -166,7 +240,7 @@ class AdminPermohonanMagangController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Search di semua 5 tabel
+        // Search di semua 6 tabel
         $permohonan = Magang::find($id) 
             ?? Asuransi::find($id)
             ?? LayananData::find($id)
@@ -178,28 +252,70 @@ class AdminPermohonanMagangController extends Controller
             return redirect()->route('admin.pelayanan-jasa.index')->with('error', 'Permohonan tidak ditemukan');
         }
 
-        // Validate based on model type
-        $validated = [];
-        if ($permohonan instanceof Magang) {
-            $validated = $request->validate([
-                'nama_lengkap' => 'nullable|string',
-                'no_whatsapp' => 'nullable|string',
-                'email' => 'nullable|email',
-                'universitas' => 'required|string',
-                'fakultas' => 'required|string',
-                'prodi' => 'required|string',
-                'tanggal_mulai' => 'required|date',
-                'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-                'status' => 'nullable',
-            ]);
-        } else {
-            // For other models, accept common fields
-            $validated = $request->validate([
-                'status' => 'nullable',
-            ]);
-        }
-
         try {
+            // Validate and update based on model type
+            if ($permohonan instanceof Magang) {
+                $validated = $request->validate([
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'universitas' => 'required|string',
+                    'fakultas' => 'required|string',
+                    'prodi' => 'required|string',
+                    'tanggal_mulai' => 'required|date',
+                    'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+                    'status' => 'nullable',
+                ]);
+                
+            } elseif ($permohonan instanceof Asuransi) {
+                $validated = $request->validate([
+                    'perusahaan' => 'required|string',
+                    'tanggal' => 'required|date',
+                    'lokasi' => 'required|string',
+                    'latitude' => 'required|string',
+                    'longitude' => 'required|string',
+                    'kejadian' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'status' => 'nullable',
+                ]);
+                
+            } elseif ($permohonan instanceof LayananData) {
+                $validated = $request->validate([
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'keterangan' => 'required|string',
+                    'status' => 'nullable',
+                ]);
+                
+            } elseif ($permohonan instanceof Pemetaan) {
+                $validated = $request->validate([
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'keterangan' => 'required|string',
+                    'status' => 'nullable',
+                ]);
+                
+            } elseif ($permohonan instanceof Survey) {
+                $validated = $request->validate([
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'keterangan' => 'required|string',
+                    'status' => 'nullable',
+                ]);
+                
+            } elseif ($permohonan instanceof JasaKonsultasi) {
+                $validated = $request->validate([
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'keterangan' => 'required|string',
+                    'status' => 'nullable',
+                ]);
+            }
+
             $permohonan->update($validated);
             return redirect()->route('admin.pelayanan-jasa.index')->with('success', 'Permohonan berhasil diupdate');
         } catch (Exception $error) {

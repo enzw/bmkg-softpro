@@ -158,7 +158,9 @@ class MagangController extends Controller
         
         // Auto-fill dari user profile jika tidak diisi
         $user = Auth::user();
-        if ($jenis_layanan === 'Magang') {
+        
+        // Auto-fill untuk semua service yang punya field nama_lengkap
+        if (in_array($jenis_layanan, ['Magang', 'Layanan Data', 'Layanan Pemetaan', 'Layanan Survey', 'Layanan Konsultasi'])) {
             if (empty($validated['nama_lengkap'])) {
                 $validated['nama_lengkap'] = $user->name;
             }
@@ -167,6 +169,13 @@ class MagangController extends Controller
             }
             if (empty($validated['email'])) {
                 $validated['email'] = $user->email;
+            }
+        }
+        
+        // Auto-fill untuk Asuransi dan Peta Sebaran
+        if (in_array($jenis_layanan, ['Layanan Klaim Asuransi', 'Layanan Peta Sebaran'])) {
+            if (empty($validated['no_whatsapp'])) {
+                $validated['no_whatsapp'] = $user->telp;
             }
         }
         
@@ -199,6 +208,7 @@ class MagangController extends Controller
             ]),
             'Layanan Klaim Asuransi' => $rules = array_merge($rules, [
                 'perusahaan' => 'required|string',
+                'no_whatsapp' => 'nullable|string',
                 'tanggal' => 'required|date',
                 'lokasi' => 'required|string',
                 'latitude' => 'nullable|numeric',
@@ -206,19 +216,20 @@ class MagangController extends Controller
                 'kejadian' => 'required|string',
             ]),
             'Layanan Data' => $rules = array_merge($rules, [
-                'nama_lengkap' => 'required|string',
-                'no_whatsapp' => 'required|string',
-                'email' => 'required|email',
+                'nama_lengkap' => 'nullable|string',
+                'no_whatsapp' => 'nullable|string',
+                'email' => 'nullable|email',
                 'keterangan' => 'nullable|string',
             ]),
             'Layanan Pemetaan' => $rules = array_merge($rules, [
-                'nama_lengkap' => 'required|string',
-                'no_whatsapp' => 'required|string',
-                'email' => 'required|email',
+                'nama_lengkap' => 'nullable|string',
+                'no_whatsapp' => 'nullable|string',
+                'email' => 'nullable|email',
                 'keterangan' => 'nullable|string',
             ]),
             'Layanan Peta Sebaran' => $rules = array_merge($rules, [
                 'perusahaan' => 'required|string',
+                'no_whatsapp' => 'nullable|string',
                 'tanggal' => 'required|date',
                 'lokasi' => 'required|string',
                 'latitude' => 'nullable|numeric',
@@ -226,15 +237,15 @@ class MagangController extends Controller
                 'kejadian' => 'required|string',
             ]),
             'Layanan Survey' => $rules = array_merge($rules, [
-                'nama_lengkap' => 'required|string',
-                'no_whatsapp' => 'required|string',
-                'email' => 'required|email',
+                'nama_lengkap' => 'nullable|string',
+                'no_whatsapp' => 'nullable|string',
+                'email' => 'nullable|email',
                 'keterangan' => 'nullable|string',
             ]),
             'Layanan Konsultasi' => $rules = array_merge($rules, [
-                'nama_lengkap' => 'required|string',
-                'no_whatsapp' => 'required|string',
-                'email' => 'required|email',
+                'nama_lengkap' => 'nullable|string',
+                'no_whatsapp' => 'nullable|string',
+                'email' => 'nullable|email',
                 'keterangan' => 'nullable|string',
             ]),
             default => null

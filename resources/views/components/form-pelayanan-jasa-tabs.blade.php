@@ -186,6 +186,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <x-input-error :messages="$errors->get('perusahaan')" class="mt-2" />
             </div>
 
+            <div>
+                <x-input-label for="no_whatsapp_asuransi">No WhatsApp</x-input-label>
+                <x-text-input id="no_whatsapp_asuransi" class="block w-full mt-1" type="text" name="no_whatsapp" 
+                    :value="old('no_whatsapp')" />
+                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
+            </div>
+
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <x-input-label for="tanggal_asuransi">Tanggal Kejadian</x-input-label>

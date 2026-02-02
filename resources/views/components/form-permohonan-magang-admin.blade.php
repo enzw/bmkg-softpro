@@ -14,10 +14,32 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
     @php
     $permohonan = $permohonan ?? null;
-    $jenis_layanan = $is_edit ? ($permohonan->jenis_layanan ?? old('jenis_layanan', '')) : old('jenis_layanan', '');
+    
+    // Tentukan jenis_layanan berdasarkan tipe model saat edit
+    if ($is_edit && $permohonan) {
+        $modelClass = class_basename($permohonan::class);
+        if ($modelClass === 'Magang') {
+            $jenis_layanan = 'Magang';
+        } elseif ($modelClass === 'Asuransi') {
+            $jenis_layanan = 'Layanan Klaim Asuransi';
+        } elseif ($modelClass === 'LayananData') {
+            $jenis_layanan = 'Layanan Data';
+        } elseif ($modelClass === 'Pemetaan') {
+            $jenis_layanan = 'Layanan Peta Sebaran';
+        } elseif ($modelClass === 'Survey') {
+            $jenis_layanan = 'Layanan Survey';
+        } elseif ($modelClass === 'JasaKonsultasi') {
+            $jenis_layanan = 'Layanan Konsultasi';
+        } else {
+            $jenis_layanan = old('jenis_layanan', '');
+        }
+    } else {
+        $jenis_layanan = old('jenis_layanan', '');
+    }
     @endphp
 
-    <!-- Tabs Navigation -->
+    <!-- Tabs Navigation - Hanya tampil di CREATE mode -->
+    @if (!$is_edit)
     <div class="border-b border-gray-200 dark:border-gray-700 mb-6 overflow-x-auto">
         <div class="flex gap-0" role="tablist">
             <button 
@@ -64,6 +86,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             </button>
         </div>
     </div>
+    @endif
 
     @if (session('success'))
         <div class="px-4 py-2 mb-4 text-green-900 bg-green-300 rounded">
@@ -99,20 +122,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <!-- MAGANG Fields -->
         <div id="magang-fields" style="display: {{ $jenis_layanan == 'Magang' ? 'block' : 'none' }}" class="space-y-4">
             <div>
-                <x-input-label for="nama_lengkap">Nama Lengkap</x-input-label>
-                <x-text-input id="nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
+                <x-input-label for="magang_nama_lengkap">Nama Lengkap</x-input-label>
+                <x-text-input id="magang_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
                     :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap')" />
                 <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
             </div>
             <div>
-                <x-input-label for="no_whatsapp">No WhatsApp</x-input-label>
-                <x-text-input id="no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
+                <x-input-label for="magang_no_whatsapp">No WhatsApp</x-input-label>
+                <x-text-input id="magang_no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
                     :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
                 <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
             </div>
             <div>
-                <x-input-label for="email">Email</x-input-label>
-                <x-text-input id="email" class="block w-full mt-1" type="email" name="email" 
+                <x-input-label for="magang_email">Email</x-input-label>
+                <x-text-input id="magang_email" class="block w-full mt-1" type="email" name="email" 
                     :value="$is_edit ? old('email', $permohonan->email ?? '') : old('email')" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
@@ -195,34 +218,134 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('kejadian', $permohonan->kejadian ?? '') : old('kejadian') }}</textarea>
                 <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
             </div>
+
+            <div>
+                <x-input-label for="no_whatsapp_asuransi">No WhatsApp</x-input-label>
+                <x-text-input id="no_whatsapp_asuransi" class="block w-full mt-1" type="text" name="no_whatsapp" 
+                    :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
+                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
+            </div>
         </div>
 
-        <!-- COMMON Fields (Data, Pemetaan, Survey, Konsultasi) -->
-        <div id="common-fields" style="display: {{ in_array($jenis_layanan, ['Layanan Data', 'Layanan Pemetaan', 'Layanan Survey', 'Layanan Konsultasi']) ? 'block' : 'none' }}" class="space-y-4">
+        <!-- DATA GEOFISIKA Fields -->
+        <div id="data-fields" style="display: {{ $jenis_layanan == 'Layanan Data' ? 'block' : 'none' }}" class="space-y-4">
             <div>
-                <x-input-label for="nama_lengkap">Nama Lengkap</x-input-label>
-                <x-text-input id="nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
+                <x-input-label for="data_nama_lengkap">Nama Lengkap</x-input-label>
+                <x-text-input id="data_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
                     :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap')" />
                 <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
             </div>
 
             <div>
-                <x-input-label for="no_whatsapp">No WhatsApp</x-input-label>
-                <x-text-input id="no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
+                <x-input-label for="data_no_whatsapp">No WhatsApp</x-input-label>
+                <x-text-input id="data_no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
                     :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
                 <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
             </div>
 
             <div>
-                <x-input-label for="email">Email</x-input-label>
-                <x-text-input id="email" class="block w-full mt-1" type="email" name="email" 
+                <x-input-label for="data_email">Email</x-input-label>
+                <x-text-input id="data_email" class="block w-full mt-1" type="email" name="email" 
                     :value="$is_edit ? old('email', $permohonan->email ?? '') : old('email')" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
 
             <div>
-                <x-input-label for="keterangan">Deskripsi Kebutuhan</x-input-label>
-                <textarea id="keterangan" name="keterangan" rows="3"
+                <x-input-label for="data_keterangan">Deskripsi Data Geofisika</x-input-label>
+                <textarea id="data_keterangan" name="keterangan" rows="4"
+                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
+                <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
+            </div>
+        </div>
+
+        <!-- PEMETAAN Fields -->
+        <div id="pemetaan-fields" style="display: {{ $jenis_layanan == 'Layanan Peta Sebaran' ? 'block' : 'none' }}" class="space-y-4">
+            <div>
+                <x-input-label for="pemetaan_nama_lengkap">Nama Lengkap</x-input-label>
+                <x-text-input id="pemetaan_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
+                    :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap')" />
+                <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="pemetaan_no_whatsapp">No WhatsApp</x-input-label>
+                <x-text-input id="pemetaan_no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
+                    :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
+                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="pemetaan_email">Email</x-input-label>
+                <x-text-input id="pemetaan_email" class="block w-full mt-1" type="email" name="email" 
+                    :value="$is_edit ? old('email', $permohonan->email ?? '') : old('email')" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="pemetaan_keterangan">Deskripsi Pemetaan</x-input-label>
+                <textarea id="pemetaan_keterangan" name="keterangan" rows="4"
+                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
+                <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
+            </div>
+        </div>
+
+        <!-- SURVEY Fields -->
+        <div id="survey-fields" style="display: {{ $jenis_layanan == 'Layanan Survey' ? 'block' : 'none' }}" class="space-y-4">
+            <div>
+                <x-input-label for="survey_nama_lengkap">Nama Lengkap</x-input-label>
+                <x-text-input id="survey_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
+                    :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap')" />
+                <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="survey_no_whatsapp">No WhatsApp</x-input-label>
+                <x-text-input id="survey_no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
+                    :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
+                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="survey_email">Email</x-input-label>
+                <x-text-input id="survey_email" class="block w-full mt-1" type="email" name="email" 
+                    :value="$is_edit ? old('email', $permohonan->email ?? '') : old('email')" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="survey_keterangan">Deskripsi Survey</x-input-label>
+                <textarea id="survey_keterangan" name="keterangan" rows="4"
+                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
+                <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
+            </div>
+        </div>
+
+        <!-- KONSULTASI Fields -->
+        <div id="konsultasi-fields" style="display: {{ $jenis_layanan == 'Layanan Konsultasi' ? 'block' : 'none' }}" class="space-y-4">
+            <div>
+                <x-input-label for="konsultasi_nama_lengkap">Nama Lengkap</x-input-label>
+                <x-text-input id="konsultasi_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
+                    :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap')" />
+                <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="konsultasi_no_whatsapp">No WhatsApp</x-input-label>
+                <x-text-input id="konsultasi_no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
+                    :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
+                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="konsultasi_email">Email</x-input-label>
+                <x-text-input id="konsultasi_email" class="block w-full mt-1" type="email" name="email" 
+                    :value="$is_edit ? old('email', $permohonan->email ?? '') : old('email')" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="konsultasi_keterangan">Topik/Deskripsi Konsultasi</x-input-label>
+                <textarea id="konsultasi_keterangan" name="keterangan" rows="4"
                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
                 <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
             </div>
@@ -251,6 +374,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 </div>
 
 <script>
+function disableHiddenFields(visibleSectionId) {
+    // List semua field section IDs
+    const allSections = ['magang-fields', 'asuransi-fields', 'data-fields', 'pemetaan-fields', 'survey-fields', 'konsultasi-fields'];
+    
+    // Disable/enable inputs berdasarkan visibility
+    allSections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            const inputs = section.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (sectionId === visibleSectionId) {
+                    input.disabled = false;
+                } else {
+                    input.disabled = true;
+                }
+            });
+        }
+    });
+}
+
 function switchTab(serviceType, buttonElement) {
     // Update hidden input
     document.getElementById('jenis_layanan').value = serviceType;
@@ -258,7 +401,10 @@ function switchTab(serviceType, buttonElement) {
     // Hide all field divs
     document.getElementById('magang-fields').style.display = 'none';
     document.getElementById('asuransi-fields').style.display = 'none';
-    document.getElementById('common-fields').style.display = 'none';
+    document.getElementById('data-fields').style.display = 'none';
+    document.getElementById('pemetaan-fields').style.display = 'none';
+    document.getElementById('survey-fields').style.display = 'none';
+    document.getElementById('konsultasi-fields').style.display = 'none';
     
     // Remove active class from all tabs
     document.querySelectorAll('.tab-button').forEach(btn => {
@@ -266,13 +412,31 @@ function switchTab(serviceType, buttonElement) {
         btn.classList.add('border-transparent', 'text-gray-600', 'dark:text-gray-400');
     });
     
-    // Show relevant fields and activate tab
+    // Show relevant fields based on service type
+    let visibleSectionId;
     if (serviceType === 'Magang') {
+        visibleSectionId = 'magang-fields';
         document.getElementById('magang-fields').style.display = 'block';
     } else if (serviceType === 'Layanan Klaim Asuransi') {
+        visibleSectionId = 'asuransi-fields';
         document.getElementById('asuransi-fields').style.display = 'block';
-    } else {
-        document.getElementById('common-fields').style.display = 'block';
+    } else if (serviceType === 'Layanan Data') {
+        visibleSectionId = 'data-fields';
+        document.getElementById('data-fields').style.display = 'block';
+    } else if (serviceType === 'Layanan Peta Sebaran') {
+        visibleSectionId = 'pemetaan-fields';
+        document.getElementById('pemetaan-fields').style.display = 'block';
+    } else if (serviceType === 'Layanan Survey') {
+        visibleSectionId = 'survey-fields';
+        document.getElementById('survey-fields').style.display = 'block';
+    } else if (serviceType === 'Layanan Konsultasi') {
+        visibleSectionId = 'konsultasi-fields';
+        document.getElementById('konsultasi-fields').style.display = 'block';
+    }
+    
+    // Disable fields yang tidak visible
+    if (visibleSectionId) {
+        disableHiddenFields(visibleSectionId);
     }
     
     // Activate current tab
@@ -282,14 +446,47 @@ function switchTab(serviceType, buttonElement) {
 
 function updateFormFields() {
     const jenis_layanan = document.getElementById('jenis_layanan').value;
-    const magangFields = document.getElementById('magang-fields');
-    const asuransiFields = document.getElementById('asuransi-fields');
-    const commonFields = document.getElementById('common-fields');
     
-    magangFields.style.display = jenis_layanan === 'Magang' ? 'block' : 'none';
-    asuransiFields.style.display = jenis_layanan === 'Layanan Klaim Asuransi' ? 'block' : 'none';
-    commonFields.style.display = ['Layanan Data', 'Layanan Peta Sebaran', 'Layanan Survey', 'Layanan Konsultasi'].includes(jenis_layanan) ? 'block' : 'none';
+    // Hide all field sections
+    document.getElementById('magang-fields').style.display = 'none';
+    document.getElementById('asuransi-fields').style.display = 'none';
+    document.getElementById('data-fields').style.display = 'none';
+    document.getElementById('pemetaan-fields').style.display = 'none';
+    document.getElementById('survey-fields').style.display = 'none';
+    document.getElementById('konsultasi-fields').style.display = 'none';
+    
+    // Show relevant section and enable its fields
+    let visibleSectionId;
+    if (jenis_layanan === 'Magang') {
+        visibleSectionId = 'magang-fields';
+        document.getElementById('magang-fields').style.display = 'block';
+    } else if (jenis_layanan === 'Layanan Klaim Asuransi') {
+        visibleSectionId = 'asuransi-fields';
+        document.getElementById('asuransi-fields').style.display = 'block';
+    } else if (jenis_layanan === 'Layanan Data') {
+        visibleSectionId = 'data-fields';
+        document.getElementById('data-fields').style.display = 'block';
+    } else if (jenis_layanan === 'Layanan Peta Sebaran') {
+        visibleSectionId = 'pemetaan-fields';
+        document.getElementById('pemetaan-fields').style.display = 'block';
+    } else if (jenis_layanan === 'Layanan Survey') {
+        visibleSectionId = 'survey-fields';
+        document.getElementById('survey-fields').style.display = 'block';
+    } else if (jenis_layanan === 'Layanan Konsultasi') {
+        visibleSectionId = 'konsultasi-fields';
+        document.getElementById('konsultasi-fields').style.display = 'block';
+    }
+    
+    // Disable fields yang tidak visible
+    if (visibleSectionId) {
+        disableHiddenFields(visibleSectionId);
+    }
 }
+
+// Initialize form fields on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateFormFields();
+});
 </script>
 
 <style>
