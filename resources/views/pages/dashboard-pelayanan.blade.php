@@ -56,7 +56,7 @@
                                 <th class="px-6 py-4 text-left font-semibold">Tanggal Pengajuan</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="permohonan-table-body">
                             @foreach ($permohonan as $index => $item)
                                 <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200">
                                     <td class="px-6 py-4 text-gray-900 dark:text-white font-semibold">{{ $index + 1 }}</td>
@@ -109,6 +109,19 @@
                         </tbody>
                     </table>
                 </div>
+
+                {{-- Load More Button --}}
+                @if ($totalPermohonan > 5)
+                    <div class="mt-6 text-center">
+                        <button id="load-more-btn" 
+                            class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-300 shadow-md"
+                            onclick="loadMorePermohonan()"
+                            data-offset="5"
+                            data-total="{{ $totalPermohonan }}">
+                            <i class="fas fa-chevron-down mr-2"></i> Muat Lebih Banyak
+                        </button>
+                    </div>
+                @endif
             @else
                 <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 text-center">
                     <i class="fas fa-inbox text-4xl text-blue-600 dark:text-blue-400 mb-4 inline-block"></i>
@@ -136,3 +149,108 @@
     </div>
 </div>
 @endsection
+<script>
+    let currentRowNumber = 5; // Start from 5 since we already show 5 items
+    let isLoading = false;
+
+    function loadMorePermohonan() {
+        const button = document.getElementById('load-more-btn');
+        const offset = parseInt(button.getAttribute('data-offset'));
+        const total = parseInt(button.getAttribute('data-total'));
+
+        if (isLoading) return;
+
+        isLoading = true;
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Memuat...';
+
+        fetch(`/dashboard-pelayanan/load-more?offset=${offset}`)
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('permohonan-table-body');
+                
+                // Add new rows
+                data.permohonan.forEach((item) => {
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200';
+
+                    let statusBadge = '';
+                    const status = item.status || 'Menunggu';
+                    const approvedStatuses = ['approved', 'Approved', 'Diterima', 'Disetujui', 'Alat Siap Diambil', 'Alat Dibawa', 'Dikirim'];
+                    const rejectedStatuses = ['rejected', 'Rejected', 'Ditolak'];
+                    const processingStatuses = ['Diproses', 'Selesai'];
+
+                    if (approvedStatuses.includes(status)) {
+                        statusBadge = `<span class="inline-flex px-3 py-1 text-sm font-semibold text-green-800 bg-green-100 dark:bg-green-900/30 dark:text-green-300 rounded-full">
+                            <i class="fas fa-check-circle mr-2"></i> ${status}
+                        </span>`;
+                    } else if (rejectedStatuses.includes(status)) {
+                        statusBadge = `<span class="inline-flex px-3 py-1 text-sm font-semibold text-red-800 bg-red-100 dark:bg-red-900/30 dark:text-red-300 rounded-full">
+                            <i class="fas fa-times-circle mr-2"></i> ${status}
+                        </span>`;
+                    } else if (processingStatuses.includes(status)) {
+                        statusBadge = `<span class="inline-flex px-3 py-1 text-sm font-semibold text-blue-800 bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 rounded-full">
+                            <i class="fas fa-spinner mr-2"></i> ${status}
+                        </span>`;
+                    } else {
+                        statusBadge = `<span class="inline-flex px-3 py-1 text-sm font-semibold text-yellow-800 bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-300 rounded-full">
+                            <i class="fas fa-clock mr-2"></i> ${status}
+                        </span>`;
+                    }
+
+                    let icon = '';
+                    if (item.jenis.includes('Sewa')) {
+                        icon = '<i class="fas fa-tools text-blue-600"></i>';
+                    } else if (item.jenis.includes('Informasi')) {
+                        icon = '<i class="fas fa-file-alt text-purple-600"></i>';
+                    } else {
+                        icon = '<i class="fas fa-users text-orange-600"></i>';
+                    }
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 text-gray-900 dark:text-white font-semibold">${currentRowNumber + 1}</td>
+                        <td class="px-6 py-4 text-gray-900 dark:text-white">
+                            <span class="inline-flex items-center gap-2">
+                                ${icon}
+                                ${item.jenis}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">${statusBadge}</td>
+                        <td class="px-6 py-4 text-gray-900 dark:text-white text-sm">
+                            ${new Date(item.tanggal).toLocaleDateString('id-ID', { 
+                                year: 'numeric', 
+                                month: 'short', 
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                    currentRowNumber++;
+                });
+
+                // Update offset
+                const newOffset = offset + data.count;
+                button.setAttribute('data-offset', newOffset);
+
+                // Check if there are more items
+                if (!data.hasMore) {
+                    button.style.display = 'none';
+                } else {
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-chevron-down mr-2"></i> Muat Lebih Banyak';
+                }
+
+                isLoading = false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-chevron-down mr-2"></i> Muat Lebih Banyak';
+                isLoading = false;
+                alert('Terjadi kesalahan saat memuat data');
+            });
+    }
+</script>

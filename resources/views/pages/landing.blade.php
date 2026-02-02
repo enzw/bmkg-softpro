@@ -144,64 +144,101 @@
                                             
                                             <ul class="space-y-2 text-gray-700 dark:text-gray-300 mb-6">
                                                 @if (str_contains($item['url'], 'sewa-alat'))
+                                                    {{-- Jasa Sewa Alat MKG --}}
                                                     <li class="flex items-start gap-3">
                                                         <span class="text-green-600 font-bold">•</span>
-                                                        <span>Data pribadi lengkap (nama, email, nomor telepon)</span>
+                                                        <span>Pilih jenis alat yang ingin disewa</span>
                                                     </li>
                                                     <li class="flex items-start gap-3">
                                                         <span class="text-green-600 font-bold">•</span>
-                                                        <span>Pilih jenis dan spesifikasi alat yang ingin disewa</span>
+                                                        <span>Tentukan jumlah unit yang dibutuhkan</span>
                                                     </li>
                                                     <li class="flex items-start gap-3">
                                                         <span class="text-green-600 font-bold">•</span>
-                                                        <span>Tentukan tanggal dan durasi peminjaman</span>
+                                                        <span>Tentukan tanggal mulai dan tanggal berakhir sewa</span>
                                                     </li>
                                                     <li class="flex items-start gap-3">
                                                         <span class="text-green-600 font-bold">•</span>
-                                                        <span>Pernyataan kesanggupan merawat alat dengan baik</span>
+                                                        <span>Berikan keterangan/deskripsi kebutuhan Anda</span>
+                                                    </li>
+                                                    <li class="flex items-start gap-3">
+                                                        <span class="text-green-600 font-bold">•</span>
+                                                        <span>Upload surat permohonan (opsional)</span>
                                                     </li>
                                                 @elseif (str_contains($item['url'], 'pelayanan-jasa'))
+                                                    {{-- Pelayanan Informasi Geofisika --}}
+                                                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded p-3 mb-4">
+                                                        <p class="text-sm text-blue-800 dark:text-blue-200 font-semibold mb-2">Ada 6 jenis layanan yang tersedia:</p>
+                                                        <ul class="space-y-1 text-sm text-blue-700 dark:text-blue-300">
+                                                            <li class="flex items-start gap-2">
+                                                                <span class="text-blue-600 font-bold">1.</span>
+                                                                <span><strong>Magang</strong> - Program pelatihan di BMKG</span>
+                                                            </li>
+                                                            <li class="flex items-start gap-2">
+                                                                <span class="text-blue-600 font-bold">2.</span>
+                                                                <span><strong>Layanan Klaim Asuransi</strong> - Informasi untuk klaim asuransi bencana alam</span>
+                                                            </li>
+                                                            <li class="flex items-start gap-2">
+                                                                <span class="text-blue-600 font-bold">3.</span>
+                                                                <span><strong>Layanan Data</strong> - Permintaan data geofisika</span>
+                                                            </li>
+                                                            <li class="flex items-start gap-2">
+                                                                <span class="text-blue-600 font-bold">4.</span>
+                                                                <span><strong>Layanan Peta Sebaran</strong> - Jasa peta sebaran geofisika</span>
+                                                            </li>
+                                                            <li class="flex items-start gap-2">
+                                                                <span class="text-blue-600 font-bold">5.</span>
+                                                                <span><strong>Layanan Survey</strong> - Survey geofisika lapangan</span>
+                                                            </li>
+                                                            <li class="flex items-start gap-2">
+                                                                <span class="text-blue-600 font-bold">6.</span>
+                                                                <span><strong>Layanan Konsultasi</strong> - Konsultasi teknis geofisika</span>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    
+                                                    <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Informasi umum yang diperlukan untuk semua layanan:</p>
                                                     <li class="flex items-start gap-3">
                                                         <span class="text-green-600 font-bold">•</span>
-                                                        <span>Data pribadi atau instansi lengkap</span>
+                                                        <span>Pilih jenis layanan yang Anda butuhkan</span>
                                                     </li>
                                                     <li class="flex items-start gap-3">
                                                         <span class="text-green-600 font-bold">•</span>
-                                                        <span>Jenis informasi geofisika yang dibutuhkan (gempa bumi, tsunami, listrik udara)</span>
+                                                        <span>Data pribadi atau instansi lengkap (nama, email, telepon)</span>
                                                     </li>
                                                     <li class="flex items-start gap-3">
                                                         <span class="text-green-600 font-bold">•</span>
-                                                        <span>Periode data yang diinginkan</span>
+                                                        <span>Deskripsi detail tentang kebutuhan spesifik Anda</span>
                                                     </li>
                                                     <li class="flex items-start gap-3">
                                                         <span class="text-green-600 font-bold">•</span>
-                                                        <span>Lokasi atau area yang dimaksud</span>
+                                                        <span>Upload surat permohonan (opsional)</span>
                                                     </li>
-                                                    <li class="flex items-start gap-3">
-                                                        <span class="text-green-600 font-bold">•</span>
-                                                        <span>Tujuan penggunaan data (penelitian, klaim asuransi, dll)</span>
-                                                    </li>
-                                                @else
+                                                @elseif (str_contains($item['url'], 'permohonan-kunjungan'))
                                                     {{-- Permohonan Kunjungan --}}
                                                     <li class="flex items-start gap-3">
                                                         <span class="text-green-600 font-bold">•</span>
-                                                        <span>Data institusi atau sekolah (nama, alamat, kontak)</span>
+                                                        <span>Pilih jenis kunjungan (Go To School atau Go To BMKG)</span>
                                                     </li>
                                                     <li class="flex items-start gap-3">
                                                         <span class="text-green-600 font-bold">•</span>
-                                                        <span>Tingkat pendidikan peserta kunjungan</span>
+                                                        <span>Nama instansi/sekolah yang akan berkunjung</span>
                                                     </li>
                                                     <li class="flex items-start gap-3">
                                                         <span class="text-green-600 font-bold">•</span>
-                                                        <span>Tanggal dan waktu yang diinginkan untuk kunjungan</span>
+                                                        <span>Nama lengkap penanggung jawab</span>
                                                     </li>
                                                     <li class="flex items-start gap-3">
                                                         <span class="text-green-600 font-bold">•</span>
-                                                        <span>Jumlah peserta yang akan berkunjung</span>
+                                                        <span>Nomor WhatsApp yang dapat dihubungi</span>
                                                     </li>
                                                     <li class="flex items-start gap-3">
                                                         <span class="text-green-600 font-bold">•</span>
-                                                        <span>Nama dan kontak person yang bertanggung jawab</span>
+                                                        <span>Tanggal rencana kunjungan</span>
+                                                    </li>
+                                                    <li class="flex items-start gap-3">
+                                                        <span class="text-green-600 font-bold">•</span>
+                                                        <span>Jumlah peserta rombongan</span>
                                                     </li>
                                                 @endif
                                             </ul>
@@ -216,6 +253,66 @@
                         </div>
                     @endforeach
                 </div>
+            </div>
+        </section>
+
+        <section id="hubungi-kami" class="py-16 mt-16 bg-gradient-to-r from-slate-700 to-slate-800 dark:from-slate-900 dark:to-slate-950">
+            <div class="container px-4 mx-auto">
+                <h2 class="mb-12 text-4xl font-bold text-white text-center">Hubungi Kami</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="mb-12 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center hover:shadow-xl transition duration-300">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
+                            <i class="text-2xl text-green-600 fas fa-map-marker-alt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Alamat</h3>
+                        <p class="text-gray-700 dark:text-gray-300">
+                            Jl. Wates KM 7 Jitengan<br>
+                            Balecatur, Gamping,
+                            Sleman 55294<br>
+                            Yogyakarta
+                        </p>
+                    </div>
+
+                    <div class="mb-12 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center hover:shadow-xl transition duration-300">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
+                            <i class="text-2xl text-green-600 fas fa-phone"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Telepon</h3>
+                        <p class="text-gray-700 dark:text-gray-300 space-y-2">
+                            <div>
+                                <a class="hover:text-green-600 dark:hover:text-green-400 transition duration-300 block">
+                                    (0274) 6498383
+                                </a>
+                            </div>
+                            <div>
+                                <a href="https://wa.me/6289612643202" class="hover:text-green-600 dark:hover:text-green-400 transition duration-300 block">
+                                    0896-1264-3202
+                                </a>
+                            </div>
+                        </p>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-12 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center hover:shadow-xl transition duration-300">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
+                            <i class="text-2xl text-green-600 fas fa-envelope"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Email</h3>
+                        <p class="text-gray-700 dark:text-gray-300">
+                            <a href="mailto:stageof.yogya@bmkg.go.id" class="hover:text-green-600 dark:hover:text-green-400 transition duration-300">
+                                stageof.yogya@bmkg.go.id
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
+                <iframe class="w-full h-[350px]"
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15811.000139468904!2d110.2945792!3d-7.8162625!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7af830003ce1ab%3A0xc798f492aac6a387!2sStasiun%20Geofisika%20Yogyakarta!5e0!3m2!1sen!2sid!4v1705299927452!5m2!1sen!2sid"
+                    style="border:0;" allowfullscreen loading="lazy">
+                </iframe>
+            </div>
             </div>
         </section>
     </div>

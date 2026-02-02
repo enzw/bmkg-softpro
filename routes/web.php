@@ -71,6 +71,9 @@ Route::get('/dashboard', function () {
 Route::get('/dashboard-pelayanan', [DashboardPelayananController::class, 'index'])
     ->middleware(['auth', 'verified', 'auth.notadmin'])->name('dashboard-pelayanan');
 
+Route::get('/dashboard-pelayanan/load-more', [DashboardPelayananController::class, 'loadMore'])
+    ->middleware(['auth', 'verified', 'auth.notadmin'])->name('dashboard-pelayanan.load-more');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -80,7 +83,7 @@ Route::middleware('auth')->group(function () {
      | PROTECTED ROUTES
      | ---------------------------------------------------------------------
      */
-    Route::middleware('auth.notadmin')->prefix('layanan')->group(function () {
+    Route::prefix('layanan')->group(function () {
         Route::get('/', [DashboardPelayananController::class, 'index'])->name('layanan');
 
         Route::name('sewa-alat.')

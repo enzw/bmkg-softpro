@@ -16,7 +16,13 @@ class PetaSebaran extends Model
     protected $fillable = [
         'user_id',
         'perusahaan',
-        'minta_data',
+        'tanggal',
+        'lokasi',
+        'latitude',
+        'longitude',
+        'kejadian',
+        'surat_permohonan',
+        'status',
     ];
 
     public function user()

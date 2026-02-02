@@ -19,7 +19,7 @@
             </div>
 
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Pelayanan Jasa</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Magang</h3>
                 <div class="text-4xl font-bold text-blue-600 dark:text-blue-400">{{ $magang->count() }}</div>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">permohonan</p>
             </div>
@@ -37,7 +37,7 @@
             </div>
 
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Pemetaan</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Peta Sebaran</h3>
                 <div class="text-4xl font-bold text-red-600 dark:text-red-400">{{ $pemetaan->count() }}</div>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">permohonan</p>
             </div>
@@ -195,12 +195,12 @@
                             <td class="px-4 py-3 text-center text-red-600 dark:text-red-400">{{ $statistik['jasa_konsultasi']['ditolak'] }}</td>
                         </tr>
                         <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                            <td class="px-4 py-3 font-semibold">Pemetaan</td>
-                            <td class="px-4 py-3 text-center font-bold">{{ $statistik['pemetaan']['total'] }}</td>
-                            <td class="px-4 py-3 text-center text-yellow-600 dark:text-yellow-400">{{ $statistik['pemetaan']['menunggu'] }}</td>
-                            <td class="px-4 py-3 text-center text-blue-600 dark:text-blue-400">{{ $statistik['pemetaan']['diproses'] }}</td>
-                            <td class="px-4 py-3 text-center text-green-600 dark:text-green-400">{{ $statistik['pemetaan']['selesai'] }}</td>
-                            <td class="px-4 py-3 text-center text-red-600 dark:text-red-400">{{ $statistik['pemetaan']['ditolak'] }}</td>
+                            <td class="px-4 py-3 font-semibold">Peta Sebaran</td>
+                            <td class="px-4 py-3 text-center font-bold">{{ $statistik['peta_sebaran']['total'] }}</td>
+                            <td class="px-4 py-3 text-center text-yellow-600 dark:text-yellow-400">{{ $statistik['peta_sebaran']['menunggu'] }}</td>
+                            <td class="px-4 py-3 text-center text-blue-600 dark:text-blue-400">{{ $statistik['peta_sebaran']['diproses'] }}</td>
+                            <td class="px-4 py-3 text-center text-green-600 dark:text-green-400">{{ $statistik['peta_sebaran']['selesai'] }}</td>
+                            <td class="px-4 py-3 text-center text-red-600 dark:text-red-400">{{ $statistik['peta_sebaran']['ditolak'] }}</td>
                         </tr>
                         <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                             <td class="px-4 py-3 font-semibold">Survey</td>

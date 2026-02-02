@@ -6,6 +6,7 @@ use App\Models\Magang;
 use App\Models\Asuransi;
 use App\Models\LayananData;
 use App\Models\Pemetaan;
+use App\Models\PetaSebaran;
 use App\Models\Survey;
 use App\Models\JasaKonsultasi;
 use Exception;
@@ -47,6 +48,12 @@ class MagangController extends Controller
             return $item;
         });
         
+        $peta_sebaran = PetaSebaran::where('user_id', $userId)->get()->map(function($item) {
+            $item->jenis_layanan = 'Layanan Peta Sebaran';
+            $item->table_name = 'peta_sebaran';
+            return $item;
+        });
+        
         $survey = Survey::where('user_id', $userId)->get()->map(function($item) {
             $item->jenis_layanan = 'Layanan Survey';
             $item->table_name = 'survey';
@@ -65,6 +72,7 @@ class MagangController extends Controller
             ->merge($asuransi)
             ->merge($layanan_data)
             ->merge($pemetaan)
+            ->merge($peta_sebaran)
             ->merge($survey)
             ->merge($jasa_konsultasi)
             ->sortByDesc('created_at');
@@ -98,6 +106,7 @@ class MagangController extends Controller
             'Layanan Klaim Asuransi' => Asuransi::class,
             'Layanan Data' => LayananData::class,
             'Layanan Pemetaan' => Pemetaan::class,
+            'Layanan Peta Sebaran' => PetaSebaran::class,
             'Layanan Survey' => Survey::class,
             'Layanan Konsultasi' => JasaKonsultasi::class,
             default => null
@@ -123,6 +132,7 @@ class MagangController extends Controller
                     'Layanan Klaim Asuransi' => 'permohonan/layanan-asuransi',
                     'Layanan Data' => 'permohonan/layanan-data',
                     'Layanan Pemetaan' => 'permohonan/layanan-pemetaan',
+                    'Layanan Peta Sebaran' => 'permohonan/peta-sebaran',
                     'Layanan Survey' => 'permohonan/layanan-survey',
                     'Layanan Konsultasi' => 'permohonan/layanan-konsultasi',
                 ];
@@ -207,6 +217,14 @@ class MagangController extends Controller
                 'email' => 'required|email',
                 'keterangan' => 'nullable|string',
             ]),
+            'Layanan Peta Sebaran' => $rules = array_merge($rules, [
+                'perusahaan' => 'required|string',
+                'tanggal' => 'required|date',
+                'lokasi' => 'required|string',
+                'latitude' => 'nullable|numeric',
+                'longitude' => 'nullable|numeric',
+                'kejadian' => 'required|string',
+            ]),
             'Layanan Survey' => $rules = array_merge($rules, [
                 'nama_lengkap' => 'required|string',
                 'no_whatsapp' => 'required|string',
@@ -262,6 +280,7 @@ class MagangController extends Controller
                 Asuransi::class,
                 LayananData::class,
                 Pemetaan::class,
+                PetaSebaran::class,
                 Survey::class,
                 JasaKonsultasi::class,
                 Magang::class,

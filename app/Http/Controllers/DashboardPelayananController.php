@@ -15,12 +15,49 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardPelayananController extends Controller
 {
+    private const ITEMS_PER_PAGE = 5;
+
     public function index()
     {
         $layanan = LayananService::getLayanan();
-        $userId = Auth::id();
+        $permohonan = $this->getPermohonanList();
         
-        // Ambil semua permohonan dari user yang login
+        // Ambil hanya 5 data pertama untuk view pertama kali
+        $displayedPermohonan = array_slice($permohonan, 0, self::ITEMS_PER_PAGE);
+        $totalPermohonan = count($permohonan);
+
+        return view('pages.dashboard-pelayanan', [
+            'layanan' => $layanan,
+            'permohonan' => $displayedPermohonan,
+            'totalPermohonan' => $totalPermohonan
+        ]);
+    }
+
+    /**
+     * API endpoint untuk load more permohonan
+     */
+    public function loadMore()
+    {
+        $offset = request()->input('offset', 0);
+        $permohonan = $this->getPermohonanList();
+        
+        // Ambil data berdasarkan offset
+        $morePermohonan = array_slice($permohonan, $offset, self::ITEMS_PER_PAGE);
+        $hasMore = count($permohonan) > ($offset + self::ITEMS_PER_PAGE);
+
+        return response()->json([
+            'permohonan' => $morePermohonan,
+            'hasMore' => $hasMore,
+            'count' => count($morePermohonan),
+        ]);
+    }
+
+    /**
+     * Get all user's permohonan
+     */
+    private function getPermohonanList()
+    {
+        $userId = Auth::id();
         $permohonan = [];
         
         // Dari SewaAlat (Jasa Sewa Alat)
@@ -108,6 +145,6 @@ class DashboardPelayananController extends Controller
             return $b['tanggal']->timestamp <=> $a['tanggal']->timestamp;
         });
 
-        return view('pages.dashboard-pelayanan', compact('layanan', 'permohonan'));
+        return $permohonan;
     }
 }

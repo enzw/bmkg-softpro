@@ -7,14 +7,63 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 <div class="relative p-6 overflow-hidden text-gray-900 bg-white shadow-sm dark:text-gray-100 dark:bg-gray-800 sm:rounded-lg h-max lg:sticky lg:top-12">
 
-    <h2 class="flex items-center mb-4 text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-        {{ $is_edit ? 'Edit' : 'Buat' }} Permohonan Pelayanan Jasa
+    <h2 class="flex items-center mb-6 text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+        <i class="fas fa-clipboard-list mr-3 text-green-600"></i>
+        {{ $is_edit ? 'Edit' : 'Buat' }} Permohonan Pelayanan Informasi Geofisika
     </h2>
 
     @php
     $permohonan = $permohonan ?? null;
     $jenis_layanan = $is_edit ? ($permohonan->jenis_layanan ?? old('jenis_layanan', '')) : old('jenis_layanan', '');
     @endphp
+
+    <!-- Tabs Navigation -->
+    <div class="border-b border-gray-200 dark:border-gray-700 mb-6 overflow-x-auto">
+        <div class="flex gap-0" role="tablist">
+            <button 
+                role="tab"
+                onclick="switchTab('Magang', this)"
+                class="tab-button px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition @if($jenis_layanan == 'Magang') active-tab border-green-500 text-green-600 dark:text-green-400 @endif"
+                aria-selected="@if($jenis_layanan == 'Magang') true @else false @endif">
+                <i class="fas fa-graduation-cap mr-2"></i>Magang
+            </button>
+            <button 
+                role="tab"
+                onclick="switchTab('Layanan Klaim Asuransi', this)"
+                class="tab-button px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition @if($jenis_layanan == 'Layanan Klaim Asuransi') active-tab border-green-500 text-green-600 dark:text-green-400 @endif"
+                aria-selected="@if($jenis_layanan == 'Layanan Klaim Asuransi') true @else false @endif">
+                <i class="fas fa-file-invoice-dollar mr-2"></i>Klaim Asuransi
+            </button>
+            <button 
+                role="tab"
+                onclick="switchTab('Layanan Data', this)"
+                class="tab-button px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition @if($jenis_layanan == 'Layanan Data') active-tab border-green-500 text-green-600 dark:text-green-400 @endif"
+                aria-selected="@if($jenis_layanan == 'Layanan Data') true @else false @endif">
+                <i class="fas fa-database mr-2"></i>Data Geofisika
+            </button>
+            <button 
+                role="tab"
+                onclick="switchTab('Layanan Peta Sebaran', this)"
+                class="tab-button px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition @if($jenis_layanan == 'Layanan Peta Sebaran') active-tab border-green-500 text-green-600 dark:text-green-400 @endif"
+                aria-selected="@if($jenis_layanan == 'Layanan Peta Sebaran') true @else false @endif">
+                <i class="fas fa-map mr-2"></i>Peta Sebaran
+            </button>
+            <button 
+                role="tab"
+                onclick="switchTab('Layanan Survey', this)"
+                class="tab-button px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition @if($jenis_layanan == 'Layanan Survey') active-tab border-green-500 text-green-600 dark:text-green-400 @endif"
+                aria-selected="@if($jenis_layanan == 'Layanan Survey') true @else false @endif">
+                <i class="fas fa-compass mr-2"></i>Survey
+            </button>
+            <button 
+                role="tab"
+                onclick="switchTab('Layanan Konsultasi', this)"
+                class="tab-button px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition @if($jenis_layanan == 'Layanan Konsultasi') active-tab border-green-500 text-green-600 dark:text-green-400 @endif"
+                aria-selected="@if($jenis_layanan == 'Layanan Konsultasi') true @else false @endif">
+                <i class="fas fa-comments mr-2"></i>Konsultasi
+            </button>
+        </div>
+    </div>
 
     @if (session('success'))
         <div class="px-4 py-2 mb-4 text-green-900 bg-green-300 rounded">
@@ -38,30 +87,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         </div>
     @endif
 
-    <form action="{{ $is_edit ? url('admin/pelayanan-jasa/' . $permohonan->id) : route('admin.pelayanan-jasa.store') }}" method="POST" class="grid grid-cols-1 gap-4" enctype="multipart/form-data" id="form-layanan">
+    <form action="{{ $is_edit ? url('admin/pelayanan-jasa/' . $permohonan->id) : route('admin.pelayanan-jasa.store') }}" method="POST" class="space-y-4" enctype="multipart/form-data" id="form-layanan">
         @csrf
         @if ($is_edit)
         @method('put')
         @endif
 
-        <div>
-            <x-input-label for="jenis_layanan">Jenis Layanan</x-input-label>
-            <select name="jenis_layanan" id="jenis_layanan"
-                class="block w-full mt-1 truncate border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                onchange="updateFormFields()">
-                <option value="">Pilih layanan...</option>
-                <option value="Magang" @selected($jenis_layanan == 'Magang')>Magang</option>
-                <option value="Layanan Klaim Asuransi" @selected($jenis_layanan == 'Layanan Klaim Asuransi')>Layanan Klaim Asuransi</option>
-                <option value="Layanan Data" @selected($jenis_layanan == 'Layanan Data')>Layanan Data</option>
-                <option value="Layanan Pemetaan" @selected($jenis_layanan == 'Layanan Pemetaan')>Layanan Pemetaan</option>
-                <option value="Layanan Survey" @selected($jenis_layanan == 'Layanan Survey')>Layanan Survey</option>
-                <option value="Layanan Konsultasi" @selected($jenis_layanan == 'Layanan Konsultasi')>Layanan Konsultasi</option>
-            </select>
-            <x-input-error :messages="$errors->get('jenis_layanan')" class="mt-2" />
-        </div>
+        <!-- Hidden input for jenis_layanan -->
+        <input type="hidden" name="jenis_layanan" id="jenis_layanan" value="{{ $jenis_layanan }}" />
 
         <!-- MAGANG Fields -->
-        <div id="magang-fields" style="display: {{ $jenis_layanan == 'Magang' ? 'block' : 'none' }}">
+        <div id="magang-fields" style="display: {{ $jenis_layanan == 'Magang' ? 'block' : 'none' }}" class="space-y-4">
             <div>
                 <x-input-label for="nama_lengkap">Nama Lengkap</x-input-label>
                 <x-text-input id="nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
@@ -115,29 +151,54 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         </div>
 
         <!-- ASURANSI Fields -->
-        <div id="asuransi-fields" style="display: {{ $jenis_layanan == 'Asuransi' ? 'block' : 'none' }}">
+        <div id="asuransi-fields" style="display: {{ $jenis_layanan == 'Layanan Klaim Asuransi' ? 'block' : 'none' }}" class="space-y-4">
             <div>
-                <x-input-label for="perusahaan">Nama Instansi</x-input-label>
+                <x-input-label for="perusahaan">Nama Perusahaan/Instansi</x-input-label>
                 <x-text-input id="perusahaan" class="block w-full mt-1" type="text" name="perusahaan" 
                     :value="$is_edit ? old('perusahaan', $permohonan->perusahaan ?? '') : old('perusahaan')" />
                 <x-input-error :messages="$errors->get('perusahaan')" class="mt-2" />
             </div>
-            <div>
-                <x-input-label for="kejadian">Jenis Kunjungan</x-input-label>
-                <x-text-input id="kejadian" class="block w-full mt-1" type="text" name="kejadian" 
-                    :value="$is_edit ? old('kejadian', $permohonan->kejadian ?? '') : old('kejadian')" />
-                <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <x-input-label for="tanggal_asuransi">Tanggal Kejadian</x-input-label>
+                    <x-text-input id="tanggal_asuransi" class="block w-full mt-1" type="date" name="tanggal" 
+                        :value="$is_edit ? old('tanggal', $permohonan->tanggal ?? '') : old('tanggal')" />
+                    <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
+                </div>
+                <div>
+                    <x-input-label for="lokasi_asuransi">Lokasi Kejadian</x-input-label>
+                    <x-text-input id="lokasi_asuransi" class="block w-full mt-1" type="text" name="lokasi" 
+                        :value="$is_edit ? old('lokasi', $permohonan->lokasi ?? '') : old('lokasi')" />
+                    <x-input-error :messages="$errors->get('lokasi')" class="mt-2" />
+                </div>
             </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <x-input-label for="latitude_asuransi">Latitude</x-input-label>
+                    <x-text-input id="latitude_asuransi" class="block w-full mt-1" type="number" step="0.000001" name="latitude" 
+                        :value="$is_edit ? old('latitude', $permohonan->latitude ?? '') : old('latitude')" />
+                    <x-input-error :messages="$errors->get('latitude')" class="mt-2" />
+                </div>
+                <div>
+                    <x-input-label for="longitude_asuransi">Longitude</x-input-label>
+                    <x-text-input id="longitude_asuransi" class="block w-full mt-1" type="number" step="0.000001" name="longitude" 
+                        :value="$is_edit ? old('longitude', $permohonan->longitude ?? '') : old('longitude')" />
+                    <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
+                </div>
+            </div>
+
             <div>
-                <x-input-label for="tanggal_asuransi">Tanggal Kunjungan</x-input-label>
-                <x-text-input id="tanggal_asuransi" class="block w-full mt-1" type="date" name="tanggal" 
-                    :value="$is_edit ? old('tanggal', $permohonan->tanggal ?? '') : old('tanggal')" />
-                <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
+                <x-input-label for="kejadian">Deskripsi Kejadian</x-input-label>
+                <textarea id="kejadian" name="kejadian" rows="3"
+                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('kejadian', $permohonan->kejadian ?? '') : old('kejadian') }}</textarea>
+                <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
             </div>
         </div>
 
         <!-- COMMON Fields (Data, Pemetaan, Survey, Konsultasi) -->
-        <div id="common-fields" style="display: {{ in_array($jenis_layanan, ['Data', 'Pemetaan', 'Survey', 'Konsultasi']) ? 'block' : 'none' }}">
+        <div id="common-fields" style="display: {{ in_array($jenis_layanan, ['Layanan Data', 'Layanan Pemetaan', 'Layanan Survey', 'Layanan Konsultasi']) ? 'block' : 'none' }}" class="space-y-4">
             <div>
                 <x-input-label for="nama_lengkap">Nama Lengkap</x-input-label>
                 <x-text-input id="nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
@@ -146,10 +207,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             </div>
 
             <div>
-                <x-input-label for="no_telepon">No Telepon</x-input-label>
-                <x-text-input id="no_telepon" class="block w-full mt-1" type="text" name="no_telepon" 
-                    :value="$is_edit ? old('no_telepon', $permohonan->no_telepon ?? '') : old('no_telepon')" />
-                <x-input-error :messages="$errors->get('no_telepon')" class="mt-2" />
+                <x-input-label for="no_whatsapp">No WhatsApp</x-input-label>
+                <x-text-input id="no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
+                    :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
+                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
             </div>
 
             <div>
@@ -160,10 +221,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             </div>
 
             <div>
-                <x-input-label for="deskripsi">Deskripsi Kebutuhan</x-input-label>
-                <textarea id="deskripsi" name="deskripsi" rows="3"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('deskripsi', $permohonan->deskripsi ?? '') : old('deskripsi') }}</textarea>
-                <x-input-error :messages="$errors->get('deskripsi')" class="mt-2" />
+                <x-input-label for="keterangan">Deskripsi Kebutuhan</x-input-label>
+                <textarea id="keterangan" name="keterangan" rows="3"
+                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
+                <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
             </div>
         </div>
 
@@ -190,6 +251,35 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 </div>
 
 <script>
+function switchTab(serviceType, buttonElement) {
+    // Update hidden input
+    document.getElementById('jenis_layanan').value = serviceType;
+    
+    // Hide all field divs
+    document.getElementById('magang-fields').style.display = 'none';
+    document.getElementById('asuransi-fields').style.display = 'none';
+    document.getElementById('common-fields').style.display = 'none';
+    
+    // Remove active class from all tabs
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active-tab', 'border-green-500', 'text-green-600', 'dark:text-green-400');
+        btn.classList.add('border-transparent', 'text-gray-600', 'dark:text-gray-400');
+    });
+    
+    // Show relevant fields and activate tab
+    if (serviceType === 'Magang') {
+        document.getElementById('magang-fields').style.display = 'block';
+    } else if (serviceType === 'Layanan Klaim Asuransi') {
+        document.getElementById('asuransi-fields').style.display = 'block';
+    } else {
+        document.getElementById('common-fields').style.display = 'block';
+    }
+    
+    // Activate current tab
+    buttonElement.classList.add('active-tab', 'border-green-500', 'text-green-600', 'dark:text-green-400');
+    buttonElement.classList.remove('border-transparent', 'text-gray-600', 'dark:text-gray-400');
+}
+
 function updateFormFields() {
     const jenis_layanan = document.getElementById('jenis_layanan').value;
     const magangFields = document.getElementById('magang-fields');
@@ -198,7 +288,13 @@ function updateFormFields() {
     
     magangFields.style.display = jenis_layanan === 'Magang' ? 'block' : 'none';
     asuransiFields.style.display = jenis_layanan === 'Layanan Klaim Asuransi' ? 'block' : 'none';
-    commonFields.style.display = ['Layanan Data', 'Layanan Pemetaan', 'Layanan Survey', 'Layanan Konsultasi'].includes(jenis_layanan) ? 'block' : 'none';
+    commonFields.style.display = ['Layanan Data', 'Layanan Peta Sebaran', 'Layanan Survey', 'Layanan Konsultasi'].includes(jenis_layanan) ? 'block' : 'none';
 }
 </script>
-</div>
+
+<style>
+.active-tab {
+    border-bottom-color: rgb(34, 197, 94) !important;
+    color: rgb(22, 163, 74) !important;
+}
+</style>

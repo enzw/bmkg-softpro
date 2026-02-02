@@ -41,9 +41,9 @@ class AsuransiController extends Controller
         $validated = $request->validate([
             'perusahaan' => 'required',
             'tanggal' => 'required|date',
-            'lokasi' => 'required',
-            'latitude' => 'required',
-            'longitude' => 'required',
+            'jumlah_rombongan' => 'required',
+            'nama_lengkap' => 'required',
+            'nomor_whatsapp' => 'required',
             'kejadian'=> 'required',
         ]);
 

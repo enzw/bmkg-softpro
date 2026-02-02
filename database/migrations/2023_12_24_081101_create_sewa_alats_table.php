@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('banyak_unit')->default(1);
             $table->string('surat_permohonan')->nullable();
             $table->text('keterangan')->nullable();
-            $table->string('status')->default('Belum Lunas');
+            $table->string('status')->default('Menunggu');
             $table->string('expedisi')->nullable();
             $table->string('resi')->nullable();
             $table->timestamps();

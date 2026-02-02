@@ -20,7 +20,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-1">
-                @include('components.form-permohonan-magang')
+                @include('components.form-pelayanan-jasa-tabs')
             </div>
             <div class="lg:col-span-2">
                 @include('components.table-permohonan-magang', ['permohonan' => $permohonan])

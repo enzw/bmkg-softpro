@@ -19,8 +19,8 @@
                     </p>
 
                     <div class="text-sm text-gray-400 space-y-1">
-                        <p><a href="tel:+622746498383" class="hover:text-white transition">📞 (0274) 6498383</a></p>
-                        <p><a href="tel:+6289612643203" class="hover:text-white transition">📱 0896-1264-3203</a></p>
+                        <p><a class="hover:text-white transition">📞 (0274) 6498383</a></p>
+                        <p><a href="https://wa.me/6289612643202" class="hover:text-white transition">📱 0896-1264-3202</a></p>
                         <p><a href="mailto:stageof.yogya@bmkg.go.id" class="hover:text-white transition">✉️ stageof.yogya@bmkg.go.id</a></p>
                     </div>
                 </div>

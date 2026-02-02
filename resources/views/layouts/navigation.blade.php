@@ -12,12 +12,15 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    {{-- <x-nav-link :href="route('dashboard')" :active="request()->is('dashboard*')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link> --}}
-                    <x-nav-link :href="route('layanan')" :active="request()->is('layanan*')">
-                        {{ __('Layanan') }}
-                    </x-nav-link>
+                    @auth
+                        <x-nav-link :href="route('layanan')" :active="request()->is('layanan*')">
+                            {{ __('Layanan') }}
+                        </x-nav-link>
+                    @else
+                        <x-nav-link :href="route('layanan')" :active="request()->is('layanan*')">
+                            {{ __('Layanan') }}
+                        </x-nav-link>
+                    @endauth
                     {{-- <x-nav-link :href="route('berita')" :active="request()->is('berita*')">
                         {{ __('Berita') }}
                     </x-nav-link> --}}
@@ -53,7 +56,11 @@
 
                         @if (Auth::user()->role == 'admin')
                             <x-dropdown-link href="/admin/dashboard">
-                                Dashboard
+                                Admin Dashboard
+                            </x-dropdown-link>
+                        @else
+                            <x-dropdown-link href="/dashboard">
+                                {{ __('Dashboard') }}
                             </x-dropdown-link>
                         @endif
 
@@ -116,9 +123,15 @@
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
-                <x-dropdown-link href="/admin/dashboard">
-                    Dashboard
-                </x-dropdown-link>
+                @if (Auth::user()->role == 'admin')
+                    <x-dropdown-link href="/admin/dashboard">
+                        Admin Dashboard
+                    </x-dropdown-link>
+                @else
+                    <x-dropdown-link href="/dashboard">
+                        {{ __('Dashboard') }}
+                    </x-dropdown-link>
+                @endif
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">

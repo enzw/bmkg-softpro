@@ -41,13 +41,33 @@
                                 {{ $item->banyak_unit }}
                             </td>
                             <td class="p-3 font-bold align-top dark:text-white">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                    @if($item->status === 'Menunggu') text-yellow-600
-                                    @elseif($item->status === 'Diproses') text-blue-600
-                                    @elseif($item->status === 'Ditolak') text-red-600
-                                    @elseif($item->status === 'Selesai') text-green-600
+                                @php
+                                    // Map database status to display status
+                                    $statusMap = [
+                                        'Belum Lunas' => 'Menunggu',
+                                        'Siap Diambil' => 'Diproses',
+                                        'Dibawa' => 'Diproses',
+                                        'Dikembalikan' => 'Selesai',
+                                    ];
+                                    $displayStatus = $statusMap[$item->status] ?? $item->status;
+                                @endphp
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full inline-flex items-center gap-2
+                                    @if($displayStatus === 'Menunggu') bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300
+                                    @elseif($displayStatus === 'Diproses') bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300
+                                    @elseif($displayStatus === 'Selesai') bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300
+                                    @elseif($displayStatus === 'Ditolak') bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300
+                                    @else bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300
                                     @endif">
-                                    {{ $item->status }}
+                                    @if($displayStatus === 'Menunggu')
+                                        <i class="fas fa-hourglass-half"></i>
+                                    @elseif($displayStatus === 'Diproses')
+                                        <i class="fas fa-cog"></i>
+                                    @elseif($displayStatus === 'Selesai')
+                                        <i class="fas fa-check"></i>
+                                    @elseif($displayStatus === 'Ditolak')
+                                        <i class="fas fa-times"></i>
+                                    @endif
+                                    {{ $displayStatus }}
                                 </span>
                             </td>
                             <td class="p-3 align-top">
@@ -97,7 +117,18 @@
                                         <dd>{{ $total }}</dd>
 
                                         <dt class="text-sm text-slate-500">Status</dt>
-                                        <dd>{{ $item->status }}</dd>
+                                        <dd>
+                                            @php
+                                                $statusMap = [
+                                                    'Belum Lunas' => 'Menunggu',
+                                                    'Siap Diambil' => 'Diproses',
+                                                    'Dibawa' => 'Diproses',
+                                                    'Dikembalikan' => 'Selesai',
+                                                ];
+                                                $displayStatus = $statusMap[$item->status] ?? $item->status;
+                                            @endphp
+                                            {{ $displayStatus }}
+                                        </dd>
 
                                         @if($item->expedisi && $item->resi)
                                             <dt class="text-sm text-slate-500">Expedisi</dt>

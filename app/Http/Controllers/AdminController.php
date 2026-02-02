@@ -10,6 +10,7 @@ use App\Models\Pemetaan;
 use App\Models\PetaSebaran;
 use App\Models\SewaAlat;
 use App\Models\Survey;
+use App\Traits\StatusMapper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
+    use StatusMapper;
+
     public function dashboard()
     {
         $sewa_alat = SewaAlat::all();
@@ -28,6 +31,14 @@ class AdminController extends Controller
         $layanan_data = LayananData::all();
         $peta_sebaran = PetaSebaran::all();
         
+        // Helper function untuk count dengan mapping status untuk Sewa Alat
+        $countSewaAlatByDisplayStatus = function($collection, $displayStatus) {
+            $dbStatuses = self::getSewaAlatDbStatusesForDisplay($displayStatus);
+            return $collection->filter(function($item) use ($dbStatuses) {
+                return in_array($item->status, $dbStatuses);
+            })->count();
+        };
+        
         // Hitung statistik permohonan berdasarkan status
         $statistik = [
             'total' => $sewa_alat->count() + $magang->count() + $asuransi->count() + 
@@ -35,9 +46,9 @@ class AdminController extends Controller
                        $layanan_data->count() + $peta_sebaran->count(),
             'sewa_alat' => [
                 'total' => $sewa_alat->count(),
-                'menunggu' => $sewa_alat->where('status', 'Menunggu')->count(),
-                'diproses' => $sewa_alat->where('status', 'Diproses')->count(),
-                'selesai' => $sewa_alat->where('status', 'Selesai')->count(),
+                'menunggu' => $countSewaAlatByDisplayStatus($sewa_alat, 'Menunggu'),
+                'diproses' => $countSewaAlatByDisplayStatus($sewa_alat, 'Diproses'),
+                'selesai' => $countSewaAlatByDisplayStatus($sewa_alat, 'Selesai'),
                 'ditolak' => $sewa_alat->where('status', 'Ditolak')->count(),
             ],
             'magang' => [
