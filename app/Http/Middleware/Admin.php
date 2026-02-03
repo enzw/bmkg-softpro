@@ -16,8 +16,12 @@ class Admin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->role !== 'admin') {
-            return redirect('/layanan')->with('error', 'Maaf, Izin akses tidak terpenuhi');
+        if (!Auth::check()) {
+            return redirect('/login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        if (Auth::user()->role !== 'admin') {
+            return redirect('/dashboard-pelayanan')->with('error', 'Maaf, Anda tidak memiliki akses ke dashboard admin.');
         }
 
         return $next($request);

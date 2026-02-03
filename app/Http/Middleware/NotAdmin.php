@@ -16,8 +16,12 @@ class NotAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->role === 'admin') {
-            return redirect('/admin/dashboard')->with('error', 'Admin tidak dapat mengakses halaman ini');
+        if (!Auth::check()) {
+            return redirect('/login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        if (Auth::user()->role === 'admin') {
+            return redirect('/admin/dashboard')->with('error', 'Admin tidak dapat mengakses halaman member. Gunakan dashboard admin.');
         }
 
         return $next($request);
