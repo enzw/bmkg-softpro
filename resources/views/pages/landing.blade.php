@@ -256,9 +256,9 @@
             </div>
         </section>
 
-        <section id="hubungi-kami" class="py-16 mt-16 bg-gradient-to-r from-slate-700 to-slate-800 dark:from-slate-900 dark:to-slate-950">
+        <section id="hubungi-kami" class="py-16 mt-16 bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-950">
             <div class="container px-4 mx-auto">
-                <h2 class="mb-12 text-4xl font-bold text-white text-center">Hubungi Kami</h2>
+                <h2 class="mb-12 text-4xl font-bold text-gray-900 dark:text-white text-center">Hubungi Kami</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <div class="mb-12 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center hover:shadow-xl transition duration-300">

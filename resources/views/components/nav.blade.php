@@ -20,7 +20,7 @@
 
             <li>
                 <a href="/#layanan"
-                    class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('layanan*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
+                    class="dark:text-white rounded-full px-5 py-3 transition duration-200 hover:bg-green-700 hover:text-white">
                     Layanan
                 </a>
             </li>
@@ -102,7 +102,7 @@
     <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-gray-900 w-full px-4 pb-6">
         <ul class="flex flex-col gap-3 mt-4">
             <li><a href="/tentang-kami" class="px-5 py-3 rounded-full dark:text-white">Tentang</a></li>
-            <li><a href="{{ Auth::user() ? '/layanan' : '/#layanan' }}"
+            <li><a href="/#layanan"
                     class="px-5 py-3 rounded-full dark:text-white">Layanan</a></li>
             
             @if (Auth::check())

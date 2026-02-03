@@ -26,6 +26,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             $jenis_layanan = 'Layanan Data';
         } elseif ($modelClass === 'Pemetaan') {
             $jenis_layanan = 'Layanan Peta Sebaran';
+        } elseif ($modelClass === 'PetaSebaran') {
+            $jenis_layanan = 'Layanan Peta Sebaran';
         } elseif ($modelClass === 'Survey') {
             $jenis_layanan = 'Layanan Survey';
         } elseif ($modelClass === 'JasaKonsultasi') {
@@ -120,7 +122,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <input type="hidden" name="jenis_layanan" id="jenis_layanan" value="{{ $jenis_layanan }}" />
 
         <!-- MAGANG Fields -->
-        <div id="magang-fields" style="display: {{ $jenis_layanan == 'Magang' ? 'block' : 'none' }}" class="space-y-4">
+        <div id="magang-fields" style="display: {{ !$is_edit && ($jenis_layanan == '' || $jenis_layanan == 'Magang') ? 'block' : 'none' }}" class="space-y-4">
             <div>
                 <x-input-label for="magang_nama_lengkap">Nama Lengkap</x-input-label>
                 <x-text-input id="magang_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
@@ -174,7 +176,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         </div>
 
         <!-- ASURANSI Fields -->
-        <div id="asuransi-fields" style="display: {{ $jenis_layanan == 'Layanan Klaim Asuransi' ? 'block' : 'none' }}" class="space-y-4">
+        <div id="asuransi-fields" style="display: {{ $is_edit && $jenis_layanan == 'Layanan Klaim Asuransi' ? 'block' : 'none' }}" class="space-y-4">
             <div>
                 <x-input-label for="perusahaan">Nama Perusahaan/Instansi</x-input-label>
                 <x-text-input id="perusahaan" class="block w-full mt-1" type="text" name="perusahaan" 
@@ -228,7 +230,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         </div>
 
         <!-- DATA GEOFISIKA Fields -->
-        <div id="data-fields" style="display: {{ $jenis_layanan == 'Layanan Data' ? 'block' : 'none' }}" class="space-y-4">
+        <div id="data-fields" style="display: {{ $is_edit && $jenis_layanan == 'Layanan Data' ? 'block' : 'none' }}" class="space-y-4">
             <div>
                 <x-input-label for="data_nama_lengkap">Nama Lengkap</x-input-label>
                 <x-text-input id="data_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
@@ -256,41 +258,68 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
                 <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
             </div>
+
+            <div>
+                <x-input-label for="data_surat_permohonan">Surat Permohonan (PDF, JPG, PNG) - Opsional</x-input-label>
+                <input id="data_surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+                    class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300" />
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Maksimal ukuran file: 2MB</p>
+                @if ($is_edit && $permohonan->surat_permohonan)
+                    <p class="text-xs text-green-600 dark:text-green-400 mt-1">File saat ini: {{ basename($permohonan->surat_permohonan) }}</p>
+                @endif
+                <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
+            </div>
         </div>
 
-        <!-- PEMETAAN Fields -->
-        <div id="pemetaan-fields" style="display: {{ $jenis_layanan == 'Layanan Peta Sebaran' ? 'block' : 'none' }}" class="space-y-4">
+        <!-- PETA SEBARAN Fields (combines Pemetaan and PetaSebaran) -->
+        <div id="peta-sebaran-fields" style="display: {{ $is_edit && in_array($jenis_layanan, ['Layanan Peta Sebaran', 'Layanan Pemetaan']) ? 'block' : 'none' }}" class="space-y-4">
             <div>
-                <x-input-label for="pemetaan_nama_lengkap">Nama Lengkap</x-input-label>
-                <x-text-input id="pemetaan_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
-                    :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap')" />
-                <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
+                <x-input-label for="peta_sebaran_perusahaan">Nama Perusahaan/Instansi</x-input-label>
+                <x-text-input id="peta_sebaran_perusahaan" class="block w-full mt-1" type="text" name="perusahaan" 
+                    :value="$is_edit ? old('perusahaan', $permohonan->perusahaan ?? '') : old('perusahaan')" />
+                <x-input-error :messages="$errors->get('perusahaan')" class="mt-2" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <x-input-label for="peta_sebaran_tanggal">Tanggal Kejadian</x-input-label>
+                    <x-text-input id="peta_sebaran_tanggal" class="block w-full mt-1" type="date" name="tanggal" 
+                        :value="$is_edit ? old('tanggal', $permohonan->tanggal ?? '') : old('tanggal')" />
+                    <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
+                </div>
+                <div>
+                    <x-input-label for="peta_sebaran_lokasi">Lokasi Kejadian</x-input-label>
+                    <x-text-input id="peta_sebaran_lokasi" class="block w-full mt-1" type="text" name="lokasi" 
+                        :value="$is_edit ? old('lokasi', $permohonan->lokasi ?? '') : old('lokasi')" />
+                    <x-input-error :messages="$errors->get('lokasi')" class="mt-2" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <x-input-label for="peta_sebaran_latitude">Latitude</x-input-label>
+                    <x-text-input id="peta_sebaran_latitude" class="block w-full mt-1" type="number" step="0.000001" name="latitude" 
+                        :value="$is_edit ? old('latitude', $permohonan->latitude ?? '') : old('latitude')" />
+                    <x-input-error :messages="$errors->get('latitude')" class="mt-2" />
+                </div>
+                <div>
+                    <x-input-label for="peta_sebaran_longitude">Longitude</x-input-label>
+                    <x-text-input id="peta_sebaran_longitude" class="block w-full mt-1" type="number" step="0.000001" name="longitude" 
+                        :value="$is_edit ? old('longitude', $permohonan->longitude ?? '') : old('longitude')" />
+                    <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
+                </div>
             </div>
 
             <div>
-                <x-input-label for="pemetaan_no_whatsapp">No WhatsApp</x-input-label>
-                <x-text-input id="pemetaan_no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
-                    :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
-                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
-            </div>
-
-            <div>
-                <x-input-label for="pemetaan_email">Email</x-input-label>
-                <x-text-input id="pemetaan_email" class="block w-full mt-1" type="email" name="email" 
-                    :value="$is_edit ? old('email', $permohonan->email ?? '') : old('email')" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
-            </div>
-
-            <div>
-                <x-input-label for="pemetaan_keterangan">Deskripsi Pemetaan</x-input-label>
-                <textarea id="pemetaan_keterangan" name="keterangan" rows="4"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
-                <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
+                <x-input-label for="peta_sebaran_kejadian">Deskripsi Kejadian</x-input-label>
+                <textarea id="peta_sebaran_kejadian" name="kejadian" rows="3"
+                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('kejadian', $permohonan->kejadian ?? '') : old('kejadian') }}</textarea>
+                <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
             </div>
         </div>
 
         <!-- SURVEY Fields -->
-        <div id="survey-fields" style="display: {{ $jenis_layanan == 'Layanan Survey' ? 'block' : 'none' }}" class="space-y-4">
+        <div id="survey-fields" style="display: {{ $is_edit && $jenis_layanan == 'Layanan Survey' ? 'block' : 'none' }}" class="space-y-4">
             <div>
                 <x-input-label for="survey_nama_lengkap">Nama Lengkap</x-input-label>
                 <x-text-input id="survey_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
@@ -321,7 +350,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         </div>
 
         <!-- KONSULTASI Fields -->
-        <div id="konsultasi-fields" style="display: {{ $jenis_layanan == 'Layanan Konsultasi' ? 'block' : 'none' }}" class="space-y-4">
+        <div id="konsultasi-fields" style="display: {{ $is_edit && $jenis_layanan == 'Layanan Konsultasi' ? 'block' : 'none' }}" class="space-y-4">
             <div>
                 <x-input-label for="konsultasi_nama_lengkap">Nama Lengkap</x-input-label>
                 <x-text-input id="konsultasi_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
@@ -376,7 +405,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 <script>
 function disableHiddenFields(visibleSectionId) {
     // List semua field section IDs
-    const allSections = ['magang-fields', 'asuransi-fields', 'data-fields', 'pemetaan-fields', 'survey-fields', 'konsultasi-fields'];
+    const allSections = ['magang-fields', 'asuransi-fields', 'data-fields', 'peta-sebaran-fields', 'survey-fields', 'konsultasi-fields'];
     
     // Disable/enable inputs berdasarkan visibility
     allSections.forEach(sectionId => {
@@ -402,7 +431,7 @@ function switchTab(serviceType, buttonElement) {
     document.getElementById('magang-fields').style.display = 'none';
     document.getElementById('asuransi-fields').style.display = 'none';
     document.getElementById('data-fields').style.display = 'none';
-    document.getElementById('pemetaan-fields').style.display = 'none';
+    document.getElementById('peta-sebaran-fields').style.display = 'none';
     document.getElementById('survey-fields').style.display = 'none';
     document.getElementById('konsultasi-fields').style.display = 'none';
     
@@ -424,8 +453,8 @@ function switchTab(serviceType, buttonElement) {
         visibleSectionId = 'data-fields';
         document.getElementById('data-fields').style.display = 'block';
     } else if (serviceType === 'Layanan Peta Sebaran') {
-        visibleSectionId = 'pemetaan-fields';
-        document.getElementById('pemetaan-fields').style.display = 'block';
+        visibleSectionId = 'peta-sebaran-fields';
+        document.getElementById('peta-sebaran-fields').style.display = 'block';
     } else if (serviceType === 'Layanan Survey') {
         visibleSectionId = 'survey-fields';
         document.getElementById('survey-fields').style.display = 'block';
@@ -451,7 +480,7 @@ function updateFormFields() {
     document.getElementById('magang-fields').style.display = 'none';
     document.getElementById('asuransi-fields').style.display = 'none';
     document.getElementById('data-fields').style.display = 'none';
-    document.getElementById('pemetaan-fields').style.display = 'none';
+    document.getElementById('peta-sebaran-fields').style.display = 'none';
     document.getElementById('survey-fields').style.display = 'none';
     document.getElementById('konsultasi-fields').style.display = 'none';
     
@@ -467,8 +496,8 @@ function updateFormFields() {
         visibleSectionId = 'data-fields';
         document.getElementById('data-fields').style.display = 'block';
     } else if (jenis_layanan === 'Layanan Peta Sebaran') {
-        visibleSectionId = 'pemetaan-fields';
-        document.getElementById('pemetaan-fields').style.display = 'block';
+        visibleSectionId = 'peta-sebaran-fields';
+        document.getElementById('peta-sebaran-fields').style.display = 'block';
     } else if (jenis_layanan === 'Layanan Survey') {
         visibleSectionId = 'survey-fields';
         document.getElementById('survey-fields').style.display = 'block';

@@ -303,7 +303,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     </div>
 
     <!-- Peta Sebaran Tab -->
-    <div id="peta-sebaran-content" class="tab-content hidden">
+    <div id="pemetaan-content" class="tab-content hidden">
         <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg p-4 mb-6">
             <h3 class="font-semibold text-green-900 dark:text-green-100 mb-2">
                 <i class="fas fa-info-circle mr-2"></i>Layanan Peta Sebaran Geofisika
@@ -318,40 +318,47 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <input type="hidden" name="jenis_layanan" value="Layanan Peta Sebaran">
 
             <div>
-                <x-input-label for="nama_lengkap_pemetaan">Nama Lengkap</x-input-label>
-                <x-text-input id="nama_lengkap_pemetaan" class="block w-full mt-1" type="text" name="nama_lengkap" 
-                    :value="old('nama_lengkap')" />
-                <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
+                <x-input-label for="perusahaan_pemetaan">Nama Perusahaan/Instansi</x-input-label>
+                <x-text-input id="perusahaan_pemetaan" class="block w-full mt-1" type="text" name="perusahaan" 
+                    :value="old('perusahaan')" required />
+                <x-input-error :messages="$errors->get('perusahaan')" class="mt-2" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <x-input-label for="tanggal_pemetaan">Tanggal Kejadian</x-input-label>
+                    <x-text-input id="tanggal_pemetaan" class="block w-full mt-1" type="date" name="tanggal" 
+                        :value="old('tanggal')" required />
+                    <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
+                </div>
+                <div>
+                    <x-input-label for="lokasi_pemetaan">Lokasi Kejadian</x-input-label>
+                    <x-text-input id="lokasi_pemetaan" class="block w-full mt-1" type="text" name="lokasi" 
+                        :value="old('lokasi')" required />
+                    <x-input-error :messages="$errors->get('lokasi')" class="mt-2" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <x-input-label for="latitude_pemetaan">Latitude</x-input-label>
+                    <x-text-input id="latitude_pemetaan" class="block w-full mt-1" type="number" step="0.000001" name="latitude" 
+                        :value="old('latitude')" required />
+                    <x-input-error :messages="$errors->get('latitude')" class="mt-2" />
+                </div>
+                <div>
+                    <x-input-label for="longitude_pemetaan">Longitude</x-input-label>
+                    <x-text-input id="longitude_pemetaan" class="block w-full mt-1" type="number" step="0.000001" name="longitude" 
+                        :value="old('longitude')" required />
+                    <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
+                </div>
             </div>
 
             <div>
-                <x-input-label for="no_whatsapp_pemetaan">No WhatsApp</x-input-label>
-                <x-text-input id="no_whatsapp_pemetaan" class="block w-full mt-1" type="text" name="no_whatsapp" 
-                    :value="old('no_whatsapp')" />
-                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
-            </div>
-
-            <div>
-                <x-input-label for="email_pemetaan">Email</x-input-label>
-                <x-text-input id="email_pemetaan" class="block w-full mt-1" type="email" name="email" 
-                    :value="old('email')" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
-            </div>
-
-            <div>
-                <x-input-label for="keterangan_pemetaan">Deskripsi Kebutuhan Pemetaan</x-input-label>
-                <textarea id="keterangan_pemetaan" name="keterangan" rows="3"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">{{ old('keterangan') }}</textarea>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Jelaskan area yang perlu dipetakan dan detail teknis yang diperlukan</p>
-                <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
-            </div>
-
-            <div>
-                <x-input-label for="surat_permohonan_pemetaan">Surat Permohonan (PDF, JPG, PNG) - Opsional</x-input-label>
-                <input id="surat_permohonan_pemetaan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
-                    class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300" />
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Maksimal ukuran file: 2MB</p>
-                <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
+                <x-input-label for="kejadian_pemetaan">Deskripsi Kejadian</x-input-label>
+                <textarea id="kejadian_pemetaan" name="kejadian" rows="3" required
+                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ old('kejadian') }}</textarea>
+                <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
             </div>
 
             <button type="submit" class="w-full px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition font-semibold">

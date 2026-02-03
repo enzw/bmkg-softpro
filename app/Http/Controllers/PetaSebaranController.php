@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PetaSebaran;
+use App\Services\TelegramService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ class PetaSebaranController extends Controller
      */
     public function index()
     {
-        $permohonan = PetaSebaran::all();
+        $permohonan = PetaSebaran::where('user_id', Auth::id())->get();
         $data = [
             'title' => 'Peta Sebaran',
             'permohonan' => $permohonan,
@@ -39,14 +40,38 @@ class PetaSebaranController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'perusahaan' => 'required',
-            'minta_data' => 'required',
+            'perusahaan' => 'required|string',
+            'tanggal' => 'required|date',
+            'lokasi' => 'required|string',
+            'latitude' => 'required|string',
+            'longitude' => 'required|string',
+            'kejadian' => 'required|string',
         ]);
 
         $validated['user_id'] = Auth::id();
 
         try {
-            PetaSebaran::create($validated);
+            $petaSebaran = PetaSebaran::create($validated);
+            
+            // Send Telegram notification
+            try {
+                $telegramService = new TelegramService();
+                $user = Auth::user();
+                
+                $telegramData = [
+                    'nama_lengkap' => $user->name,
+                    'email' => $user->email,
+                    'no_whatsapp' => $user->telp ?? '-',
+                    'keterangan' => $validated['kejadian'] ?? '-',
+                    'created_at' => $petaSebaran->created_at->format('d-m-Y H:i'),
+                ];
+                
+                $telegramService->sendPermohonanNotification('peta_sebaran', $telegramData);
+            } catch (Exception $telegramError) {
+                \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                // Continue even if telegram fails
+            }
+            
             return back()->with('success', 'Permohonan kunjungan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());

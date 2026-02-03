@@ -15,10 +15,12 @@ class Pemetaan extends Model
 
     protected $fillable = [
         'user_id',
-        'nama_lengkap',
-        'no_whatsapp',
-        'email',
-        'keterangan',
+        'perusahaan',
+        'tanggal',
+        'lokasi',
+        'latitude',
+        'longitude',
+        'kejadian',
         'status',
         'surat_permohonan',
     ];

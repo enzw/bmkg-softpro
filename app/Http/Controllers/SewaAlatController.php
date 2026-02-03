@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Alat;
 use App\Models\SewaAlat;
+use App\Services\TelegramService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -80,7 +81,32 @@ class SewaAlatController extends Controller
             ->first();
 
         try {
-            SewaAlat::create($validated);
+            $sewaAlat = SewaAlat::create($validated);
+            
+            // Send Telegram notification
+            try {
+                $telegramService = new TelegramService();
+                $alat = Alat::find($validated['alat_id']);
+                $user = Auth::user();
+                
+                $telegramData = [
+                    'user_name' => $user->name,
+                    'email' => $user->email,
+                    'no_whatsapp' => $user->telp ?? '-',
+                    'alat_name' => $alat->nama ?? '-',
+                    'banyak_unit' => $validated['banyak_unit'],
+                    'sewa_mulai' => $validated['sewa_mulai'],
+                    'sewa_berakhir' => $validated['sewa_berakhir'],
+                    'keterangan' => $validated['keterangan'] ?? '-',
+                    'created_at' => $sewaAlat->created_at->format('d-m-Y H:i'),
+                ];
+                
+                $telegramService->sendPermohonanNotification('sewa_alat', $telegramData);
+            } catch (Exception $telegramError) {
+                \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                // Continue even if telegram fails
+            }
+            
             return back()->with('success', 'Permohonan berhasil dibuat');
         } catch (Exception $error) {
             \Log::error('Sewa Alat Error: ' . $error->getMessage());

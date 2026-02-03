@@ -14,16 +14,25 @@
                 Peta Sebaran
             </h1>
             <p class="text-gray-600 dark:text-gray-400">
-                Layanan peta sebaran sedang dalam tahap pengembangan.
+                Silakan isi formulir untuk melakukan permohonan layanan peta sebaran.
             </p>
         </div>
 
-        <div class="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-1">
+                @include('components.form-peta-sebaran')
+            </div>
+            <div class="lg:col-span-2">
+                @include('components.table-peta-sebaran', ['permohonan' => $permohonan ?? []])
+            </div>
+        </div>
+
+        <div class="mt-12 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
             <h4 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                <i class="fas fa-info-circle mr-2"></i> Sedang Dikembangkan
+                <i class="fas fa-info-circle mr-2"></i> Informasi Penting
             </h4>
             <p class="text-blue-800 dark:text-blue-200 text-sm">
-                Fitur peta sebaran akan segera tersedia. Silakan kembali lagi nanti untuk informasi lebih lanjut.
+                Semua permohonan layanan peta sebaran akan diproses oleh tim kami. Anda dapat memantau status permohonan Anda di tabel yang tertera di atas.
             </p>
         </div>
     </div>

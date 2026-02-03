@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pemetaan;
+use App\Services\TelegramService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -74,7 +75,27 @@ class PemetaanController extends Controller
         $validated['status'] = 'Menunggu';
 
         try {
-            Pemetaan::create($validated);
+            $pemetaan = Pemetaan::create($validated);
+            
+            // Send Telegram notification
+            try {
+                $telegramService = new TelegramService();
+                
+                $telegramData = [
+                    'nama_lengkap' => $validated['nama_lengkap'],
+                    'email' => $validated['email'],
+                    'no_whatsapp' => $validated['no_whatsapp'],
+                    'area_pemetaan' => $validated['keterangan'] ?? '-',
+                    'keterangan' => $validated['keterangan'] ?? '-',
+                    'created_at' => $pemetaan->created_at->format('d-m-Y H:i'),
+                ];
+                
+                $telegramService->sendPermohonanNotification('pemetaan', $telegramData);
+            } catch (Exception $telegramError) {
+                \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                // Continue even if telegram fails
+            }
+            
             return back()->with('success', 'Permohonan layanan pemetaan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());

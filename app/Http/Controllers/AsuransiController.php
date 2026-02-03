@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asuransi;
+use App\Services\TelegramService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -50,7 +51,28 @@ class AsuransiController extends Controller
         $validated['user_id'] = Auth::id();
 
         try {
-            Asuransi::create($validated);
+            $asuransi = Asuransi::create($validated);
+            
+            // Send Telegram notification
+            try {
+                $telegramService = new TelegramService();
+                $user = Auth::user();
+                
+                $telegramData = [
+                    'nama_lengkap' => $validated['nama_lengkap'],
+                    'email' => $user->email,
+                    'no_whatsapp' => $validated['nomor_whatsapp'],
+                    'jenis_asuransi' => $validated['perusahaan'],
+                    'keterangan' => $validated['kejadian'] ?? '-',
+                    'created_at' => $asuransi->created_at->format('d-m-Y H:i'),
+                ];
+                
+                $telegramService->sendPermohonanNotification('asuransi', $telegramData);
+            } catch (Exception $telegramError) {
+                \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                // Continue even if telegram fails
+            }
+            
             return back()->with('success', 'Permohonan kunjungan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());

@@ -44,31 +44,47 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         @endif
 
         <div>
-            <x-input-label for="nama_lengkap">Nama Lengkap</x-input-label>
-            <x-text-input id="nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
-                :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap) : old('nama_lengkap')" required />
-            <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
+            <x-input-label for="perusahaan">Nama Perusahaan/Instansi</x-input-label>
+            <x-text-input id="perusahaan" class="block w-full mt-1" type="text" name="perusahaan" 
+                :value="$is_edit ? old('perusahaan', $permohonan->perusahaan) : old('perusahaan')" required />
+            <x-input-error :messages="$errors->get('perusahaan')" class="mt-2" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <x-input-label for="tanggal">Tanggal Kejadian</x-input-label>
+                <x-text-input id="tanggal" class="block w-full mt-1" type="date" name="tanggal" 
+                    :value="$is_edit ? old('tanggal', $permohonan->tanggal) : old('tanggal')" required />
+                <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
+            </div>
+            <div>
+                <x-input-label for="lokasi">Lokasi Kejadian</x-input-label>
+                <x-text-input id="lokasi" class="block w-full mt-1" type="text" name="lokasi" 
+                    :value="$is_edit ? old('lokasi', $permohonan->lokasi) : old('lokasi')" required />
+                <x-input-error :messages="$errors->get('lokasi')" class="mt-2" />
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <x-input-label for="latitude">Latitude</x-input-label>
+                <x-text-input id="latitude" class="block w-full mt-1" type="number" step="0.000001" name="latitude" 
+                    :value="$is_edit ? old('latitude', $permohonan->latitude) : old('latitude')" required />
+                <x-input-error :messages="$errors->get('latitude')" class="mt-2" />
+            </div>
+            <div>
+                <x-input-label for="longitude">Longitude</x-input-label>
+                <x-text-input id="longitude" class="block w-full mt-1" type="number" step="0.000001" name="longitude" 
+                    :value="$is_edit ? old('longitude', $permohonan->longitude) : old('longitude')" required />
+                <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
+            </div>
         </div>
 
         <div>
-            <x-input-label for="no_whatsapp">No WhatsApp</x-input-label>
-            <x-text-input id="no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
-                :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp) : old('no_whatsapp')" required />
-            <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
-        </div>
-
-        <div>
-            <x-input-label for="email">Email</x-input-label>
-            <x-text-input id="email" class="block w-full mt-1" type="email" name="email" 
-                :value="$is_edit ? old('email', $permohonan->email) : old('email')" required />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <div>
-            <x-input-label for="keterangan">Deskripsi Kebutuhan Pemetaan</x-input-label>
-            <textarea id="keterangan" name="keterangan" rows="3"
-                class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan) : old('keterangan') }}</textarea>
-            <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
+            <x-input-label for="kejadian">Deskripsi Kejadian</x-input-label>
+            <textarea id="kejadian" name="kejadian" rows="3" required
+                class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('kejadian', $permohonan->kejadian) : old('kejadian') }}</textarea>
+            <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
         </div>
 
         @if ($is_edit)

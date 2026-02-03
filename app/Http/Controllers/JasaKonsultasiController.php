@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JasaKonsultasi;
+use App\Services\TelegramService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -74,7 +75,26 @@ class JasaKonsultasiController extends Controller
         $validated['status'] = 'Menunggu';
 
         try {
-            JasaKonsultasi::create($validated);
+            $jasaKonsultasi = JasaKonsultasi::create($validated);
+            
+            // Send Telegram notification
+            try {
+                $telegramService = new TelegramService();
+                
+                $telegramData = [
+                    'nama_lengkap' => $validated['nama_lengkap'],
+                    'email' => $validated['email'],
+                    'no_whatsapp' => $validated['no_whatsapp'],
+                    'keterangan' => $validated['keterangan'] ?? '-',
+                    'created_at' => $jasaKonsultasi->created_at->format('d-m-Y H:i'),
+                ];
+                
+                $telegramService->sendPermohonanNotification('jasa_konsultasi', $telegramData);
+            } catch (Exception $telegramError) {
+                \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                // Continue even if telegram fails
+            }
+            
             return back()->with('success', 'Permohonan jasa konsultasi berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());

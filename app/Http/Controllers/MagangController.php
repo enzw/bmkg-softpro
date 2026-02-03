@@ -9,6 +9,7 @@ use App\Models\Pemetaan;
 use App\Models\PetaSebaran;
 use App\Models\Survey;
 use App\Models\JasaKonsultasi;
+use App\Services\TelegramService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -180,7 +181,45 @@ class MagangController extends Controller
         }
         
         try {
-            $model::create($validated);
+            $permohonan = $model::create($validated);
+            
+            // Send Telegram notification
+            try {
+                $telegramService = new TelegramService();
+                $user = Auth::user();
+                
+                // Map jenis_layanan to telegram type
+                $telegramTypeMap = [
+                    'Magang' => 'magang',
+                    'Layanan Klaim Asuransi' => 'asuransi',
+                    'Layanan Data' => 'layanan_data',
+                    'Layanan Pemetaan' => 'pemetaan',
+                    'Layanan Peta Sebaran' => 'peta_sebaran',
+                    'Layanan Survey' => 'survey',
+                    'Layanan Konsultasi' => 'jasa_konsultasi',
+                ];
+                
+                $telegramType = $telegramTypeMap[$jenis_layanan] ?? null;
+                
+                if ($telegramType) {
+                    $telegramData = $validated;
+                    $telegramData['created_at'] = $permohonan->created_at->format('d-m-Y H:i');
+                    
+                    // Add user info if not present
+                    if (!isset($telegramData['nama_lengkap']) && $jenis_layanan === 'Layanan Klaim Asuransi') {
+                        $telegramData['nama_lengkap'] = $user->name;
+                    }
+                    if (!isset($telegramData['email']) && $jenis_layanan === 'Layanan Klaim Asuransi') {
+                        $telegramData['email'] = $user->email;
+                    }
+                    
+                    $telegramService->sendPermohonanNotification($telegramType, $telegramData);
+                }
+            } catch (Exception $telegramError) {
+                \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                // Continue even if telegram fails
+            }
+            
             return back()->with('success', "Permohonan $jenis_layanan berhasil dibuat");
         } catch (Exception $error) {
             report($error->getMessage());

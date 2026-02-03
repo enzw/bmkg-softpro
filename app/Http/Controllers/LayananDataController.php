@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LayananData;
+use App\Services\TelegramService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -74,7 +75,27 @@ class LayananDataController extends Controller
         $validated['status'] = 'Menunggu';
 
         try {
-            LayananData::create($validated);
+            $layananData = LayananData::create($validated);
+            
+            // Send Telegram notification
+            try {
+                $telegramService = new TelegramService();
+                
+                $telegramData = [
+                    'nama_lengkap' => $validated['nama_lengkap'],
+                    'email' => $validated['email'],
+                    'no_whatsapp' => $validated['no_whatsapp'],
+                    'jenis_data' => $validated['keterangan'] ?? '-',
+                    'keterangan' => $validated['keterangan'] ?? '-',
+                    'created_at' => $layananData->created_at->format('d-m-Y H:i'),
+                ];
+                
+                $telegramService->sendPermohonanNotification('layanan_data', $telegramData);
+            } catch (Exception $telegramError) {
+                \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                // Continue even if telegram fails
+            }
+            
             return back()->with('success', 'Permohonan layanan data berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());

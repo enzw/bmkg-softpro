@@ -23,9 +23,9 @@
                     <table class="min-w-full">
                         <thead class="bg-gray-100 dark:bg-gray-700">
                             <tr>
-                                <th class="px-6 py-3 text-left text-gray-900 dark:text-white">Nama</th>
-                                <th class="px-6 py-3 text-left text-gray-900 dark:text-white">Email</th>
-                                <th class="px-6 py-3 text-left text-gray-900 dark:text-white">WhatsApp</th>
+                                <th class="px-6 py-3 text-left text-gray-900 dark:text-white">Perusahaan</th>
+                                <th class="px-6 py-3 text-left text-gray-900 dark:text-white">Tanggal</th>
+                                <th class="px-6 py-3 text-left text-gray-900 dark:text-white">Lokasi</th>
                                 <th class="px-6 py-3 text-left text-gray-900 dark:text-white">Status</th>
                                 <th class="px-6 py-3 text-left text-gray-900 dark:text-white">Tgl Permohonan</th>
                                 <th class="px-6 py-3 text-left text-gray-900 dark:text-white">Aksi</th>
@@ -34,9 +34,9 @@
                         <tbody>
                             @foreach ($pemetaan as $item)
                             <tr class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $item->nama_lengkap }}</td>
-                                <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $item->email }}</td>
-                                <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $item->no_whatsapp }}</td>
+                                <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $item->perusahaan }}</td>
+                                <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d M Y') : '-' }}</td>
+                                <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $item->lokasi }}</td>
                                 <td class="px-6 py-4">
                                     @php
                                         $status = $item->status ?? 'Menunggu';

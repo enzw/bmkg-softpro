@@ -41,10 +41,12 @@ class AdminPemetaanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_lengkap' => 'required',
-            'no_whatsapp' => 'required',
-            'email' => 'required|email',
-            'keterangan' => 'nullable',
+            'perusahaan' => 'required',
+            'tanggal' => 'required|date',
+            'lokasi' => 'required',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'kejadian' => 'required',
             'status' => 'nullable',
         ]);
 
@@ -95,10 +97,12 @@ class AdminPemetaanController extends Controller
     public function update(Request $request, Pemetaan $pemetaan)
     {
         $validated = $request->validate([
-            'nama_lengkap' => 'required',
-            'no_whatsapp' => 'required',
-            'email' => 'required|email',
-            'keterangan' => 'nullable',
+            'perusahaan' => 'required',
+            'tanggal' => 'required|date',
+            'lokasi' => 'required',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'kejadian' => 'required',
             'status' => 'nullable',
         ]);
 
