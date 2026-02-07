@@ -65,4 +65,4 @@ RUN chown -R www-data:www-data storage bootstrap/cache
 EXPOSE 10000
 
 # Start PHP-FPM
-CMD ["php-fpm"]
+CMD php artisan serve --host=0.0.0.0 --port=${PORT}
