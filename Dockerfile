@@ -65,6 +65,9 @@ RUN chown -R www-data:www-data storage bootstrap/cache
 EXPOSE 8080
 
 # Start Laravel HTTP server
-CMD php artisan migrate --force \
- && php artisan db:seed --force \
+CMD if [ "$RESET_DB" = "true" ]; then \
+      php artisan migrate:fresh --force --seed; \
+    else \
+      php artisan migrate --force; \
+    fi \
  && php artisan serve --host=0.0.0.0 --port=${PORT}
