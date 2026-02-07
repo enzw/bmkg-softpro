@@ -1,7 +1,13 @@
 <style>
 input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1) brightness(2);
+    filter: invert(0) brightness(1);
     cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) brightness(2);
+    }
 }
 </style>
 
@@ -48,31 +54,31 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         </div>
 
         <div>
-            <x-input-label for="perusahaan">Nama Instansi</x-input-label>
+            <x-input-label for="perusahaan">Nama Instansi <span class="text-red-500">*</span></x-input-label>
             <x-text-input id="perusahaan" class="block w-full mt-1" type="text" name="perusahaan" 
-                :value="old('perusahaan')" />
+                :value="old('perusahaan')" required />
             <x-input-error :messages="$errors->get('perusahaan')" class="mt-2" />
         </div>
 
         <div>
-            <x-input-label for="latitude">Nama Lengkap</x-input-label>
-            <x-text-input id="latitude" class="block w-full mt-1" type="text" name="latitude"
-                :value="old('latitude')" />
-            <x-input-error :messages="$errors->get('latitude')" class="mt-2" />
+            <x-input-label for="nama_lengkap">Nama Lengkap</x-input-label>
+            <x-text-input id="nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap"
+                :value="old('nama_lengkap')" />
+            <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
         </div>
 
         <div>
-            <x-input-label for="longitude">Nomor Whatsapp</x-input-label>
-            <x-text-input id="longitude" class="block w-full mt-1" type="text" name="longitude" 
-                :value="old('longitude')" />
-            <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
+            <x-input-label for="nomor_whatsapp">Nomor Whatsapp</x-input-label>
+            <x-text-input id="nomor_whatsapp" class="block w-full mt-1" type="text" name="nomor_whatsapp" 
+                :value="old('nomor_whatsapp')" />
+            <x-input-error :messages="$errors->get('nomor_whatsapp')" class="mt-2" />
         </div>
 
         <div>
-            <x-input-label for="lokasi">Jumlah Rombongan</x-input-label>
-            <x-text-input id="lokasi" class="block w-full mt-1" type="text" name="lokasi"
-                :value="old('lokasi')" />
-            <x-input-error :messages="$errors->get('lokasi')" class="mt-2" />
+            <x-input-label for="jumlah_rombongan">Jumlah Rombongan</x-input-label>
+            <x-text-input id="jumlah_rombongan" class="block w-full mt-1" type="text" name="jumlah_rombongan"
+                :value="old('jumlah_rombongan')" />
+            <x-input-error :messages="$errors->get('jumlah_rombongan')" class="mt-2" />
         </div>
 
         <div>

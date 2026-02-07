@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Drop old/unused konsultasis table - replaced by jasa_konsultasis
-        if (Schema::hasTable('konsultasis')) {
-            Schema::drop('konsultasis');
-        }
+        Schema::table('sewa_alats', function (Blueprint $table) {
+            $table->string('nama')->nullable()->after('user_id');
+            $table->string('no_whatsapp')->nullable()->after('nama');
+        });
     }
 
     /**
@@ -22,10 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Recreate if needed
-        Schema::create('konsultasis', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('sewa_alats', function (Blueprint $table) {
+            $table->dropColumn(['nama', 'no_whatsapp']);
         });
     }
 };

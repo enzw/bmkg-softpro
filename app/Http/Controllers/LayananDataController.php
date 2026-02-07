@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LayananData;
+use App\Services\TelegramService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -74,7 +75,35 @@ class LayananDataController extends Controller
         $validated['status'] = 'Menunggu';
 
         try {
-            LayananData::create($validated);
+            $layananData = LayananData::create($validated);
+            
+            // Send Telegram notification with document
+            try {
+                $telegramService = new TelegramService();
+                
+                $telegramData = [
+                    'nama_lengkap' => $validated['nama_lengkap'],
+                    'email' => $validated['email'],
+                    'no_whatsapp' => $validated['no_whatsapp'],
+                    'jenis_data' => $validated['keterangan'] ?? '-',
+                    'keterangan' => $validated['keterangan'] ?? '-',
+                    'surat_permohonan' => $validated['surat_permohonan'] ?? null,
+                    'created_at' => $layananData->created_at->format('d-m-Y H:i'),
+                ];
+                
+                // Get the full path to the document if it exists
+                $documentPath = null;
+                if (!empty($validated['surat_permohonan'])) {
+                    $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                }
+                
+                // Send notification with document
+                $telegramService->sendPermohonanWithDocument('layanan_data', $telegramData, $documentPath);
+            } catch (Exception $telegramError) {
+                \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                // Continue even if telegram fails
+            }
+            
             return back()->with('success', 'Permohonan layanan data berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Alat;
 use App\Models\SewaAlat;
+use App\Services\TelegramService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -28,6 +29,8 @@ class SewaAlatController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'no_whatsapp' => 'required|string|max:20',
             'alat_id' => 'required',
             'banyak_unit' => 'required|numeric|min:1',
             'sewa_mulai' => 'required|date',
@@ -80,7 +83,45 @@ class SewaAlatController extends Controller
             ->first();
 
         try {
-            SewaAlat::create($validated);
+            $sewaAlat = SewaAlat::create($validated);
+            
+            // Send Telegram notification
+            try {
+                $telegramService = new TelegramService();
+                $alat = Alat::find($validated['alat_id']);
+                $user = Auth::user();
+                
+                $telegramData = [
+                    'user_name' => $user->name,
+                    'email' => $user->email,
+                    'no_whatsapp' => $validated['no_whatsapp'] ?? '-',
+                    'nama' => $validated['nama'] ?? '-',
+                    'alat_name' => $alat->nama ?? '-',
+                    'banyak_unit' => $validated['banyak_unit'],
+                    'sewa_mulai' => $validated['sewa_mulai'],
+                    'sewa_berakhir' => $validated['sewa_berakhir'],
+                    'keterangan' => $validated['keterangan'] ?? '-',
+                    'surat_permohonan' => $validated['surat_permohonan'] ?? null,
+                    'created_at' => $sewaAlat->created_at->format('d-m-Y H:i'),
+                ];
+                
+                // Get full path to document if exists
+                $documentPath = null;
+                if (!empty($validated['surat_permohonan'])) {
+                    $documentPath = Storage::disk('local')->path($validated['surat_permohonan']);
+                }
+                
+                // Send notification with document if available
+                if ($documentPath && file_exists($documentPath)) {
+                    $telegramService->sendPermohonanWithDocument('sewa_alat', $telegramData, $documentPath);
+                } else {
+                    $telegramService->sendPermohonanNotification('sewa_alat', $telegramData);
+                }
+            } catch (Exception $telegramError) {
+                \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                // Continue even if telegram fails
+            }
+            
             return back()->with('success', 'Permohonan berhasil dibuat');
         } catch (Exception $error) {
             \Log::error('Sewa Alat Error: ' . $error->getMessage());

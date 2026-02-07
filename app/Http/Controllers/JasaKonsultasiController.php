@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JasaKonsultasi;
+use App\Services\TelegramService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -74,7 +75,34 @@ class JasaKonsultasiController extends Controller
         $validated['status'] = 'Menunggu';
 
         try {
-            JasaKonsultasi::create($validated);
+            $jasaKonsultasi = JasaKonsultasi::create($validated);
+            
+            // Send Telegram notification with document
+            try {
+                $telegramService = new TelegramService();
+                
+                $telegramData = [
+                    'nama_lengkap' => $validated['nama_lengkap'],
+                    'email' => $validated['email'],
+                    'no_whatsapp' => $validated['no_whatsapp'],
+                    'keterangan' => $validated['keterangan'] ?? '-',
+                    'surat_permohonan' => $validated['surat_permohonan'] ?? null,
+                    'created_at' => $jasaKonsultasi->created_at->format('d-m-Y H:i'),
+                ];
+                
+                // Get the full path to the document if it exists
+                $documentPath = null;
+                if (!empty($validated['surat_permohonan'])) {
+                    $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                }
+                
+                // Send notification with document
+                $telegramService->sendPermohonanWithDocument('jasa_konsultasi', $telegramData, $documentPath);
+            } catch (Exception $telegramError) {
+                \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                // Continue even if telegram fails
+            }
+            
             return back()->with('success', 'Permohonan jasa konsultasi berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
@@ -111,15 +139,33 @@ class JasaKonsultasiController extends Controller
      */
     public function destroy(JasaKonsultasi $jasa_konsultasi)
     {
+        // Check if the jasa_konsultasi belongs to the current user
+        if ($jasa_konsultasi->user_id !== Auth::id()) {
+            if (request()->expectsJson()) {
+                return response()->json(['message' => 'Anda tidak memiliki akses untuk menghapus permohonan ini'], 403);
+            }
+            return back()->with('error', 'Anda tidak memiliki akses untuk menghapus permohonan ini');
+        }
+
         try {
             if ($jasa_konsultasi->surat_permohonan) {
                 Storage::disk('local')->delete($jasa_konsultasi->surat_permohonan);
             }
             $jasa_konsultasi->delete();
+            
+            // Return JSON if it's an AJAX request, otherwise redirect
+            if (request()->expectsJson()) {
+                return response()->json(['message' => 'Permohonan jasa konsultasi berhasil dihapus'], 200);
+            }
             return back()->with('success', 'Permohonan jasa konsultasi berhasil dihapus');
         } catch (Exception $error) {
             report($error->getMessage());
-            return back()->with('error', 'Permohonan jasa konsultasi gagal dihapus: ' . $error->getMessage());
+            $message = 'Permohonan jasa konsultasi gagal dihapus: ' . $error->getMessage();
+            
+            if (request()->expectsJson()) {
+                return response()->json(['message' => $message], 500);
+            }
+            return back()->with('error', $message);
         }
     }
 

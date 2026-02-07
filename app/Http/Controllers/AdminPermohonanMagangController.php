@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Magang;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Asuransi;
 use App\Models\LayananData;
-use App\Models\Pemetaan;
 use App\Models\Survey;
 use App\Models\JasaKonsultasi;
+use App\Services\TelegramService;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Exception;
@@ -16,6 +17,16 @@ use Illuminate\Support\Collection;
 
 class AdminPermohonanMagangController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (Auth::check() && Auth::user()->role !== 'admin') {
+                return redirect('/dashboard-pelayanan')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+            }
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -33,8 +44,8 @@ class AdminPermohonanMagangController extends Controller
         
         $asuransiData = Asuransi::all()->map(function($item) {
             $item->jenis_layanan = 'Layanan Klaim Asuransi';
-            $item->nama_lengkap = $item->latitude ?? '-';
-            $item->no_whatsapp = $item->longitude ?? '-';
+            $item->nama_lengkap = $item->perusahaan ?? '-';
+            $item->no_whatsapp = $item->no_whatsapp ?? '-';
             $item->email = null;
             return $item;
         });
@@ -42,36 +53,27 @@ class AdminPermohonanMagangController extends Controller
         $datumData = LayananData::all()->map(function($item) {
             $item->jenis_layanan = 'Layanan Data';
             $item->nama_lengkap = $item->nama_lengkap ?? '-';
-            $item->no_whatsapp = $item->no_telepon ?? '-';
+            $item->no_whatsapp = $item->no_whatsapp ?? '-';
             $item->email = $item->email ?? null;
-            $item->keterangan = $item->deskripsi ?? null;
-            return $item;
-        });
-        
-        $pemetaanData = Pemetaan::all()->map(function($item) {
-            $item->jenis_layanan = 'Layanan Pemetaan';
-            $item->nama_lengkap = $item->nama_lengkap ?? '-';
-            $item->no_whatsapp = $item->no_telepon ?? '-';
-            $item->email = $item->email ?? null;
-            $item->keterangan = $item->deskripsi ?? null;
+            $item->keterangan = $item->keterangan ?? null;
             return $item;
         });
         
         $surveyData = Survey::all()->map(function($item) {
             $item->jenis_layanan = 'Layanan Survey';
             $item->nama_lengkap = $item->nama_lengkap ?? '-';
-            $item->no_whatsapp = $item->no_telepon ?? '-';
+            $item->no_whatsapp = $item->no_whatsapp ?? '-';
             $item->email = $item->email ?? null;
-            $item->keterangan = $item->deskripsi ?? null;
+            $item->keterangan = $item->keterangan ?? null;
             return $item;
         });
         
         $konsultasiData = JasaKonsultasi::all()->map(function($item) {
             $item->jenis_layanan = 'Layanan Konsultasi';
             $item->nama_lengkap = $item->nama_lengkap ?? '-';
-            $item->no_whatsapp = $item->no_telepon ?? '-';
+            $item->no_whatsapp = $item->no_whatsapp ?? '-';
             $item->email = $item->email ?? null;
-            $item->keterangan = $item->topik ?? null;
+            $item->keterangan = $item->keterangan ?? null;
             return $item;
         });
         
@@ -80,7 +82,6 @@ class AdminPermohonanMagangController extends Controller
             ->merge($magangData)
             ->merge($asuransiData)
             ->merge($datumData)
-            ->merge($pemetaanData)
             ->merge($surveyData)
             ->merge($konsultasiData)
             ->sortByDesc('created_at');
@@ -109,21 +110,245 @@ class AdminPermohonanMagangController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'universitas' => 'required',
-            'fakultas' => 'required',
-            'prodi' => 'required',
-            'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-            'status' => 'nullable',
-        ]);
+        $jenis_layanan = $request->input('jenis_layanan');
+        $validated = [];
 
         try {
-            Magang::create($validated);
-            return redirect()->route('admin.pelayanan-jasa.index')->with('success', 'Permohonan berhasil dibuat');
+            if ($jenis_layanan === 'Magang') {
+                $validated = $request->validate([
+                    'jenis_layanan' => 'required',
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'universitas' => 'required|string',
+                    'fakultas' => 'required|string',
+                    'prodi' => 'required|string',
+                    'tanggal_mulai' => 'required|date',
+                    'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+                    'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'kartu_mahasiswa' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+                ]);
+                $validated['user_id'] = auth()->id();
+                
+                // Handle file uploads
+                if ($request->hasFile('surat_permohonan')) {
+                    $file = $request->file('surat_permohonan');
+                    $path = $file->store('permohonan/magang');
+                    $validated['surat_permohonan'] = $path;
+                }
+                
+                if ($request->hasFile('kartu_mahasiswa')) {
+                    $file = $request->file('kartu_mahasiswa');
+                    $path = $file->store('permohonan/magang');
+                    $validated['kartu_mahasiswa'] = $path;
+                }
+                
+                $permohonan = Magang::create($validated);
+                
+                // Send Telegram notification with document
+                try {
+                    $telegramService = new TelegramService();
+                    $telegramData = $validated;
+                    $telegramData['created_at'] = $permohonan->created_at->format('d-m-Y H:i');
+                    
+                    // Get the full path to the document if it exists
+                    $documentPath = null;
+                    if (!empty($validated['surat_permohonan'])) {
+                        $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                    }
+                    
+                    // Send notification with document
+                    if ($documentPath && file_exists($documentPath)) {
+                        $telegramService->sendPermohonanWithDocument('magang', $telegramData, $documentPath);
+                    } else {
+                        $telegramService->sendPermohonanNotification('magang', $telegramData);
+                    }
+                } catch (Exception $telegramError) {
+                    \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                }
+                
+            } elseif ($jenis_layanan === 'Layanan Klaim Asuransi') {
+                $validated = $request->validate([
+                    'jenis_layanan' => 'required',
+                    'nama_user' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'tanggal' => 'required|date',
+                    'lokasi' => 'required|string',
+                    'latitude' => 'nullable|numeric',
+                    'longitude' => 'nullable|numeric',
+                    'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                ]);
+                $validated['user_id'] = auth()->id();
+                
+                // Handle file uploads
+                if ($request->hasFile('surat_permohonan')) {
+                    $file = $request->file('surat_permohonan');
+                    $path = $file->store('permohonan/asuransi');
+                    $validated['surat_permohonan'] = $path;
+                }
+                
+                $permohonan = Asuransi::create($validated);
+                
+                // Send Telegram notification with document
+                try {
+                    $telegramService = new TelegramService();
+                    $telegramData = $validated;
+                    $telegramData['created_at'] = $permohonan->created_at->format('d-m-Y H:i');
+                    
+                    // Get the full path to the document if it exists
+                    $documentPath = null;
+                    if (!empty($validated['surat_permohonan'])) {
+                        $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                    }
+                    
+                    // Send notification with document
+                    if ($documentPath && file_exists($documentPath)) {
+                        $telegramService->sendPermohonanWithDocument('asuransi', $telegramData, $documentPath);
+                    } else {
+                        $telegramService->sendPermohonanNotification('asuransi', $telegramData);
+                    }
+                } catch (Exception $telegramError) {
+                    \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                }
+                
+            } elseif ($jenis_layanan === 'Layanan Data') {
+                $validated = $request->validate([
+                    'jenis_layanan' => 'required',
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'keterangan' => 'required|string',
+                    'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                ]);
+                $validated['user_id'] = auth()->id();
+                
+                // Handle file upload
+                if ($request->hasFile('surat_permohonan')) {
+                    $file = $request->file('surat_permohonan');
+                    $path = $file->store('permohonan/data');
+                    $validated['surat_permohonan'] = $path;
+                }
+                
+                $permohonan = LayananData::create($validated);
+                
+                // Send Telegram notification with document
+                try {
+                    $telegramService = new TelegramService();
+                    $telegramData = $validated;
+                    $telegramData['created_at'] = $permohonan->created_at->format('d-m-Y H:i');
+                    
+                    // Get the full path to the document if it exists
+                    $documentPath = null;
+                    if (!empty($validated['surat_permohonan'])) {
+                        $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                    }
+                    
+                    // Send notification with document
+                    if ($documentPath && file_exists($documentPath)) {
+                        $telegramService->sendPermohonanWithDocument('layanan_data', $telegramData, $documentPath);
+                    } else {
+                        $telegramService->sendPermohonanNotification('layanan_data', $telegramData);
+                    }
+                } catch (Exception $telegramError) {
+                    \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                }
+                
+            } elseif ($jenis_layanan === 'Layanan Survey') {
+                $validated = $request->validate([
+                    'jenis_layanan' => 'required',
+                    'nama_lengkap' => 'nullable|string',
+                    'no_whatsapp' => 'nullable|string',
+                    'email' => 'nullable|email',
+                    'keterangan' => 'nullable|string',
+                    'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                ]);
+                $validated['user_id'] = auth()->id();
+                
+                // Handle file upload
+                if ($request->hasFile('surat_permohonan')) {
+                    $file = $request->file('surat_permohonan');
+                    $path = $file->store('permohonan/survey');
+                    $validated['surat_permohonan'] = $path;
+                }
+                
+                $permohonan = Survey::create($validated);
+                
+                // Send Telegram notification with document
+                try {
+                    $telegramService = new TelegramService();
+                    $telegramData = $validated;
+                    $telegramData['created_at'] = $permohonan->created_at->format('d-m-Y H:i');
+                    
+                    // Get the full path to the document if it exists
+                    $documentPath = null;
+                    if (!empty($validated['surat_permohonan'])) {
+                        $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                    }
+                    
+                    // Send notification with document
+                    if ($documentPath && file_exists($documentPath)) {
+                        $telegramService->sendPermohonanWithDocument('survey', $telegramData, $documentPath);
+                    } else {
+                        $telegramService->sendPermohonanNotification('survey', $telegramData);
+                    }
+                } catch (Exception $telegramError) {
+                    \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                }
+                
+            } elseif ($jenis_layanan === 'Layanan Konsultasi') {
+                $validated = $request->validate([
+                    'jenis_layanan' => 'required',
+                    'nama_lengkap' => 'nullable|string',
+                    'no_whatsapp' => 'nullable|string',
+                    'email' => 'nullable|email',
+                    'keterangan' => 'nullable|string',
+                    'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                ]);
+                $validated['user_id'] = auth()->id();
+                
+                // Handle file upload
+                if ($request->hasFile('surat_permohonan')) {
+                    $file = $request->file('surat_permohonan');
+                    $path = $file->store('permohonan/konsultasi');
+                    $validated['surat_permohonan'] = $path;
+                }
+                
+                $permohonan = JasaKonsultasi::create($validated);
+                
+                // Send Telegram notification with document
+                try {
+                    $telegramService = new TelegramService();
+                    $telegramData = $validated;
+                    $telegramData['created_at'] = $permohonan->created_at->format('d-m-Y H:i');
+                    
+                    // Get the full path to the document if it exists
+                    $documentPath = null;
+                    if (!empty($validated['surat_permohonan'])) {
+                        $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                    }
+                    
+                    // Send notification with document
+                    if ($documentPath && file_exists($documentPath)) {
+                        $telegramService->sendPermohonanWithDocument('jasa_konsultasi', $telegramData, $documentPath);
+                    } else {
+                        $telegramService->sendPermohonanNotification('jasa_konsultasi', $telegramData);
+                    }
+                } catch (Exception $telegramError) {
+                    \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                }
+                
+            } else {
+                return redirect()->route('admin.pelayanan-jasa.create')
+                    ->with('error', 'Jenis layanan tidak valid');
+            }
+
+            return redirect()->route('admin.pelayanan-jasa.index')
+                ->with('success', 'Permohonan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
-            return redirect()->route('admin.pelayanan-jasa.create')->with('error', 'Permohonan gagal dibuat: ' . $error->getMessage());
+            return redirect()->route('admin.pelayanan-jasa.create')
+                ->withInput()
+                ->with('error', 'Permohonan gagal dibuat: ' . $error->getMessage());
         }
     }
 
@@ -145,7 +370,6 @@ class AdminPermohonanMagangController extends Controller
         $permohonan = Magang::find($id) 
             ?? Asuransi::find($id)
             ?? LayananData::find($id)
-            ?? Pemetaan::find($id)
             ?? Survey::find($id)
             ?? JasaKonsultasi::find($id);
 
@@ -170,7 +394,6 @@ class AdminPermohonanMagangController extends Controller
         $permohonan = Magang::find($id) 
             ?? Asuransi::find($id)
             ?? LayananData::find($id)
-            ?? Pemetaan::find($id)
             ?? Survey::find($id)
             ?? JasaKonsultasi::find($id);
 
@@ -178,28 +401,93 @@ class AdminPermohonanMagangController extends Controller
             return redirect()->route('admin.pelayanan-jasa.index')->with('error', 'Permohonan tidak ditemukan');
         }
 
-        // Validate based on model type
-        $validated = [];
-        if ($permohonan instanceof Magang) {
-            $validated = $request->validate([
-                'nama_lengkap' => 'nullable|string',
-                'no_whatsapp' => 'nullable|string',
-                'email' => 'nullable|email',
-                'universitas' => 'required|string',
-                'fakultas' => 'required|string',
-                'prodi' => 'required|string',
-                'tanggal_mulai' => 'required|date',
-                'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-                'status' => 'nullable',
-            ]);
-        } else {
-            // For other models, accept common fields
-            $validated = $request->validate([
-                'status' => 'nullable',
-            ]);
-        }
-
         try {
+            // Validate and update based on model type
+            if ($permohonan instanceof Magang) {
+                $validated = $request->validate([
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'universitas' => 'required|string',
+                    'fakultas' => 'required|string',
+                    'prodi' => 'required|string',
+                    'tanggal_mulai' => 'required|date',
+                    'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+                    'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'kartu_mahasiswa' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+                    'status' => 'nullable',
+                ]);
+                
+            } elseif ($permohonan instanceof Asuransi) {
+                $validated = $request->validate([
+                    'nama_user' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'tanggal' => 'required|date',
+                    'lokasi' => 'required|string',
+                    'latitude' => 'nullable|numeric',
+                    'longitude' => 'nullable|numeric',
+                    'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'status' => 'nullable',
+                ]);
+                
+            } elseif ($permohonan instanceof LayananData) {
+                $validated = $request->validate([
+                    'nama_lengkap' => 'required|string',
+                    'no_whatsapp' => 'required|string',
+                    'email' => 'required|email',
+                    'keterangan' => 'required|string',
+                    'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'status' => 'nullable',
+                ]);
+                
+            } elseif ($permohonan instanceof Survey) {
+                $validated = $request->validate([
+                    'nama_lengkap' => 'nullable|string',
+                    'no_whatsapp' => 'nullable|string',
+                    'email' => 'nullable|email',
+                    'keterangan' => 'nullable|string',
+                    'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'status' => 'nullable',
+                ]);
+                
+            } elseif ($permohonan instanceof JasaKonsultasi) {
+                $validated = $request->validate([
+                    'nama_lengkap' => 'nullable|string',
+                    'no_whatsapp' => 'nullable|string',
+                    'email' => 'nullable|email',
+                    'keterangan' => 'nullable|string',
+                    'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'status' => 'nullable',
+                ]);
+            }
+
+            // Handle file uploads
+            if ($request->hasFile('surat_permohonan')) {
+                // Delete old file if exists
+                if ($permohonan->surat_permohonan && Storage::disk('local')->exists($permohonan->surat_permohonan)) {
+                    Storage::disk('local')->delete($permohonan->surat_permohonan);
+                }
+                
+                $file = $request->file('surat_permohonan');
+                $modelType = class_basename($permohonan);
+                $folder = strtolower(str_replace('Jasa', '', $modelType));
+                $path = $file->store('permohonan/' . $folder);
+                $validated['surat_permohonan'] = $path;
+            }
+
+            if ($request->hasFile('kartu_mahasiswa') && $permohonan instanceof Magang) {
+                // Delete old file if exists
+                if ($permohonan->kartu_mahasiswa && Storage::disk('local')->exists($permohonan->kartu_mahasiswa)) {
+                    Storage::disk('local')->delete($permohonan->kartu_mahasiswa);
+                }
+                
+                $file = $request->file('kartu_mahasiswa');
+                $modelType = class_basename($permohonan);
+                $folder = strtolower(str_replace('Jasa', '', $modelType));
+                $path = $file->store('permohonan/' . $folder);
+                $validated['kartu_mahasiswa'] = $path;
+            }
+
             $permohonan->update($validated);
             return redirect()->route('admin.pelayanan-jasa.index')->with('success', 'Permohonan berhasil diupdate');
         } catch (Exception $error) {
@@ -218,7 +506,6 @@ class AdminPermohonanMagangController extends Controller
             $permohonan = Magang::find($id) 
                 ?? Asuransi::find($id)
                 ?? LayananData::find($id)
-                ?? Pemetaan::find($id)
                 ?? Survey::find($id)
                 ?? JasaKonsultasi::find($id);
 
@@ -241,6 +528,31 @@ class AdminPermohonanMagangController extends Controller
                 return response()->json(['message' => 'Permohonan gagal dihapus: ' . $error->getMessage()], 500);
             }
             return back()->with('error', 'Permohonan gagal dihapus: ' . $error->getMessage());
+        }
+    }
+
+    /**
+     * Download surat permohonan dari magang/layanan jasa
+     */
+    public function download(Magang $pelayanan_jasa)
+    {
+        if (!$pelayanan_jasa->surat_permohonan) {
+            return back()->with('error', 'File surat permohonan tidak ditemukan');
+        }
+
+        try {
+            $path = $pelayanan_jasa->surat_permohonan;
+            
+            if (!Storage::exists($path)) {
+                return back()->with('error', 'File tidak ditemukan di server');
+            }
+
+            $fileName = 'surat-permohonan-' . $pelayanan_jasa->id . '.' . pathinfo($path, PATHINFO_EXTENSION);
+            
+            return Storage::download($path, $fileName);
+        } catch (Exception $error) {
+            \Log::error('Download Permohonan Error: ' . $error->getMessage());
+            return back()->with('error', 'Gagal mengunduh file: ' . $error->getMessage());
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asuransi;
+use App\Services\TelegramService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -38,19 +39,44 @@ class AsuransiController extends Controller
      */
     public function store(Request $request)
     {
+        \Log::info('Form submission:', $request->all());
+        
         $validated = $request->validate([
-            'perusahaan' => 'required',
+            'perusahaan' => 'required|string',
             'tanggal' => 'required|date',
-            'lokasi' => 'required',
-            'latitude' => 'required',
-            'longitude' => 'required',
-            'kejadian'=> 'required',
+            'jumlah_rombongan' => 'required|string',
+            'nama_lengkap' => 'required|string',
+            'nomor_whatsapp' => 'required|string',
+            'kejadian' => 'required|string',
         ]);
 
         $validated['user_id'] = Auth::id();
 
         try {
-            Asuransi::create($validated);
+            $asuransi = Asuransi::create($validated);
+            
+            // Send Telegram notification with document
+            try {
+                $telegramService = new TelegramService();
+                $user = Auth::user();
+                
+                $telegramData = [
+                    'nama_lengkap' => $validated['nama_lengkap'],
+                    'email' => $user->email,
+                    'no_whatsapp' => $validated['nomor_whatsapp'],
+                    'jenis_asuransi' => $validated['perusahaan'],
+                    'keterangan' => $validated['kejadian'] ?? '-',
+                    'created_at' => $asuransi->created_at->format('d-m-Y H:i'),
+                ];
+                
+                // Asuransi tidak memiliki surat_permohonan, jadi documentPath selalu null
+                // Ini hanya mengirim notifikasi tanpa dokumen
+                $telegramService->sendPermohonanWithDocument('asuransi', $telegramData, null);
+            } catch (Exception $telegramError) {
+                \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                // Continue even if telegram fails
+            }
+            
             return back()->with('success', 'Permohonan kunjungan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());

@@ -50,6 +50,11 @@
     </script>
     @include('components.footer')
 
+    {{-- Session Timeout Warning --}}
+    @auth
+        <script src="{{ asset('js/session-timeout.js') }}"></script>
+    @endauth
+
     {{-- Font Awesome --}}
     {{-- <script src="https://kit.fontawesome.com/1191ef92be.js" crossorigin="anonymous"></script> --}}
 </body>

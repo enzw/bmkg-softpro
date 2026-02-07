@@ -224,7 +224,7 @@ function deleteRecord(recordId) {
                     <a :href="edit"
                         class="w-full p-3 mt-5 text-center text-gray-600 uppercase border border-gray-600 rounded hover:bg-gray-500 hover:text-white ms-auto">Edit
                         Permohonan</a>
-                    <button type="button" @click="showModalPermohonan = false; showModalBatalPermohonan = true"
+                    <button type="button" onclick="openDeleteModal('{{ route('admin.permohonan-kunjungan.destroy', ['permohonan_kunjungan' => $item]) }}', 'Hapus permohonan ini?')"
                         class="w-full p-3 mt-5 text-center text-white uppercase bg-red-400 rounded hover:bg-red-500 ms-auto">Batalkan
                         Permohonan</button>
                 </div>
@@ -234,38 +234,46 @@ function deleteRecord(recordId) {
     <!-- /Modal -->
 
     <!-- Modal Confirm Delete -->
-    <div class="fixed inset-0 z-30 overflow-auto bg-black bg-opacity-50" x-show="showModalBatalPermohonan"
-        x-transition.opacity x-cloak>
-
-        <!-- Modal inner -->
-        <div class="w-full max-w-sm p-6 mx-auto mt-20 mb-10 text-left bg-white rounded-lg shadow-lg dark:bg-slate-800"
-            @click.away="showModalBatalPermohonan = false" x-transition>
-            <!-- Title / Close-->
-            <div class="flex items-center justify-between mb-5">
-                <h5 class="mr-3 font-bold max-w-none">Batalkan Permohonan</h5>
-
-                <button type="button" class="z-50 cursor-pointer" @click="showModalBatalPermohonan = false">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+    <div id="modal-delete-confirm" class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full shadow-2xl">
+            <div class="flex items-center justify-center w-16 h-16 mx-auto mt-6 rounded-full bg-red-100 dark:bg-red-900/20">
+                <i class="fas fa-exclamation-triangle text-3xl text-red-600 dark:text-red-400"></i>
+            </div>
+            
+            <div class="mt-4 text-center px-6">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Hapus Permohonan?</h3>
+                <p class="text-gray-600 dark:text-gray-400 mt-2" id="delete-message">Yakin ingin menghapus permohonan ini?</p>
+                <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">Tindakan ini tidak dapat dibatalkan.</p>
             </div>
 
-            <!-- content -->
-            <div class="modal-content">
-                <p>Anda yakin akan membatalkan permohonan?</p>
-
-                <form :action="action" method="post" class="flex gap-3 w-full *:flex-1 mt-5">
-                    @csrf @method('delete')
-
-                    <button type="button" class="p-3 rouded" @click="showModalBatalPermohonan = false">Tidak</button>
-                    <button type="submit" class="p-3 text-center text-white bg-red-400 rounded hover:bg-red-500">Ya,
-                        Batalkan</butt>
+            <div class="flex gap-3 p-6">
+                <button type="button" onclick="closeDeleteModal()"
+                    class="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
+                    Batal
+                </button>
+                <form id="delete-form" method="POST" class="inline w-full">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="w-full px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white font-semibold transition">
+                        <i class="fas fa-trash mr-2"></i>Hapus
+                    </button>
                 </form>
             </div>
         </div>
     </div>
     <!-- /Modal Confirm Delete -->
 </div>
+
+<script>
+function openDeleteModal(action, message) {
+    document.getElementById('delete-form').action = action;
+    document.getElementById('delete-message').textContent = message;
+    document.getElementById('modal-delete-confirm').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDeleteModal() {
+    document.getElementById('modal-delete-confirm').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+</script>

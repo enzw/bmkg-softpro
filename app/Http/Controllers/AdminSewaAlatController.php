@@ -12,6 +12,16 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminSewaAlatController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (Auth::check() && Auth::user()->role !== 'admin') {
+                return redirect('/dashboard-pelayanan')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+            }
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -47,6 +57,8 @@ class AdminSewaAlatController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'no_whatsapp' => 'required|string|max:20',
             'alat_id' => 'required',
             'banyak_unit' => 'required|numeric',
             'sewa_mulai' => 'required|date',
@@ -122,6 +134,8 @@ class AdminSewaAlatController extends Controller
     {
         // Validasi input
         $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'no_whatsapp' => 'required|string|max:20',
             'alat_id' => 'required',
             'banyak_unit' => 'required|numeric',
             'status' => 'required',
@@ -218,5 +232,26 @@ class AdminSewaAlatController extends Controller
             \Log::error('Download Error: ' . $error->getMessage());
             return back()->with('error', 'Gagal mengunduh file: ' . $error->getMessage());
         }
+    }
+
+    /**
+     * Download file
+     */
+    public function downloadFile($id, $fileName)
+    {
+        $sewaAlat = SewaAlat::findOrFail($id);
+
+        // Security: validate that the file belongs to this record
+        if (!$sewaAlat->surat_permohonan || !str_contains($sewaAlat->surat_permohonan, $fileName)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        $filePath = storage_path('app/' . $sewaAlat->surat_permohonan);
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        return response()->download($filePath, $fileName);
     }
 }

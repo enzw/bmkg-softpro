@@ -5,18 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PetaSebaran extends Model
+class Kunjungan extends Model
 {
     use HasFactory;
 
-    protected $table = 'peta_sebarans';
+    protected $table = 'kunjungans';
     
     protected $guarded = ['id'];
 
     protected $fillable = [
         'user_id',
-        'perusahaan',
-        'minta_data',
+        'jenis_kunjungan',
+        'nama_instansi',
+        'nama_lengkap',
+        'no_whatsapp',
+        'jumlah_rombongan',
+        'rencana_kunjungan',
+        'surat_permohonan',
+        'status',
     ];
 
     public function user()

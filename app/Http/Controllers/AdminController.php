@@ -4,40 +4,60 @@ namespace App\Http\Controllers;
 
 use App\Models\Asuransi;
 use App\Models\JasaKonsultasi;
+use App\Models\Kunjungan;
 use App\Models\LayananData;
 use App\Models\Magang;
-use App\Models\Pemetaan;
-use App\Models\PetaSebaran;
 use App\Models\SewaAlat;
 use App\Models\Survey;
+use App\Traits\StatusMapper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
+    use StatusMapper;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (Auth::check() && Auth::user()->role !== 'admin') {
+                return redirect('/dashboard-pelayanan')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+            }
+            return $next($request);
+        });
+    }
+
     public function dashboard()
     {
         $sewa_alat = SewaAlat::all();
         $magang = Magang::all();
+        $kunjungan = Kunjungan::all();
         $asuransi = Asuransi::all();
         $jasa_konsultasi = JasaKonsultasi::all();
-        $pemetaan = Pemetaan::all();
         $survey = Survey::all();
         $layanan_data = LayananData::all();
-        $peta_sebaran = PetaSebaran::all();
+        
+        // Helper function untuk count dengan mapping status untuk Sewa Alat
+        $countSewaAlatByDisplayStatus = function($collection, $displayStatus) {
+            $dbStatuses = self::getSewaAlatDbStatusesForDisplay($displayStatus);
+            return $collection->filter(function($item) use ($dbStatuses) {
+                return in_array($item->status, $dbStatuses);
+            })->count();
+        };
         
         // Hitung statistik permohonan berdasarkan status
         $statistik = [
-            'total' => $sewa_alat->count() + $magang->count() + $asuransi->count() + 
-                       $jasa_konsultasi->count() + $pemetaan->count() + $survey->count() + 
-                       $layanan_data->count() + $peta_sebaran->count(),
+            'total' => $sewa_alat->count() + $magang->count() + $kunjungan->count() + $asuransi->count() + 
+                       $jasa_konsultasi->count() + $survey->count() + 
+                       $layanan_data->count(),
             'sewa_alat' => [
                 'total' => $sewa_alat->count(),
-                'menunggu' => $sewa_alat->where('status', 'Menunggu')->count(),
-                'diproses' => $sewa_alat->where('status', 'Diproses')->count(),
-                'selesai' => $sewa_alat->where('status', 'Selesai')->count(),
+                'menunggu' => $countSewaAlatByDisplayStatus($sewa_alat, 'Menunggu'),
+                'diproses' => $countSewaAlatByDisplayStatus($sewa_alat, 'Diproses'),
+                'selesai' => $countSewaAlatByDisplayStatus($sewa_alat, 'Selesai'),
                 'ditolak' => $sewa_alat->where('status', 'Ditolak')->count(),
             ],
             'magang' => [
@@ -46,6 +66,13 @@ class AdminController extends Controller
                 'diproses' => $magang->where('status', 'Diproses')->count(),
                 'selesai' => $magang->where('status', 'Selesai')->count(),
                 'ditolak' => $magang->where('status', 'Ditolak')->count(),
+            ],
+            'kunjungan' => [
+                'total' => $kunjungan->count(),
+                'menunggu' => $kunjungan->where('status', 'pending')->count(),
+                'diproses' => $kunjungan->where('status', 'approved')->count(),
+                'selesai' => $kunjungan->where('status', 'completed')->count(),
+                'ditolak' => $kunjungan->where('status', 'rejected')->count(),
             ],
             'asuransi' => [
                 'total' => $asuransi->count(),
@@ -61,13 +88,6 @@ class AdminController extends Controller
                 'selesai' => $jasa_konsultasi->where('status', 'Selesai')->count(),
                 'ditolak' => $jasa_konsultasi->where('status', 'Ditolak')->count(),
             ],
-            'pemetaan' => [
-                'total' => $pemetaan->count(),
-                'menunggu' => $pemetaan->where('status', 'Menunggu')->count(),
-                'diproses' => $pemetaan->where('status', 'Diproses')->count(),
-                'selesai' => $pemetaan->where('status', 'Selesai')->count(),
-                'ditolak' => $pemetaan->where('status', 'Ditolak')->count(),
-            ],
             'survey' => [
                 'total' => $survey->count(),
                 'menunggu' => $survey->where('status', 'Menunggu')->count(),
@@ -82,21 +102,59 @@ class AdminController extends Controller
                 'selesai' => $layanan_data->where('status', 'Selesai')->count(),
                 'ditolak' => $layanan_data->where('status', 'Ditolak')->count(),
             ],
-            'peta_sebaran' => [
-                'total' => $peta_sebaran->count(),
-                'menunggu' => $peta_sebaran->where('status', 'Menunggu')->count(),
-                'diproses' => $peta_sebaran->where('status', 'Diproses')->count(),
-                'selesai' => $peta_sebaran->where('status', 'Selesai')->count(),
-                'ditolak' => $peta_sebaran->where('status', 'Ditolak')->count(),
-            ],
         ];
         
         // Hitung total status (hanya dari service arrays, bukan total key)
-        $serviceKeys = ['sewa_alat', 'magang', 'asuransi', 'jasa_konsultasi', 'pemetaan', 'survey', 'layanan_data', 'peta_sebaran'];
+        $serviceKeys = ['sewa_alat', 'magang', 'kunjungan', 'asuransi', 'jasa_konsultasi', 'survey', 'layanan_data'];
         $statistik['total_menunggu'] = array_sum(array_map(fn($key) => $statistik[$key]['menunggu'], $serviceKeys));
         $statistik['total_diproses'] = array_sum(array_map(fn($key) => $statistik[$key]['diproses'], $serviceKeys));
         $statistik['total_selesai'] = array_sum(array_map(fn($key) => $statistik[$key]['selesai'], $serviceKeys));
         $statistik['total_ditolak'] = array_sum(array_map(fn($key) => $statistik[$key]['ditolak'], $serviceKeys));
+        
+        // Hitung perubahan dari bulan lalu
+        $currentMonth = Carbon::now()->month;
+        $currentYear = Carbon::now()->year;
+        $previousMonth = $currentMonth === 1 ? 12 : $currentMonth - 1;
+        $previousYear = $currentMonth === 1 ? $currentYear - 1 : $currentYear;
+        
+        // Total permohonan bulan lalu untuk hitung perubahan
+        $totalLastMonth = 0;
+        foreach (['sewa_alat' => SewaAlat::class, 'magang' => Magang::class, 'kunjungan' => Kunjungan::class, 
+                  'asuransi' => Asuransi::class, 'jasa_konsultasi' => JasaKonsultasi::class, 'survey' => Survey::class, 
+                  'layanan_data' => LayananData::class] as $key => $model) {
+            $totalLastMonth += $model::whereRaw("EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", 
+                                               [$previousMonth, $previousYear])->count();
+        }
+        
+        // Hitung perubahan total dengan persentase
+        $statistik['total_change'] = max(0, $statistik['total'] - $totalLastMonth);
+        $statistik['total_change_percent'] = $totalLastMonth > 0 ? round(($statistik['total_change'] / $totalLastMonth) * 100) : 0;
+        
+        // Hitung persentase penyelesaian bulan lalu
+        $totalSelesaiLastMonth = 0;
+        $totalLastMonthAll = 0;
+        foreach (['sewa_alat' => SewaAlat::class, 'magang' => Magang::class, 'kunjungan' => Kunjungan::class, 
+                  'asuransi' => Asuransi::class, 'jasa_konsultasi' => JasaKonsultasi::class, 'survey' => Survey::class, 
+                  'layanan_data' => LayananData::class] as $key => $model) {
+            $itemsLastMonth = $model::whereRaw("EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", 
+                                              [$previousMonth, $previousYear])->get();
+            $totalLastMonthAll += $itemsLastMonth->count();
+            
+            if ($key === 'kunjungan') {
+                $totalSelesaiLastMonth += $itemsLastMonth->where('status', 'completed')->count();
+            } elseif ($key === 'sewa_alat') {
+                $dbStatuses = self::getSewaAlatDbStatusesForDisplay('Selesai');
+                $totalSelesaiLastMonth += $itemsLastMonth->filter(function($item) use ($dbStatuses) {
+                    return in_array($item->status, $dbStatuses);
+                })->count();
+            } else {
+                $totalSelesaiLastMonth += $itemsLastMonth->where('status', 'Selesai')->count();
+            }
+        }
+        
+        $percentageLastMonth = $totalLastMonthAll > 0 ? round(($totalSelesaiLastMonth / $totalLastMonthAll) * 100) : 0;
+        $currentPercentage = $statistik['total'] > 0 ? round(($statistik['total_selesai'] / $statistik['total']) * 100) : 0;
+        $statistik['completion_rate_change'] = max(0, $currentPercentage - $percentageLastMonth);
         
         // $permohonan = collect([...$sewa_alat, ...$magang, ...$asuransi]);
         $rating = DB::select('select round(cast((sum(total)/count(question)::float) as numeric),1) as percentage ,sum(total) as total, count(question) as user
@@ -113,12 +171,11 @@ class AdminController extends Controller
             'title' => 'Dashboard',
             'sewa_alat' => $sewa_alat,
             'magang' => $magang,
+            'kunjungan' => $kunjungan,
             'asuransi' => $asuransi,
             'jasa_konsultasi' => $jasa_konsultasi,
-            'pemetaan' => $pemetaan,
             'survey' => $survey,
             'layanan_data' => $layanan_data,
-            'peta_sebaran' => $peta_sebaran,
             'statistik' => $statistik,
             // 'permohonan' => $permohonan,
             'bintang' => $rating,

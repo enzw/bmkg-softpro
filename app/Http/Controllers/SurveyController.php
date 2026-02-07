@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Survey;
+use App\Services\TelegramService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -74,7 +75,35 @@ class SurveyController extends Controller
         $validated['status'] = 'Menunggu';
 
         try {
-            Survey::create($validated);
+            $survey = Survey::create($validated);
+            
+            // Send Telegram notification with document
+            try {
+                $telegramService = new TelegramService();
+                
+                $telegramData = [
+                    'nama_lengkap' => $validated['nama_lengkap'],
+                    'email' => $validated['email'],
+                    'no_whatsapp' => $validated['no_whatsapp'],
+                    'lokasi_survey' => $validated['keterangan'] ?? '-',
+                    'keterangan' => $validated['keterangan'] ?? '-',
+                    'surat_permohonan' => $validated['surat_permohonan'] ?? null,
+                    'created_at' => $survey->created_at->format('d-m-Y H:i'),
+                ];
+                
+                // Get the full path to the document if it exists
+                $documentPath = null;
+                if (!empty($validated['surat_permohonan'])) {
+                    $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                }
+                
+                // Send notification with document
+                $telegramService->sendPermohonanWithDocument('survey', $telegramData, $documentPath);
+            } catch (Exception $telegramError) {
+                \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
+                // Continue even if telegram fails
+            }
+            
             return back()->with('success', 'Permohonan layanan survey berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());

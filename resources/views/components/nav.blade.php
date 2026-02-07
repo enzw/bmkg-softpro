@@ -19,38 +19,34 @@
             </li>
 
             <li>
-                <a href="{{ Auth::check() && Auth::user()->role === 'admin'
-                    ? '/#layanan'
-                    : (Auth::check()
-                        ? '/dashboard-pelayanan'
-                        : '/#layanan') }}"
-                    class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('layanan*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
+                <a href="/#layanan"
+                    class="dark:text-white rounded-full px-5 py-3 transition duration-200 hover:bg-green-700 hover:text-white">
                     Layanan
                 </a>
             </li>
 
-            @if (Auth::check() && Auth::user()->role === 'admin')
+            @if (Auth::check())
                 <li>
-                    <a href="{{ route('admin.dashboard') }}"
-                        class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('admin*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
-                        Admin
+                    <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : '/dashboard-pelayanan' }}"
+                        class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('admin*') || request()->is('dashboard-pelayanan*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
+                        Dashboard
                     </a>
                 </li>
             @endif
 
-            <li>
+            {{-- <li>
                 <a href="/berita"
                     class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('berita*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
                     Berita
                 </a>
-            </li>
+            </li> --}}
 
-            <li>
+            {{-- <li>
                 <a href="/kontak"
                     class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('kontak*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
                     Hubungi kami
                 </a>
-            </li>
+            </li> --}}
 
         </ul>
 
@@ -106,11 +102,11 @@
     <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-gray-900 w-full px-4 pb-6">
         <ul class="flex flex-col gap-3 mt-4">
             <li><a href="/tentang-kami" class="px-5 py-3 rounded-full dark:text-white">Tentang</a></li>
-            <li><a href="{{ Auth::user() ? '/layanan' : '/#layanan' }}"
+            <li><a href="/#layanan"
                     class="px-5 py-3 rounded-full dark:text-white">Layanan</a></li>
             
-            @if (Auth::check() && Auth::user()->role === 'admin')
-                <li><a href="{{ route('admin.dashboard') }}" class="px-5 py-3 rounded-full dark:text-white">Admin</a></li>
+            @if (Auth::check())
+                <li><a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : '/dashboard-pelayanan' }}" class="px-5 py-3 rounded-full dark:text-white">Dashboard</a></li>
             @endif
 
             <li><a href="/berita" class="px-5 py-3 rounded-full dark:text-white">Berita</a></li>
