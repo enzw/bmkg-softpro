@@ -11,11 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('asuransis', function (Blueprint $table) {
-            // Change latitude and longitude to use proper precision for coordinates
-            $table->decimal('latitude', 10, 8)->change();
-            $table->decimal('longitude', 11, 8)->change();
-        });
+        if (Schema::hasTable('asuransis')) {
+            Schema::table('asuransis', function (Blueprint $table) {
+                // Change latitude and longitude to use proper precision for coordinates
+                if (Schema::hasColumn('asuransis', 'latitude')) {
+                    $table->decimal('latitude', 10, 8)->change();
+                }
+                if (Schema::hasColumn('asuransis', 'longitude')) {
+                    $table->decimal('longitude', 11, 8)->change();
+                }
+            });
+        }
     }
 
     /**
@@ -23,9 +29,15 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('asuransis', function (Blueprint $table) {
-            $table->decimal('latitude', 11, 8)->change();
-            $table->decimal('longitude', 11, 8)->change();
-        });
+        if (Schema::hasTable('asuransis')) {
+            Schema::table('asuransis', function (Blueprint $table) {
+                if (Schema::hasColumn('asuransis', 'latitude')) {
+                    $table->decimal('latitude', 11, 8)->change();
+                }
+                if (Schema::hasColumn('asuransis', 'longitude')) {
+                    $table->decimal('longitude', 11, 8)->change();
+                }
+            });
+        }
     }
 };

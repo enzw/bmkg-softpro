@@ -11,17 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('kunjungans', function (Blueprint $table) {
-            // Drop old geographic/location-based columns
-            $table->dropColumn([
-                'nama_user',
-                'tanggal',
-                'lokasi',
-                'latitude',
-                'longitude',
-                'kartu_identitas',
-            ]);
-        });
+        if (Schema::hasTable('kunjungans')) {
+            Schema::table('kunjungans', function (Blueprint $table) {
+                // Drop old geographic/location-based columns
+                $columnsToDelete = [];
+                foreach (['nama_user', 'tanggal', 'lokasi', 'latitude', 'longitude', 'kartu_identitas'] as $column) {
+                    if (Schema::hasColumn('kunjungans', $column)) {
+                        $columnsToDelete[] = $column;
+                    }
+                }
+                
+                if (!empty($columnsToDelete)) {
+                    $table->dropColumn($columnsToDelete);
+                }
+            });
+        }
     }
 
     /**
@@ -29,14 +33,28 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('kunjungans', function (Blueprint $table) {
-            // Restore old columns if needed
-            $table->string('nama_user')->nullable();
-            $table->date('tanggal')->nullable();
-            $table->string('lokasi')->nullable();
-            $table->decimal('latitude', 10, 8)->nullable();
-            $table->decimal('longitude', 11, 8)->nullable();
-            $table->string('kartu_identitas')->nullable();
-        });
+        if (Schema::hasTable('kunjungans')) {
+            Schema::table('kunjungans', function (Blueprint $table) {
+                // Restore old columns if needed
+                if (!Schema::hasColumn('kunjungans', 'nama_user')) {
+                    $table->string('nama_user')->nullable();
+                }
+                if (!Schema::hasColumn('kunjungans', 'tanggal')) {
+                    $table->date('tanggal')->nullable();
+                }
+                if (!Schema::hasColumn('kunjungans', 'lokasi')) {
+                    $table->string('lokasi')->nullable();
+                }
+                if (!Schema::hasColumn('kunjungans', 'latitude')) {
+                    $table->decimal('latitude', 10, 8)->nullable();
+                }
+                if (!Schema::hasColumn('kunjungans', 'longitude')) {
+                    $table->decimal('longitude', 11, 8)->nullable();
+                }
+                if (!Schema::hasColumn('kunjungans', 'kartu_identitas')) {
+                    $table->string('kartu_identitas')->nullable();
+                }
+            });
+        }
     }
 };

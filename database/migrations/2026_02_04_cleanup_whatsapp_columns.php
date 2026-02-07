@@ -12,20 +12,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('asuransis', function (Blueprint $table) {
-            // Drop the old nomor_whatsapp column if it exists
-            if (Schema::hasColumn('asuransis', 'nomor_whatsapp')) {
-                DB::statement('ALTER TABLE asuransis DROP COLUMN nomor_whatsapp');
-            }
-            
-            // Drop no_whatsapp if it exists (it shouldn't be NOT NULL)
-            if (Schema::hasColumn('asuransis', 'no_whatsapp')) {
-                DB::statement('ALTER TABLE asuransis DROP COLUMN no_whatsapp');
-            }
-            
-            // Add no_whatsapp as nullable
-            $table->string('no_whatsapp')->nullable()->after('nama_user');
-        });
+        if (Schema::hasTable('asuransis')) {
+            Schema::table('asuransis', function (Blueprint $table) {
+                // Drop the old nomor_whatsapp column if it exists
+                if (Schema::hasColumn('asuransis', 'nomor_whatsapp')) {
+                    DB::statement('ALTER TABLE asuransis DROP COLUMN nomor_whatsapp');
+                }
+                
+                // Drop no_whatsapp if it exists (it shouldn't be NOT NULL)
+                if (Schema::hasColumn('asuransis', 'no_whatsapp')) {
+                    DB::statement('ALTER TABLE asuransis DROP COLUMN no_whatsapp');
+                }
+                
+                // Add no_whatsapp as nullable
+                $table->string('no_whatsapp')->nullable()->after('nama_user');
+            });
+        }
     }
 
     /**
@@ -33,8 +35,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('asuransis', function (Blueprint $table) {
-            $table->dropColumn('no_whatsapp');
-        });
+        if (Schema::hasTable('asuransis')) {
+            Schema::table('asuransis', function (Blueprint $table) {
+                if (Schema::hasColumn('asuransis', 'no_whatsapp')) {
+                    $table->dropColumn('no_whatsapp');
+                }
+            });
+        }
     }
 };

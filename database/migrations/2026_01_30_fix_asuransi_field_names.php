@@ -11,12 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('asuransis', function (Blueprint $table) {
-            // Rename columns to match form labels
-            $table->renameColumn('latitude', 'nama_lengkap');
-            $table->renameColumn('longitude', 'nomor_whatsapp');
-            $table->renameColumn('lokasi', 'jumlah_rombongan');
-        });
+        if (Schema::hasTable('asuransis')) {
+            Schema::table('asuransis', function (Blueprint $table) {
+                // Rename columns to match form labels
+                if (Schema::hasColumn('asuransis', 'latitude')) {
+                    $table->renameColumn('latitude', 'nama_lengkap');
+                }
+                if (Schema::hasColumn('asuransis', 'longitude')) {
+                    $table->renameColumn('longitude', 'nomor_whatsapp');
+                }
+                if (Schema::hasColumn('asuransis', 'lokasi')) {
+                    $table->renameColumn('lokasi', 'jumlah_rombongan');
+                }
+            });
+        }
     }
 
     /**
@@ -24,11 +32,19 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('asuransis', function (Blueprint $table) {
-            // Revert the renames
-            $table->renameColumn('nama_lengkap', 'latitude');
-            $table->renameColumn('nomor_whatsapp', 'longitude');
-            $table->renameColumn('jumlah_rombongan', 'lokasi');
-        });
+        if (Schema::hasTable('asuransis')) {
+            Schema::table('asuransis', function (Blueprint $table) {
+                // Revert the renames
+                if (Schema::hasColumn('asuransis', 'nama_lengkap')) {
+                    $table->renameColumn('nama_lengkap', 'latitude');
+                }
+                if (Schema::hasColumn('asuransis', 'nomor_whatsapp')) {
+                    $table->renameColumn('nomor_whatsapp', 'longitude');
+                }
+                if (Schema::hasColumn('asuransis', 'jumlah_rombongan')) {
+                    $table->renameColumn('jumlah_rombongan', 'lokasi');
+                }
+            });
+        }
     }
 };

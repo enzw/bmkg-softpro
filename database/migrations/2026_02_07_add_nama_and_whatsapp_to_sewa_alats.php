@@ -11,10 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('sewa_alats', function (Blueprint $table) {
-            $table->string('nama')->nullable()->after('user_id');
-            $table->string('no_whatsapp')->nullable()->after('nama');
-        });
+        if (Schema::hasTable('sewa_alats')) {
+            Schema::table('sewa_alats', function (Blueprint $table) {
+                if (!Schema::hasColumn('sewa_alats', 'nama')) {
+                    $table->string('nama')->nullable()->after('user_id');
+                }
+                if (!Schema::hasColumn('sewa_alats', 'no_whatsapp')) {
+                    $table->string('no_whatsapp')->nullable()->after('nama');
+                }
+            });
+        }
     }
 
     /**
@@ -22,8 +28,19 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('sewa_alats', function (Blueprint $table) {
-            $table->dropColumn(['nama', 'no_whatsapp']);
-        });
+        if (Schema::hasTable('sewa_alats')) {
+            Schema::table('sewa_alats', function (Blueprint $table) {
+                $columnsToDrop = [];
+                foreach (['nama', 'no_whatsapp'] as $column) {
+                    if (Schema::hasColumn('sewa_alats', $column)) {
+                        $columnsToDrop[] = $column;
+                    }
+                }
+                
+                if (!empty($columnsToDrop)) {
+                    $table->dropColumn($columnsToDrop);
+                }
+            });
+        }
     }
 };

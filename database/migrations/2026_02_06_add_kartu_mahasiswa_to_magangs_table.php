@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('magangs', function (Blueprint $table) {
-            $table->string('kartu_mahasiswa')->nullable()->after('surat_ijin_magang')->comment('File path for student ID card');
-        });
+        if (Schema::hasTable('magangs')) {
+            Schema::table('magangs', function (Blueprint $table) {
+                if (!Schema::hasColumn('magangs', 'kartu_mahasiswa')) {
+                    $table->string('kartu_mahasiswa')->nullable()->after('surat_ijin_magang')->comment('File path for student ID card');
+                }
+            });
+        }
     }
 
     /**
@@ -21,8 +25,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('magangs', function (Blueprint $table) {
-            $table->dropColumn('kartu_mahasiswa');
-        });
+        if (Schema::hasTable('magangs')) {
+            Schema::table('magangs', function (Blueprint $table) {
+                if (Schema::hasColumn('magangs', 'kartu_mahasiswa')) {
+                    $table->dropColumn('kartu_mahasiswa');
+                }
+            });
+        }
     }
 };

@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('asuransis', function (Blueprint $table) {
-            // Ensure Asuransi table has the right columns
-            if (!Schema::hasColumn('asuransis', 'perusahaan')) {
-                $table->string('perusahaan')->nullable();
-            }
-            if (!Schema::hasColumn('asuransis', 'kejadian')) {
-                $table->string('kejadian')->nullable();
-            }
-            if (!Schema::hasColumn('asuransis', 'no_whatsapp')) {
-                $table->string('no_whatsapp')->nullable();
-            }
-        });
+        if (Schema::hasTable('asuransis')) {
+            Schema::table('asuransis', function (Blueprint $table) {
+                // Ensure Asuransi table has the right columns
+                if (!Schema::hasColumn('asuransis', 'perusahaan')) {
+                    $table->string('perusahaan')->nullable();
+                }
+                if (!Schema::hasColumn('asuransis', 'kejadian')) {
+                    $table->string('kejadian')->nullable();
+                }
+                if (!Schema::hasColumn('asuransis', 'no_whatsapp')) {
+                    $table->string('no_whatsapp')->nullable();
+                }
+            });
+        }
     }
 
     /**

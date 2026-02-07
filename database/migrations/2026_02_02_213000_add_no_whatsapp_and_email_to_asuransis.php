@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('asuransis', function (Blueprint $table) {
-            $table->string('no_whatsapp')->nullable();
-        });
+        if (Schema::hasTable('asuransis')) {
+            Schema::table('asuransis', function (Blueprint $table) {
+                if (!Schema::hasColumn('asuransis', 'no_whatsapp')) {
+                    $table->string('no_whatsapp')->nullable();
+                }
+            });
+        }
     }
 
     /**
@@ -21,8 +25,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('asuransis', function (Blueprint $table) {
-            $table->dropColumn('no_whatsapp');
-        });
+        if (Schema::hasTable('asuransis')) {
+            Schema::table('asuransis', function (Blueprint $table) {
+                if (Schema::hasColumn('asuransis', 'no_whatsapp')) {
+                    $table->dropColumn('no_whatsapp');
+                }
+            });
+        }
     }
 };
