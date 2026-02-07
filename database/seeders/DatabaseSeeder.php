@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@example.com',
             'role' => 'admin',
-            'password' => Hash::make('12345678'),
+            'password' => Hash::make('PelayananGeof2026!'),
 
             'npwp' => fake()->randomNumber(9, true),
             'no_identitas' => fake()->randomNumber(9, true),
