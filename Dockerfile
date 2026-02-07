@@ -12,11 +12,11 @@ RUN npm run build
 
 
 # ======================
-# Stage 2 - Backend (Laravel)
+# Stage 2 - Backend (Laravel HTTP)
 # ======================
-FROM php:8.2-fpm
+FROM php:8.2
 
-# Install system & PHP extensions (FULL, biar Composer diem)
+# Install system & PHP extensions
 RUN apt-get update && apt-get install -y \
     git curl unzip \
     libpq-dev \
@@ -37,21 +37,21 @@ RUN apt-get update && apt-get install -y \
         bcmath \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Composer
+# Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy app source
+# Copy backend
 COPY . .
 
-# Copy Vite build result
+# Copy Vite build
 COPY --from=frontend /app/public/build ./public/build
 
-# Create dummy env for build
+# Dummy env (build only)
 RUN echo "APP_KEY=base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" > .env
 
-# Install PHP dependencies (anti memory crash)
+# Install deps
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-dev \
     --optimize-autoloader \
@@ -61,8 +61,8 @@ RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
 # Permission
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Render default port
-EXPOSE 10000
+# IMPORTANT: expose platform port
+EXPOSE 8080
 
-# Start PHP-FPM
-CMD php artisan serve --host=0.0.0.0 --port=${PORT}
+# Start Laravel HTTP server
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
