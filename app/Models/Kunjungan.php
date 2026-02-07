@@ -5,24 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Pemetaan extends Model
+class Kunjungan extends Model
 {
     use HasFactory;
 
-    protected $table = 'pemetaans';
+    protected $table = 'kunjungans';
     
     protected $guarded = ['id'];
 
     protected $fillable = [
         'user_id',
-        'perusahaan',
-        'tanggal',
-        'lokasi',
-        'latitude',
-        'longitude',
-        'kejadian',
-        'status',
+        'jenis_kunjungan',
+        'nama_instansi',
+        'nama_lengkap',
+        'no_whatsapp',
+        'jumlah_rombongan',
+        'rencana_kunjungan',
         'surat_permohonan',
+        'status',
     ];
 
     public function user()

@@ -1,3 +1,16 @@
+<style>
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0) brightness(1);
+    cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) brightness(2);
+    }
+}
+</style>
+
 <div class="relative text-gray-900 bg-white shadow-sm dark:text-gray-100 dark:bg-gray-800 h-max lg:sticky lg:top-12">
 
     @if (session('success'))
@@ -34,18 +47,18 @@
 
         <div class="flex flex-col gap-3">
             <div>
-                <x-input-label for="kejadian">Jenis Kunjungan</x-input-label>
+                <x-input-label for="kejadian">Jenis Kunjungan <span class="text-red-500">*</span></x-input-label>
                 <select name="kejadian" id="kejadian"
-                    class="block w-full mt-1 truncate border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
-                    <option value="$is_edit ? old('kejadian', $permohonan->kejadian) : old('kejadian')">Pilih kunjungan...</option>
-                    <option value="Go To School">Go To School</option>
-                    <option value="Go To BMKG">Go To BMKG</option>
+                    class="block w-full mt-1 truncate border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600" required>
+                    <option value="">Pilih kunjungan...</option>
+                    <option value="Go To School" @selected($is_edit ? old('kejadian', $permohonan->kejadian) == 'Go To School' : old('kejadian') == 'Go To School')>Go To School</option>
+                    <option value="Go To BMKG" @selected($is_edit ? old('kejadian', $permohonan->kejadian) == 'Go To BMKG' : old('kejadian') == 'Go To BMKG')>Go To BMKG</option>
                 </select>
-                <x-input-error :messages="$errors->get('lokasi')" class="mt-2" />
+                <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
             </div>
 
             <div>
-                <x-input-label for="perusahaan">Nama Instansi</x-input-label>
+                <x-input-label for="perusahaan">Nama Instansi <span class="text-red-500">*</span></x-input-label>
                 <x-text-input id="perusahaan" class="block w-full mt-1" type="text" name="perusahaan" :value="$is_edit ? old('perusahaan', $permohonan->perusahaan) : old('perusahaan')"
                     required />
                 <x-input-error :messages="$errors->get('perusahaan')" class="mt-2" />

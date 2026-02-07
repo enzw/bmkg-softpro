@@ -1,16 +1,55 @@
 <style>
 input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1) brightness(2);
+    filter: invert(0) brightness(1);
     cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) brightness(2);
+    }
 }
 </style>
 
-<div class="relative p-6 overflow-hidden text-gray-900 bg-white shadow-sm dark:text-gray-100 dark:bg-gray-800 sm:rounded-lg h-max lg:sticky lg:top-12">
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-8 h-max lg:sticky lg:top-20">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
+                <i class="fas fa-clipboard-check text-white"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $is_edit ? 'Edit Permohonan' : 'Buat Permohonan' }}</h2>
+        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Lengkapi data dengan akurat dan benar</p>
+    </div>
 
-    <h2 class="flex items-center mb-6 text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-        <i class="fas fa-clipboard-list mr-3 text-green-600"></i>
-        {{ $is_edit ? 'Edit' : 'Buat' }} Permohonan Pelayanan Informasi Geofisika
-    </h2>
+    {{-- Alert Messages --}}
+    @if (session('success'))
+        <div class="mb-6 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 flex items-start gap-3">
+            <i class="fas fa-check-circle text-green-600 dark:text-green-400 mt-0.5"></i>
+            <p class="text-sm text-green-700 dark:text-green-300">{{ session('success') }}</p>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 flex items-start gap-3">
+            <i class="fas fa-exclamation-circle text-red-600 dark:text-red-400 mt-0.5"></i>
+            <p class="text-sm text-red-700 dark:text-red-300">{{ session('error') }}</p>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50">
+            <ul class="space-y-1 text-sm text-red-700 dark:text-red-300">
+                @foreach ($errors->all() as $error)
+                    <li class="flex items-start gap-2">
+                        <span class="text-red-600 dark:text-red-400 mt-0.5">•</span>
+                        <span>{{ $error }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     @php
     $permohonan = $permohonan ?? null;
@@ -24,60 +63,49 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             $jenis_layanan = 'Layanan Klaim Asuransi';
         } elseif ($modelClass === 'LayananData') {
             $jenis_layanan = 'Layanan Data';
-        } elseif ($modelClass === 'Pemetaan') {
-            $jenis_layanan = 'Layanan Peta Sebaran';
-        } elseif ($modelClass === 'PetaSebaran') {
-            $jenis_layanan = 'Layanan Peta Sebaran';
         } elseif ($modelClass === 'Survey') {
             $jenis_layanan = 'Layanan Survey';
         } elseif ($modelClass === 'JasaKonsultasi') {
             $jenis_layanan = 'Layanan Konsultasi';
         } else {
-            $jenis_layanan = old('jenis_layanan', '');
+            $jenis_layanan = old('jenis_layanan', 'Magang');
         }
     } else {
-        $jenis_layanan = old('jenis_layanan', '');
+        $jenis_layanan = old('jenis_layanan', 'Magang');
     }
     @endphp
 
     <!-- Tabs Navigation - Hanya tampil di CREATE mode -->
     @if (!$is_edit)
-    <div class="border-b border-gray-200 dark:border-gray-700 mb-6 overflow-x-auto">
+    <div class="border-b border-gray-200 dark:border-gray-700 mb-8 overflow-x-auto">
         <div class="flex gap-0" role="tablist">
             <button 
                 role="tab"
                 onclick="switchTab('Magang', this)"
                 class="tab-button px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition @if($jenis_layanan == 'Magang') active-tab border-green-500 text-green-600 dark:text-green-400 @endif"
                 aria-selected="@if($jenis_layanan == 'Magang') true @else false @endif">
-                <i class="fas fa-graduation-cap mr-2"></i>Magang
+                <i class="fas fa-user-graduate mr-2"></i>Magang
             </button>
             <button 
                 role="tab"
                 onclick="switchTab('Layanan Klaim Asuransi', this)"
                 class="tab-button px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition @if($jenis_layanan == 'Layanan Klaim Asuransi') active-tab border-green-500 text-green-600 dark:text-green-400 @endif"
                 aria-selected="@if($jenis_layanan == 'Layanan Klaim Asuransi') true @else false @endif">
-                <i class="fas fa-file-invoice-dollar mr-2"></i>Klaim Asuransi
+                <i class="fas fa-shield-alt mr-2"></i>Asuransi
             </button>
             <button 
                 role="tab"
                 onclick="switchTab('Layanan Data', this)"
                 class="tab-button px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition @if($jenis_layanan == 'Layanan Data') active-tab border-green-500 text-green-600 dark:text-green-400 @endif"
                 aria-selected="@if($jenis_layanan == 'Layanan Data') true @else false @endif">
-                <i class="fas fa-database mr-2"></i>Data Geofisika
-            </button>
-            <button 
-                role="tab"
-                onclick="switchTab('Layanan Peta Sebaran', this)"
-                class="tab-button px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition @if($jenis_layanan == 'Layanan Peta Sebaran') active-tab border-green-500 text-green-600 dark:text-green-400 @endif"
-                aria-selected="@if($jenis_layanan == 'Layanan Peta Sebaran') true @else false @endif">
-                <i class="fas fa-map mr-2"></i>Peta Sebaran
+                <i class="fas fa-database mr-2"></i>Data
             </button>
             <button 
                 role="tab"
                 onclick="switchTab('Layanan Survey', this)"
                 class="tab-button px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition @if($jenis_layanan == 'Layanan Survey') active-tab border-green-500 text-green-600 dark:text-green-400 @endif"
                 aria-selected="@if($jenis_layanan == 'Layanan Survey') true @else false @endif">
-                <i class="fas fa-compass mr-2"></i>Survey
+                <i class="fas fa-map-marked-alt mr-2"></i>Survey
             </button>
             <button 
                 role="tab"
@@ -90,29 +118,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     </div>
     @endif
 
-    @if (session('success'))
-        <div class="px-4 py-2 mb-4 text-green-900 bg-green-300 rounded">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="px-4 py-2 mb-4 text-red-900 bg-red-200 rounded">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if ($errors->any())
-        <div class="px-4 py-2 mb-4 text-red-900 bg-red-200 rounded shadow">
-            <ul class="list-disc list-inside">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <form action="{{ $is_edit ? url('admin/pelayanan-jasa/' . $permohonan->id) : route('admin.pelayanan-jasa.store') }}" method="POST" class="space-y-4" enctype="multipart/form-data" id="form-layanan">
+    <form action="{{ $is_edit ? url('admin/pelayanan-jasa/' . $permohonan->id) : route('admin.pelayanan-jasa.store') }}" method="POST" class="space-y-6" enctype="multipart/form-data" id="form-layanan">
         @csrf
         @if ($is_edit)
         @method('put')
@@ -122,290 +128,410 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <input type="hidden" name="jenis_layanan" id="jenis_layanan" value="{{ $jenis_layanan }}" />
 
         <!-- MAGANG Fields -->
-        <div id="magang-fields" style="display: {{ !$is_edit && ($jenis_layanan == '' || $jenis_layanan == 'Magang') ? 'block' : 'none' }}" class="space-y-4">
-            <div>
-                <x-input-label for="magang_nama_lengkap">Nama Lengkap</x-input-label>
-                <x-text-input id="magang_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
-                    :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap')" />
-                <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
-            </div>
-            <div>
-                <x-input-label for="magang_no_whatsapp">No WhatsApp</x-input-label>
-                <x-text-input id="magang_no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
-                    :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
-                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
-            </div>
-            <div>
-                <x-input-label for="magang_email">Email</x-input-label>
-                <x-text-input id="magang_email" class="block w-full mt-1" type="email" name="email" 
-                    :value="$is_edit ? old('email', $permohonan->email ?? '') : old('email')" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
-            </div>
-            <div>
-                <x-input-label for="universitas">Universitas</x-input-label>
-                <x-text-input id="universitas" class="block w-full mt-1" type="text" name="universitas" 
-                    :value="$is_edit ? old('universitas', $permohonan->universitas ?? '') : old('universitas')" />
-                <x-input-error :messages="$errors->get('universitas')" class="mt-2" />
-            </div>
-            <div>
-                <x-input-label for="fakultas">Fakultas</x-input-label>
-                <x-text-input id="fakultas" class="block w-full mt-1" type="text" name="fakultas" 
-                    :value="$is_edit ? old('fakultas', $permohonan->fakultas ?? '') : old('fakultas')" />
-                <x-input-error :messages="$errors->get('fakultas')" class="mt-2" />
-            </div>
-            <div>
-                <x-input-label for="prodi">Program Studi</x-input-label>
-                <x-text-input id="prodi" class="block w-full mt-1" type="text" name="prodi" 
-                    :value="$is_edit ? old('prodi', $permohonan->prodi ?? '') : old('prodi')" />
-                <x-input-error :messages="$errors->get('prodi')" class="mt-2" />
-            </div>
-            <div class="flex gap-3">
-                <div class="flex-1">
-                    <x-input-label for="tanggal_mulai">Tanggal Mulai</x-input-label>
-                    <x-text-input id="tanggal_mulai" class="block w-full mt-1" type="date" name="tanggal_mulai"
-                        :value="$is_edit ? old('tanggal_mulai', $permohonan->tanggal_mulai ?? '') : old('tanggal_mulai')" />
-                    <x-input-error :messages="$errors->get('tanggal_mulai')" class="mt-2" />
+        <div id="magang-fields" style="display: {{ $jenis_layanan == 'Magang' ? 'block' : 'none' }}" class="space-y-6">
+            <!-- Row 1: Basic Info -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label for="magang_nama_lengkap" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        Nama Lengkap <span class="text-red-500">*</span>
+                    </label>
+                    <input id="magang_nama_lengkap" type="text" name="nama_lengkap" value="{{ $is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('nama_lengkap')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
                 </div>
-                <div class="flex-1">
-                    <x-input-label for="tanggal_selesai">Tanggal Selesai</x-input-label>
-                    <x-text-input id="tanggal_selesai" class="block w-full mt-1" type="date" name="tanggal_selesai"
-                        :value="$is_edit ? old('tanggal_selesai', $permohonan->tanggal_selesai ?? '') : old('tanggal_selesai')" />
-                    <x-input-error :messages="$errors->get('tanggal_selesai')" class="mt-2" />
+
+                <div>
+                    <label for="magang_email" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        Email <span class="text-red-500">*</span>
+                    </label>
+                    <input id="magang_email" type="email" name="email" value="{{ $is_edit ? old('email', $permohonan->email ?? '') : old('email') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('email')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <!-- Row 2: WhatsApp -->
+            <div>
+                <label for="magang_no_whatsapp" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                    No WhatsApp <span class="text-red-500">*</span>
+                </label>
+                <input id="magang_no_whatsapp" type="text" name="no_whatsapp" value="{{ $is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp') }}" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                @error('no_whatsapp')
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Row 3: Academic Info -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div>
+                    <label for="universitas" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        Universitas <span class="text-red-500">*</span>
+                    </label>
+                    <input id="universitas" type="text" name="universitas" value="{{ $is_edit ? old('universitas', $permohonan->universitas ?? '') : old('universitas') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('universitas')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="fakultas" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        Fakultas <span class="text-red-500">*</span>
+                    </label>
+                    <input id="fakultas" type="text" name="fakultas" value="{{ $is_edit ? old('fakultas', $permohonan->fakultas ?? '') : old('fakultas') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('fakultas')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="prodi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        Program Studi <span class="text-red-500">*</span>
+                    </label>
+                    <input id="prodi" type="text" name="prodi" value="{{ $is_edit ? old('prodi', $permohonan->prodi ?? '') : old('prodi') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('prodi')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <!-- Row 4: Dates -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label for="tanggal_mulai" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        Tanggal Mulai <span class="text-red-500">*</span>
+                    </label>
+                    <input id="tanggal_mulai" type="date" name="tanggal_mulai" value="{{ $is_edit ? old('tanggal_mulai', $permohonan->tanggal_mulai ?? '') : old('tanggal_mulai') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('tanggal_mulai')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="tanggal_selesai" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        Tanggal Selesai <span class="text-red-500">*</span>
+                    </label>
+                    <input id="tanggal_selesai" type="date" name="tanggal_selesai" value="{{ $is_edit ? old('tanggal_selesai', $permohonan->tanggal_selesai ?? '') : old('tanggal_selesai') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('tanggal_selesai')
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <!-- Row 5: File Uploads -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label for="magang_surat_permohonan" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        Surat Permohonan <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span>
+                    </label>
+                    <div class="relative">
+                        <input id="magang_surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
+                    </p>
+                    @if ($is_edit && $permohonan && $permohonan->surat_permohonan)
+                        <div class="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
+                            <p class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+                                <i class="fas fa-file text-blue-600 dark:text-blue-400"></i>
+                                File saat ini:
+                            </p>
+                            <a href="{{ route('pelayanan-jasa.download-file', ['id' => $permohonan->id, 'fileName' => basename($permohonan->surat_permohonan)]) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
+                                <i class="fas fa-download"></i>
+                                {{ basename($permohonan->surat_permohonan) }}
+                            </a>
+                        </div>
+                    @endif
+                    <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
+                </div>
+
+                <div>
+                    <label for="magang_kartu_mahasiswa" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        Kartu Mahasiswa <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span>
+                    </label>
+                    <div class="relative">
+                        <input id="magang_kartu_mahasiswa" type="file" name="kartu_mahasiswa" accept=".jpg,.jpeg,.png"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                        <i class="fas fa-info-circle mr-1"></i>Format: JPG, PNG. Maksimal 2MB
+                    </p>
+                    @if ($is_edit && $permohonan && $permohonan->kartu_mahasiswa)
+                        <div class="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
+                            <p class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+                                <i class="fas fa-file text-blue-600 dark:text-blue-400"></i>
+                                File saat ini:
+                            </p>
+                            <a href="{{ route('pelayanan-jasa.download-file', ['id' => $permohonan->id, 'fileName' => basename($permohonan->kartu_mahasiswa)]) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
+                                <i class="fas fa-download"></i>
+                                {{ basename($permohonan->kartu_mahasiswa) }}
+                            </a>
+                        </div>
+                    @endif
+                    <x-input-error :messages="$errors->get('kartu_mahasiswa')" class="mt-2" />
                 </div>
             </div>
         </div>
 
         <!-- ASURANSI Fields -->
-        <div id="asuransi-fields" style="display: {{ $is_edit && $jenis_layanan == 'Layanan Klaim Asuransi' ? 'block' : 'none' }}" class="space-y-4">
+        <div id="asuransi-fields" style="display: {{ $is_edit && $jenis_layanan == 'Layanan Klaim Asuransi' ? 'block' : 'none' }}" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Nama <span class="text-red-500">*</span></label>
+                    <input type="text" name="nama_user" value="{{ $is_edit ? old('nama_user', $permohonan->nama_user ?? '') : old('nama_user') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('nama_user')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">No WhatsApp <span class="text-red-500">*</span></label>
+                    <input type="text" name="no_whatsapp" value="{{ $is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('no_whatsapp')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+                </div>
+            </div>
             <div>
-                <x-input-label for="perusahaan">Nama Perusahaan/Instansi</x-input-label>
-                <x-text-input id="perusahaan" class="block w-full mt-1" type="text" name="perusahaan" 
-                    :value="$is_edit ? old('perusahaan', $permohonan->perusahaan ?? '') : old('perusahaan')" />
-                <x-input-error :messages="$errors->get('perusahaan')" class="mt-2" />
+                <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Lokasi Kejadian <span class="text-red-500">*</span></label>
+                <input type="text" name="lokasi" value="{{ $is_edit ? old('lokasi', $permohonan->lokasi ?? '') : old('lokasi') }}" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                @error('lokasi')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
             </div>
-
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                    <x-input-label for="tanggal_asuransi">Tanggal Kejadian</x-input-label>
-                    <x-text-input id="tanggal_asuransi" class="block w-full mt-1" type="date" name="tanggal" 
-                        :value="$is_edit ? old('tanggal', $permohonan->tanggal ?? '') : old('tanggal')" />
-                    <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
+                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Latitude <span class="text-red-500">*</span></label>
+                    <input type="number" step="0.00000001" min="-90" max="90" name="latitude" value="{{ $is_edit ? old('latitude', $permohonan->latitude ?? '') : old('latitude') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="-90 hingga 90" />
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Range: -90 hingga 90</p>
+                    @error('latitude')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <x-input-label for="lokasi_asuransi">Lokasi Kejadian</x-input-label>
-                    <x-text-input id="lokasi_asuransi" class="block w-full mt-1" type="text" name="lokasi" 
-                        :value="$is_edit ? old('lokasi', $permohonan->lokasi ?? '') : old('lokasi')" />
-                    <x-input-error :messages="$errors->get('lokasi')" class="mt-2" />
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <x-input-label for="latitude_asuransi">Latitude</x-input-label>
-                    <x-text-input id="latitude_asuransi" class="block w-full mt-1" type="number" step="0.000001" name="latitude" 
-                        :value="$is_edit ? old('latitude', $permohonan->latitude ?? '') : old('latitude')" />
-                    <x-input-error :messages="$errors->get('latitude')" class="mt-2" />
-                </div>
-                <div>
-                    <x-input-label for="longitude_asuransi">Longitude</x-input-label>
-                    <x-text-input id="longitude_asuransi" class="block w-full mt-1" type="number" step="0.000001" name="longitude" 
-                        :value="$is_edit ? old('longitude', $permohonan->longitude ?? '') : old('longitude')" />
-                    <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
+                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Longitude <span class="text-red-500">*</span></label>
+                    <input type="number" step="0.00000001" min="-180" max="180" name="longitude" value="{{ $is_edit ? old('longitude', $permohonan->longitude ?? '') : old('longitude') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="-180 hingga 180" />
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Range: -180 hingga 180</p>
+                    @error('longitude')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
                 </div>
             </div>
-
             <div>
-                <x-input-label for="kejadian">Deskripsi Kejadian</x-input-label>
-                <textarea id="kejadian" name="kejadian" rows="3"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('kejadian', $permohonan->kejadian ?? '') : old('kejadian') }}</textarea>
-                <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
+                <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Tanggal Kejadian <span class="text-red-500">*</span></label>
+                <input type="date" name="tanggal" value="{{ $is_edit ? old('tanggal', $permohonan->tanggal ?? '') : old('tanggal') }}" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                @error('tanggal')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
             </div>
-
             <div>
-                <x-input-label for="no_whatsapp_asuransi">No WhatsApp</x-input-label>
-                <x-text-input id="no_whatsapp_asuransi" class="block w-full mt-1" type="text" name="no_whatsapp" 
-                    :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
-                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
+                <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Surat Permohonan <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span></label>
+                <input type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Format: PDF, JPG, PNG. Maksimal 2MB</p>
+                @if ($is_edit && $permohonan && $permohonan->surat_permohonan)
+                    <div class="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
+                        <p class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+                            <i class="fas fa-file text-blue-600 dark:text-blue-400"></i>
+                            File saat ini:
+                        </p>
+                        <a href="{{ route('pelayanan-jasa.download-file', ['id' => $permohonan->id, 'fileName' => basename($permohonan->surat_permohonan)]) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
+                            <i class="fas fa-download"></i>
+                            {{ basename($permohonan->surat_permohonan) }}
+                        </a>
+                    </div>
+                @endif
+                @error('surat_permohonan')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
             </div>
         </div>
 
         <!-- DATA GEOFISIKA Fields -->
-        <div id="data-fields" style="display: {{ $is_edit && $jenis_layanan == 'Layanan Data' ? 'block' : 'none' }}" class="space-y-4">
-            <div>
-                <x-input-label for="data_nama_lengkap">Nama Lengkap</x-input-label>
-                <x-text-input id="data_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
-                    :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap')" />
-                <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
+        <div id="data-fields" style="display: {{ $is_edit && $jenis_layanan == 'Layanan Data' ? 'block' : 'none' }}" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
+                    <input type="text" name="nama_lengkap" value="{{ $is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('nama_lengkap')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Email <span class="text-red-500">*</span></label>
+                    <input type="email" name="email" value="{{ $is_edit ? old('email', $permohonan->email ?? '') : old('email') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('email')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+                </div>
             </div>
-
             <div>
-                <x-input-label for="data_no_whatsapp">No WhatsApp</x-input-label>
-                <x-text-input id="data_no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
-                    :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
-                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
+                <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">No WhatsApp <span class="text-red-500">*</span></label>
+                <input type="text" name="no_whatsapp" value="{{ $is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp') }}" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                @error('no_whatsapp')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
             </div>
-
             <div>
-                <x-input-label for="data_email">Email</x-input-label>
-                <x-text-input id="data_email" class="block w-full mt-1" type="email" name="email" 
-                    :value="$is_edit ? old('email', $permohonan->email ?? '') : old('email')" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Deskripsi Data <span class="text-red-500">*</span></label>
+                <textarea name="keterangan" rows="4" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition resize-none">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
+                @error('keterangan')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
             </div>
-
             <div>
-                <x-input-label for="data_keterangan">Deskripsi Data Geofisika</x-input-label>
-                <textarea id="data_keterangan" name="keterangan" rows="4"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
-                <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
-            </div>
-
-            <div>
-                <x-input-label for="data_surat_permohonan">Surat Permohonan (PDF, JPG, PNG) - Opsional</x-input-label>
-                <input id="data_surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
-                    class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300" />
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Maksimal ukuran file: 2MB</p>
-                @if ($is_edit && $permohonan->surat_permohonan)
-                    <p class="text-xs text-green-600 dark:text-green-400 mt-1">File saat ini: {{ basename($permohonan->surat_permohonan) }}</p>
+                <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Surat Permohonan <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span></label>
+                <div class="relative">
+                    <input type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB</p>
+                @if ($is_edit && $permohonan && $permohonan->surat_permohonan)
+                    <div class="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
+                        <p class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+                            <i class="fas fa-file text-blue-600 dark:text-blue-400"></i>
+                            File saat ini:
+                        </p>
+                        <a href="{{ route('pelayanan-jasa.download-file', ['id' => $permohonan->id, 'fileName' => basename($permohonan->surat_permohonan)]) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
+                            <i class="fas fa-download"></i>
+                            {{ basename($permohonan->surat_permohonan) }}
+                        </a>
+                    </div>
                 @endif
                 <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
             </div>
         </div>
 
-        <!-- PETA SEBARAN Fields (combines Pemetaan and PetaSebaran) -->
-        <div id="peta-sebaran-fields" style="display: {{ $is_edit && in_array($jenis_layanan, ['Layanan Peta Sebaran', 'Layanan Pemetaan']) ? 'block' : 'none' }}" class="space-y-4">
-            <div>
-                <x-input-label for="peta_sebaran_perusahaan">Nama Perusahaan/Instansi</x-input-label>
-                <x-text-input id="peta_sebaran_perusahaan" class="block w-full mt-1" type="text" name="perusahaan" 
-                    :value="$is_edit ? old('perusahaan', $permohonan->perusahaan ?? '') : old('perusahaan')" />
-                <x-input-error :messages="$errors->get('perusahaan')" class="mt-2" />
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <x-input-label for="peta_sebaran_tanggal">Tanggal Kejadian</x-input-label>
-                    <x-text-input id="peta_sebaran_tanggal" class="block w-full mt-1" type="date" name="tanggal" 
-                        :value="$is_edit ? old('tanggal', $permohonan->tanggal ?? '') : old('tanggal')" />
-                    <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
-                </div>
-                <div>
-                    <x-input-label for="peta_sebaran_lokasi">Lokasi Kejadian</x-input-label>
-                    <x-text-input id="peta_sebaran_lokasi" class="block w-full mt-1" type="text" name="lokasi" 
-                        :value="$is_edit ? old('lokasi', $permohonan->lokasi ?? '') : old('lokasi')" />
-                    <x-input-error :messages="$errors->get('lokasi')" class="mt-2" />
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <x-input-label for="peta_sebaran_latitude">Latitude</x-input-label>
-                    <x-text-input id="peta_sebaran_latitude" class="block w-full mt-1" type="number" step="0.000001" name="latitude" 
-                        :value="$is_edit ? old('latitude', $permohonan->latitude ?? '') : old('latitude')" />
-                    <x-input-error :messages="$errors->get('latitude')" class="mt-2" />
-                </div>
-                <div>
-                    <x-input-label for="peta_sebaran_longitude">Longitude</x-input-label>
-                    <x-text-input id="peta_sebaran_longitude" class="block w-full mt-1" type="number" step="0.000001" name="longitude" 
-                        :value="$is_edit ? old('longitude', $permohonan->longitude ?? '') : old('longitude')" />
-                    <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
-                </div>
-            </div>
-
-            <div>
-                <x-input-label for="peta_sebaran_kejadian">Deskripsi Kejadian</x-input-label>
-                <textarea id="peta_sebaran_kejadian" name="kejadian" rows="3"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('kejadian', $permohonan->kejadian ?? '') : old('kejadian') }}</textarea>
-                <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
-            </div>
-        </div>
-
         <!-- SURVEY Fields -->
-        <div id="survey-fields" style="display: {{ $is_edit && $jenis_layanan == 'Layanan Survey' ? 'block' : 'none' }}" class="space-y-4">
-            <div>
-                <x-input-label for="survey_nama_lengkap">Nama Lengkap</x-input-label>
-                <x-text-input id="survey_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
-                    :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap')" />
-                <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
+        <div id="survey-fields" style="display: {{ $is_edit && $jenis_layanan == 'Layanan Survey' ? 'block' : 'none' }}" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
+                    <input type="text" name="nama_lengkap" value="{{ $is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('nama_lengkap')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Email <span class="text-red-500">*</span></label>
+                    <input type="email" name="email" value="{{ $is_edit ? old('email', $permohonan->email ?? '') : old('email') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('email')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+                </div>
             </div>
-
             <div>
-                <x-input-label for="survey_no_whatsapp">No WhatsApp</x-input-label>
-                <x-text-input id="survey_no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
-                    :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
-                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
+                <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">No WhatsApp <span class="text-red-500">*</span></label>
+                <input type="text" name="no_whatsapp" value="{{ $is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp') }}" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                @error('no_whatsapp')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
             </div>
-
             <div>
-                <x-input-label for="survey_email">Email</x-input-label>
-                <x-text-input id="survey_email" class="block w-full mt-1" type="email" name="email" 
-                    :value="$is_edit ? old('email', $permohonan->email ?? '') : old('email')" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Deskripsi Survey <span class="text-red-500">*</span></label>
+                <textarea name="keterangan" rows="4" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition resize-none">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
+                @error('keterangan')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
             </div>
-
             <div>
-                <x-input-label for="survey_keterangan">Deskripsi Survey</x-input-label>
-                <textarea id="survey_keterangan" name="keterangan" rows="4"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
-                <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
+                <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Surat Permohonan <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span></label>
+                <div class="relative">
+                    <input type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB</p>
+                @if ($is_edit && $permohonan && $permohonan->surat_permohonan)
+                    <div class="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
+                        <p class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+                            <i class="fas fa-file text-blue-600 dark:text-blue-400"></i>
+                            File saat ini:
+                        </p>
+                        <a href="{{ route('pelayanan-jasa.download-file', ['id' => $permohonan->id, 'fileName' => basename($permohonan->surat_permohonan)]) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
+                            <i class="fas fa-download"></i>
+                            {{ basename($permohonan->surat_permohonan) }}
+                        </a>
+                    </div>
+                @endif
+                <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
             </div>
         </div>
 
         <!-- KONSULTASI Fields -->
-        <div id="konsultasi-fields" style="display: {{ $is_edit && $jenis_layanan == 'Layanan Konsultasi' ? 'block' : 'none' }}" class="space-y-4">
-            <div>
-                <x-input-label for="konsultasi_nama_lengkap">Nama Lengkap</x-input-label>
-                <x-text-input id="konsultasi_nama_lengkap" class="block w-full mt-1" type="text" name="nama_lengkap" 
-                    :value="$is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap')" />
-                <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
+        <div id="konsultasi-fields" style="display: {{ $is_edit && $jenis_layanan == 'Layanan Konsultasi' ? 'block' : 'none' }}" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
+                    <input type="text" name="nama_lengkap" value="{{ $is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('nama_lengkap')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Email <span class="text-red-500">*</span></label>
+                    <input type="email" name="email" value="{{ $is_edit ? old('email', $permohonan->email ?? '') : old('email') }}" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                    @error('email')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+                </div>
             </div>
-
             <div>
-                <x-input-label for="konsultasi_no_whatsapp">No WhatsApp</x-input-label>
-                <x-text-input id="konsultasi_no_whatsapp" class="block w-full mt-1" type="text" name="no_whatsapp" 
-                    :value="$is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp')" />
-                <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
+                <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">No WhatsApp <span class="text-red-500">*</span></label>
+                <input type="text" name="no_whatsapp" value="{{ $is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp') }}" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                @error('no_whatsapp')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
             </div>
-
             <div>
-                <x-input-label for="konsultasi_email">Email</x-input-label>
-                <x-text-input id="konsultasi_email" class="block w-full mt-1" type="email" name="email" 
-                    :value="$is_edit ? old('email', $permohonan->email ?? '') : old('email')" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Topik Konsultasi <span class="text-red-500">*</span></label>
+                <textarea name="keterangan" rows="4" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition resize-none">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
+                @error('keterangan')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
             </div>
-
             <div>
-                <x-input-label for="konsultasi_keterangan">Topik/Deskripsi Konsultasi</x-input-label>
-                <textarea id="konsultasi_keterangan" name="keterangan" rows="4"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
-                <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
+                <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Surat Permohonan <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span></label>
+                <div class="relative">
+                    <input type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB</p>
+                @if ($is_edit && $permohonan && $permohonan->surat_permohonan)
+                    <div class="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
+                        <p class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+                            <i class="fas fa-file text-blue-600 dark:text-blue-400"></i>
+                            File saat ini:
+                        </p>
+                        <a href="{{ route('pelayanan-jasa.download-file', ['id' => $permohonan->id, 'fileName' => basename($permohonan->surat_permohonan)]) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
+                            <i class="fas fa-download"></i>
+                            {{ basename($permohonan->surat_permohonan) }}
+                        </a>
+                    </div>
+                @endif
+                <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
             </div>
         </div>
 
         @if ($is_edit)
         <div>
-            <x-input-label for="status">Status</x-input-label>
-            <select name="status" id="status"
-                class="block w-full mt-1 truncate border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+            <label for="status" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                Status <span class="text-red-500">*</span>
+            </label>
+            <select name="status" id="status" required
+                class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition">
                 <option value="">Pilih status...</option>
                 <option value="Menunggu" @selected(old('status', $permohonan->status ?? '') == 'Menunggu')>Menunggu</option>
                 <option value="Diproses" @selected(old('status', $permohonan->status ?? '') == 'Diproses')>Diproses</option>
                 <option value="Ditolak" @selected(old('status', $permohonan->status ?? '') == 'Ditolak')>Ditolak</option>
                 <option value="Selesai" @selected(old('status', $permohonan->status ?? '') == 'Selesai')>Selesai</option>
             </select>
-            <x-input-error :messages="$errors->get('status')" class="mt-2" />
+            @error('status')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
         </div>
         @endif
 
-        <button type="submit"
-            class="px-6 py-2 w-full text-white bg-green-600 rounded-lg hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 font-semibold transition duration-200">
-            {{ $is_edit ? 'Perbarui' : 'Kirim' }} Permohonan
-        </button>
+        <!-- Submit Button -->
+        <div class="pt-4">
+            <button type="submit"
+                class="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 dark:from-green-700 dark:to-green-800 dark:hover:from-green-800 dark:hover:to-green-900 text-white font-semibold transition">
+                <i class="fas fa-paper-plane mr-2"></i>{{ $is_edit ? 'Perbarui' : 'Kirim' }} Permohonan
+            </button>
+        </div>
     </form>
 </div>
 
 <script>
 function disableHiddenFields(visibleSectionId) {
     // List semua field section IDs
-    const allSections = ['magang-fields', 'asuransi-fields', 'data-fields', 'peta-sebaran-fields', 'survey-fields', 'konsultasi-fields'];
+    const allSections = ['magang-fields', 'asuransi-fields', 'data-fields', 'survey-fields', 'konsultasi-fields'];
     
     // Disable/enable inputs berdasarkan visibility
     allSections.forEach(sectionId => {
@@ -431,7 +557,6 @@ function switchTab(serviceType, buttonElement) {
     document.getElementById('magang-fields').style.display = 'none';
     document.getElementById('asuransi-fields').style.display = 'none';
     document.getElementById('data-fields').style.display = 'none';
-    document.getElementById('peta-sebaran-fields').style.display = 'none';
     document.getElementById('survey-fields').style.display = 'none';
     document.getElementById('konsultasi-fields').style.display = 'none';
     
@@ -452,9 +577,6 @@ function switchTab(serviceType, buttonElement) {
     } else if (serviceType === 'Layanan Data') {
         visibleSectionId = 'data-fields';
         document.getElementById('data-fields').style.display = 'block';
-    } else if (serviceType === 'Layanan Peta Sebaran') {
-        visibleSectionId = 'peta-sebaran-fields';
-        document.getElementById('peta-sebaran-fields').style.display = 'block';
     } else if (serviceType === 'Layanan Survey') {
         visibleSectionId = 'survey-fields';
         document.getElementById('survey-fields').style.display = 'block';
@@ -480,7 +602,6 @@ function updateFormFields() {
     document.getElementById('magang-fields').style.display = 'none';
     document.getElementById('asuransi-fields').style.display = 'none';
     document.getElementById('data-fields').style.display = 'none';
-    document.getElementById('peta-sebaran-fields').style.display = 'none';
     document.getElementById('survey-fields').style.display = 'none';
     document.getElementById('konsultasi-fields').style.display = 'none';
     
@@ -495,9 +616,6 @@ function updateFormFields() {
     } else if (jenis_layanan === 'Layanan Data') {
         visibleSectionId = 'data-fields';
         document.getElementById('data-fields').style.display = 'block';
-    } else if (jenis_layanan === 'Layanan Peta Sebaran') {
-        visibleSectionId = 'peta-sebaran-fields';
-        document.getElementById('peta-sebaran-fields').style.display = 'block';
     } else if (jenis_layanan === 'Layanan Survey') {
         visibleSectionId = 'survey-fields';
         document.getElementById('survey-fields').style.display = 'block';

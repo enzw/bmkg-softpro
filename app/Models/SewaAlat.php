@@ -16,6 +16,8 @@ class SewaAlat extends Model
     protected $fillable = [
         'alat_id',
         'user_id',
+        'nama',
+        'no_whatsapp',
         'sewa_mulai',
         'sewa_berakhir',
         'banyak_unit',
@@ -24,6 +26,11 @@ class SewaAlat extends Model
         'status',
         'expedisi',
         'resi',
+    ];
+
+    protected $casts = [
+        'sewa_mulai' => 'date',
+        'sewa_berakhir' => 'date',
     ];
 
     public function user()

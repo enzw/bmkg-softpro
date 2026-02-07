@@ -1,27 +1,35 @@
 @extends('layouts.main')
 
+@section('title', 'Sewa Alat')
+
 @section('content')
-<div class="min-h-screen bg-white dark:bg-gray-900">
-    <div class="container px-4 mx-auto py-10">
-        <div class="mt-12 mb-8">
-            <div class="flex items-center gap-3 mb-4">
-                <a href="/layanan" class="text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div class="container px-4 mx-auto py-12">
+        <!-- Header Section -->
+        <div class="mt-12 mb-12">
+            <div class="flex items-center gap-2 mb-4">
+                <a href="{{ route('layanan') }}" class="text-sm text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition">
                     Layanan
                 </a>
-                <i class="text-sm text-gray-400 fa-solid fa-angle-right"></i>
+                <span class="text-gray-300 dark:text-gray-600">/</span>
+                <span class="text-sm text-gray-600 dark:text-gray-400">Sewa Alat</span>
             </div>
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                Jasa Sewa Alat MKG
-            </h1>
-            <p class="text-gray-600 dark:text-gray-400">
-                Silakan isi formulir untuk melakukan permohonan sewa alat.
+            <div class="mb-2">
+                <h1 class="text-5xl font-bold text-gray-900 dark:text-white">Jasa Sewa Alat MKG</h1>
+            </div>
+            <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">
+                Penuhi kebutuhan alat meteorologi dan klimatologi Anda dengan layanan sewa profesional kami. Isi formulir di bawah untuk melakukan permohonan.
             </p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Form Section -->
             <div class="lg:col-span-1">
                 @include('components.form-sewa-alat-permohonan', ['alats' => $alats])
             </div>
+            
+            <!-- Table Section -->
             <div class="lg:col-span-2">
                 @include('components.table-sewa-alat-permohonan', ['permohonan' => $permohonan])
             </div>

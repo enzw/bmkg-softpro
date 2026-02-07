@@ -77,7 +77,7 @@ class LayananDataController extends Controller
         try {
             $layananData = LayananData::create($validated);
             
-            // Send Telegram notification
+            // Send Telegram notification with document
             try {
                 $telegramService = new TelegramService();
                 
@@ -87,10 +87,18 @@ class LayananDataController extends Controller
                     'no_whatsapp' => $validated['no_whatsapp'],
                     'jenis_data' => $validated['keterangan'] ?? '-',
                     'keterangan' => $validated['keterangan'] ?? '-',
+                    'surat_permohonan' => $validated['surat_permohonan'] ?? null,
                     'created_at' => $layananData->created_at->format('d-m-Y H:i'),
                 ];
                 
-                $telegramService->sendPermohonanNotification('layanan_data', $telegramData);
+                // Get the full path to the document if it exists
+                $documentPath = null;
+                if (!empty($validated['surat_permohonan'])) {
+                    $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                }
+                
+                // Send notification with document
+                $telegramService->sendPermohonanWithDocument('layanan_data', $telegramData, $documentPath);
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails

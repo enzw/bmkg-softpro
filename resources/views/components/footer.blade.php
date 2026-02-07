@@ -49,8 +49,6 @@
                     <a href="/" class="block hover:text-white transition">Beranda</a>
                     <a href="/tentang-kami" class="block hover:text-white transition">Tentang Kami</a>
                     <a href="/#layanan" class="block hover:text-white transition">Layanan</a>
-                    <a href="/berita" class="block hover:text-white transition">Berita</a>
-                    <a href="/#kontak" class="block hover:text-white transition">Kontak</a>
                 </nav>
             </div>
 

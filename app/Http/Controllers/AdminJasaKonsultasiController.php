@@ -3,14 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\JasaKonsultasi;
-use Exception;
 use Illuminate\Support\Facades\Auth;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 class AdminJasaKonsultasiController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (Auth::check() && Auth::user()->role !== 'admin') {
+                return redirect('/dashboard-pelayanan')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+            }
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -128,5 +138,26 @@ class AdminJasaKonsultasiController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Download file
+     */
+    public function downloadFile($id, $fileName)
+    {
+        $jasaKonsultasi = JasaKonsultasi::findOrFail($id);
+
+        // Security: validate that the file belongs to this record
+        if (!$jasaKonsultasi->surat_permohonan || !str_contains($jasaKonsultasi->surat_permohonan, $fileName)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        $filePath = storage_path('app/' . $jasaKonsultasi->surat_permohonan);
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        return response()->download($filePath, $fileName);
     }
 }

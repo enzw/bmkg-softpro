@@ -29,6 +29,8 @@ class SewaAlatController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'no_whatsapp' => 'required|string|max:20',
             'alat_id' => 'required',
             'banyak_unit' => 'required|numeric|min:1',
             'sewa_mulai' => 'required|date',
@@ -92,16 +94,29 @@ class SewaAlatController extends Controller
                 $telegramData = [
                     'user_name' => $user->name,
                     'email' => $user->email,
-                    'no_whatsapp' => $user->telp ?? '-',
+                    'no_whatsapp' => $validated['no_whatsapp'] ?? '-',
+                    'nama' => $validated['nama'] ?? '-',
                     'alat_name' => $alat->nama ?? '-',
                     'banyak_unit' => $validated['banyak_unit'],
                     'sewa_mulai' => $validated['sewa_mulai'],
                     'sewa_berakhir' => $validated['sewa_berakhir'],
                     'keterangan' => $validated['keterangan'] ?? '-',
+                    'surat_permohonan' => $validated['surat_permohonan'] ?? null,
                     'created_at' => $sewaAlat->created_at->format('d-m-Y H:i'),
                 ];
                 
-                $telegramService->sendPermohonanNotification('sewa_alat', $telegramData);
+                // Get full path to document if exists
+                $documentPath = null;
+                if (!empty($validated['surat_permohonan'])) {
+                    $documentPath = Storage::disk('local')->path($validated['surat_permohonan']);
+                }
+                
+                // Send notification with document if available
+                if ($documentPath && file_exists($documentPath)) {
+                    $telegramService->sendPermohonanWithDocument('sewa_alat', $telegramData, $documentPath);
+                } else {
+                    $telegramService->sendPermohonanNotification('sewa_alat', $telegramData);
+                }
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails

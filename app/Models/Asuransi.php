@@ -15,11 +15,12 @@ class Asuransi extends Model
 
     protected $fillable = [
         'user_id',
-        'perusahaan',
+        'nama_user',
         'tanggal',
         'lokasi',
         'latitude',
         'longitude',
+        'perusahaan',
         'kejadian',
         'no_whatsapp',
         'status',

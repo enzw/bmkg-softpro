@@ -3,14 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asuransi;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class AdminKlaimAsuransiController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (Auth::check() && Auth::user()->role !== 'admin') {
+                return redirect('/dashboard-pelayanan')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+            }
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      */

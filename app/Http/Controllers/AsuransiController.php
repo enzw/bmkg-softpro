@@ -39,13 +39,15 @@ class AsuransiController extends Controller
      */
     public function store(Request $request)
     {
+        \Log::info('Form submission:', $request->all());
+        
         $validated = $request->validate([
-            'perusahaan' => 'required',
+            'perusahaan' => 'required|string',
             'tanggal' => 'required|date',
-            'jumlah_rombongan' => 'required',
-            'nama_lengkap' => 'required',
-            'nomor_whatsapp' => 'required',
-            'kejadian'=> 'required',
+            'jumlah_rombongan' => 'required|string',
+            'nama_lengkap' => 'required|string',
+            'nomor_whatsapp' => 'required|string',
+            'kejadian' => 'required|string',
         ]);
 
         $validated['user_id'] = Auth::id();
@@ -53,7 +55,7 @@ class AsuransiController extends Controller
         try {
             $asuransi = Asuransi::create($validated);
             
-            // Send Telegram notification
+            // Send Telegram notification with document
             try {
                 $telegramService = new TelegramService();
                 $user = Auth::user();
@@ -67,7 +69,9 @@ class AsuransiController extends Controller
                     'created_at' => $asuransi->created_at->format('d-m-Y H:i'),
                 ];
                 
-                $telegramService->sendPermohonanNotification('asuransi', $telegramData);
+                // Asuransi tidak memiliki surat_permohonan, jadi documentPath selalu null
+                // Ini hanya mengirim notifikasi tanpa dokumen
+                $telegramService->sendPermohonanWithDocument('asuransi', $telegramData, null);
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails

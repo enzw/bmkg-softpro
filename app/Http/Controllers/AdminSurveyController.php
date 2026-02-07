@@ -3,14 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Survey;
-use Exception;
 use Illuminate\Support\Facades\Auth;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 class AdminSurveyController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (Auth::check() && Auth::user()->role !== 'admin') {
+                return redirect('/dashboard-pelayanan')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+            }
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -128,5 +138,26 @@ class AdminSurveyController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Download file
+     */
+    public function downloadFile($id, $fileName)
+    {
+        $survey = Survey::findOrFail($id);
+
+        // Security: validate that the file belongs to this record
+        if (!$survey->surat_permohonan || !str_contains($survey->surat_permohonan, $fileName)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        $filePath = storage_path('app/' . $survey->surat_permohonan);
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        return response()->download($filePath, $fileName);
     }
 }

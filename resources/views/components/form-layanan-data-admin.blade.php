@@ -1,14 +1,20 @@
 <style>
 input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1) brightness(2);
+    filter: invert(0) brightness(1);
     cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) brightness(2);
+    }
 }
 </style>
 
 <div class="relative p-6 overflow-hidden text-gray-900 bg-white shadow-sm dark:text-gray-100 dark:bg-gray-800 sm:rounded-lg h-max lg:sticky lg:top-12">
 
     <h2 class="flex items-center mb-4 text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-        {{ $is_edit ? 'Edit' : 'Buat' }} Permohonan Layanan Data
+        {{ $is_edit ? 'Edit' : 'Buat' }} Permohonan Layanan Data Geofisika
     </h2>
 
     @php
@@ -86,12 +92,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         @endif
 
         <div>
-            <x-input-label for="surat_permohonan">Surat Permohonan (PDF, JPG, PNG) - Opsional</x-input-label>
+            <x-input-label for="surat_permohonan">Surat Permohonan (PDF) - Opsional</x-input-label>
             <input id="surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
                 class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600" />
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Maksimal ukuran file: 2MB</p>
-            @if ($is_edit && $permohonan->surat_permohonan)
-                <p class="text-xs text-green-600 dark:text-green-400 mt-1">File saat ini: {{ basename($permohonan->surat_permohonan) }}</p>
+            @if ($is_edit && $permohonan && $permohonan->surat_permohonan)
+                <div class="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
+                    <p class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+                        <i class="fas fa-file text-blue-600 dark:text-blue-400"></i>
+                        File saat ini:
+                    </p>
+                    <a href="{{ route('admin.layanan-data.download-file', ['id' => $permohonan->id, 'fileName' => basename($permohonan->surat_permohonan)]) }}" 
+                        class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
+                        <i class="fas fa-download"></i>
+                        {{ basename($permohonan->surat_permohonan) }}
+                    </a>
+                </div>
             @endif
             <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
         </div>

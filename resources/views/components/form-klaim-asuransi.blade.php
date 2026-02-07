@@ -1,7 +1,13 @@
 <style>
 input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1) brightness(2);
+    filter: invert(0) brightness(1);
     cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) brightness(2);
+    }
 }
 </style>
 
@@ -48,9 +54,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         </div>
 
         <div>
-            <x-input-label for="perusahaan">Nama Instansi</x-input-label>
+            <x-input-label for="perusahaan">Nama Instansi <span class="text-red-500">*</span></x-input-label>
             <x-text-input id="perusahaan" class="block w-full mt-1" type="text" name="perusahaan" 
-                :value="old('perusahaan')" />
+                :value="old('perusahaan')" required />
             <x-input-error :messages="$errors->get('perusahaan')" class="mt-2" />
         </div>
 

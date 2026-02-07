@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Asuransi;
 use App\Models\JasaKonsultasi;
+use App\Models\Kunjungan;
 use App\Models\LayananData;
 use App\Models\Magang;
-use App\Models\Pemetaan;
-use App\Models\PetaSebaran;
 use App\Models\SewaAlat;
 use App\Models\Survey;
 use App\Services\LayananService;
@@ -65,7 +64,7 @@ class DashboardPelayananController extends Controller
         foreach ($sewaAlat as $item) {
             $permohonan[] = [
                 'jenis' => 'Jasa Sewa Alat MKG',
-                'status' => $item->status ?? 'Pending',
+                'status' => $this->translateStatus($item->status ?? 'pending'),
                 'tanggal' => $item->created_at,
             ];
         }
@@ -75,17 +74,27 @@ class DashboardPelayananController extends Controller
         foreach ($magang as $item) {
             $permohonan[] = [
                 'jenis' => 'Magang',
-                'status' => $item->status ?? 'Pending',
+                'status' => $this->translateStatus($item->status ?? 'pending'),
                 'tanggal' => $item->created_at,
             ];
         }
         
-        // Dari Asuransi (Permohonan Kunjungan)
-        $kunjungan = Asuransi::where('user_id', $userId)->get();
+        // Dari Asuransi
+        $asuransi = Asuransi::where('user_id', $userId)->get();
+        foreach ($asuransi as $item) {
+            $permohonan[] = [
+                'jenis' => 'Klaim Asuransi',
+                'status' => $this->translateStatus($item->status ?? 'pending'),
+                'tanggal' => $item->created_at,
+            ];
+        }
+        
+        // Dari Kunjungan (Permohonan Kunjungan Teknis)
+        $kunjungan = Kunjungan::where('user_id', $userId)->get();
         foreach ($kunjungan as $item) {
             $permohonan[] = [
-                'jenis' => 'Permohonan Kunjungan',
-                'status' => $item->status ?? 'Pending',
+                'jenis' => 'Permohonan Kunjungan Teknis',
+                'status' => $this->translateStatus($item->status ?? 'pending'),
                 'tanggal' => $item->created_at,
             ];
         }
@@ -95,17 +104,7 @@ class DashboardPelayananController extends Controller
         foreach ($jasaKonsultasi as $item) {
             $permohonan[] = [
                 'jenis' => 'Jasa Konsultasi',
-                'status' => $item->status ?? 'Pending',
-                'tanggal' => $item->created_at,
-            ];
-        }
-        
-        // Dari Pemetaan
-        $pemetaan = Pemetaan::where('user_id', $userId)->get();
-        foreach ($pemetaan as $item) {
-            $permohonan[] = [
-                'jenis' => 'Layanan Pemetaan',
-                'status' => $item->status ?? 'Pending',
+                'status' => $this->translateStatus($item->status ?? 'pending'),
                 'tanggal' => $item->created_at,
             ];
         }
@@ -115,7 +114,7 @@ class DashboardPelayananController extends Controller
         foreach ($survey as $item) {
             $permohonan[] = [
                 'jenis' => 'Layanan Survey',
-                'status' => $item->status ?? 'Pending',
+                'status' => $this->translateStatus($item->status ?? 'pending'),
                 'tanggal' => $item->created_at,
             ];
         }
@@ -125,17 +124,7 @@ class DashboardPelayananController extends Controller
         foreach ($layananData as $item) {
             $permohonan[] = [
                 'jenis' => 'Layanan Data',
-                'status' => $item->status ?? 'Pending',
-                'tanggal' => $item->created_at,
-            ];
-        }
-        
-        // Dari PetaSebaran
-        $petaSebaran = PetaSebaran::where('user_id', $userId)->get();
-        foreach ($petaSebaran as $item) {
-            $permohonan[] = [
-                'jenis' => 'Peta Sebaran',
-                'status' => $item->status ?? 'Pending',
+                'status' => $this->translateStatus($item->status ?? 'pending'),
                 'tanggal' => $item->created_at,
             ];
         }
@@ -146,5 +135,23 @@ class DashboardPelayananController extends Controller
         });
 
         return $permohonan;
+    }
+
+    /**
+     * Translate status to Indonesian
+     */
+    private function translateStatus($status)
+    {
+        return match(strtolower($status)) {
+            'pending' => 'Menunggu',
+            'approved', 'diterima', 'disetujui' => 'Disetujui',
+            'rejected', 'ditolak' => 'Ditolak',
+            'completed', 'selesai' => 'Selesai',
+            'diproses' => 'Diproses',
+            'alat siap diambil' => 'Alat Siap Diambil',
+            'alat dibawa' => 'Alat Dibawa',
+            'dikirim' => 'Dikirim',
+            default => ucfirst($status)
+        };
     }
 }

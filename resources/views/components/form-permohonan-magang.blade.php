@@ -1,7 +1,13 @@
 <style>
 input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1) brightness(2);
+    filter: invert(0) brightness(1);
     cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) brightness(2);
+    }
 }
 </style>
 
@@ -191,7 +197,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
         <!-- File Upload (untuk semua jenis layanan) -->
         <div id="file-fields" class="hidden">
-            <x-input-label for="surat_permohonan">Surat Permohonan (PDF, JPG, PNG) - Opsional</x-input-label>
+            <x-input-label for="surat_permohonan">Surat Permohonan (PDF) - Opsional</x-input-label>
             <input id="surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
                 class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600" />
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Maksimal ukuran file: 2MB</p>

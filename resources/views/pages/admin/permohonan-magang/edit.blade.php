@@ -12,13 +12,11 @@
                             </p>
                         </div>
                         <a href="{{ route('admin.pelayanan-jasa.index') }}"
-                            class="px-4 py-3 text-white bg-red-600 rounded hover:bg-red-500 transition">
+                            class="inline-flex items-center gap-2 px-6 py-3 text-white bg-red-600 rounded-lg hover:bg-red-700 transition font-semibold">
+                            <i class="fas fa-arrow-left"></i>
                             Kembali
                         </a>
                     </div>
                 </div>
-
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
                     @include('components.form-permohonan-magang-admin', ['is_edit' => true, 'permohonan' => $permohonan])
-                </div>
 @endsection

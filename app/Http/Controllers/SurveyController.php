@@ -77,7 +77,7 @@ class SurveyController extends Controller
         try {
             $survey = Survey::create($validated);
             
-            // Send Telegram notification
+            // Send Telegram notification with document
             try {
                 $telegramService = new TelegramService();
                 
@@ -87,10 +87,18 @@ class SurveyController extends Controller
                     'no_whatsapp' => $validated['no_whatsapp'],
                     'lokasi_survey' => $validated['keterangan'] ?? '-',
                     'keterangan' => $validated['keterangan'] ?? '-',
+                    'surat_permohonan' => $validated['surat_permohonan'] ?? null,
                     'created_at' => $survey->created_at->format('d-m-Y H:i'),
                 ];
                 
-                $telegramService->sendPermohonanNotification('survey', $telegramData);
+                // Get the full path to the document if it exists
+                $documentPath = null;
+                if (!empty($validated['surat_permohonan'])) {
+                    $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                }
+                
+                // Send notification with document
+                $telegramService->sendPermohonanWithDocument('survey', $telegramData, $documentPath);
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails
