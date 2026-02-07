@@ -48,9 +48,6 @@ COPY . .
 # Copy Vite build
 COPY --from=frontend /app/public/build ./public/build
 
-# Dummy env (build only)
-RUN echo "APP_KEY=base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" > .env
-
 # Install deps
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-dev \
