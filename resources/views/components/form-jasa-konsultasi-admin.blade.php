@@ -73,7 +73,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <div>
             <x-input-label for="keterangan">Deskripsi Layanan yang Dibutuhkan</x-input-label>
             <textarea id="keterangan" name="keterangan" rows="3"
-                class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan) : old('keterangan') }}</textarea>
+                class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600">{{ $is_edit ? old('keterangan', $permohonan->keterangan) : old('keterangan') }}</textarea>
             <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
         </div>
 
@@ -81,7 +81,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <div>
             <x-input-label for="status">Status</x-input-label>
             <select name="status" id="status"
-                class="block w-full mt-1 truncate border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                class="block w-full mt-1 truncate border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600">
                 <option value="">Pilih status...</option>
                 <option value="Menunggu" @selected(old('status', $permohonan->status) == 'Menunggu')>Menunggu</option>
                 <option value="Diproses" @selected(old('status', $permohonan->status) == 'Diproses')>Diproses</option>
@@ -94,7 +94,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <div>
             <x-input-label for="surat_permohonan">Surat Permohonan (PDF) - Opsional</x-input-label>
             <input id="surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
-                class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600" />
+                class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600" />
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Maksimal ukuran file: 2MB</p>
             @if ($is_edit && $permohonan && $permohonan->surat_permohonan)
                 <div class="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">

@@ -159,7 +159,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <div>
                 <x-input-label for="kejadian">Deskripsi Kejadian</x-input-label>
                 <textarea id="kejadian" name="kejadian" rows="3"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ old('kejadian') }}</textarea>
+                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600">{{ old('kejadian') }}</textarea>
                 <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
             </div>
         </div>
@@ -190,7 +190,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <div>
                 <x-input-label for="keterangan">Deskripsi Kebutuhan</x-input-label>
                 <textarea id="keterangan" name="keterangan" rows="3"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ old('keterangan') }}</textarea>
+                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600">{{ old('keterangan') }}</textarea>
                 <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
             </div>
         </div>
@@ -199,7 +199,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <div id="file-fields" class="hidden">
             <x-input-label for="surat_permohonan">Surat Permohonan (PDF) - Opsional</x-input-label>
             <input id="surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
-                class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600" />
+                class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600" />
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Maksimal ukuran file: 2MB</p>
             <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
         </div>
