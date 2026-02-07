@@ -32,13 +32,30 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        $sewa_alat = SewaAlat::all();
-        $magang = Magang::all();
-        $kunjungan = Kunjungan::all();
-        $asuransi = Asuransi::all();
-        $jasa_konsultasi = JasaKonsultasi::all();
-        $survey = Survey::all();
-        $layanan_data = LayananData::all();
+        try {
+            $sewa_alat = SewaAlat::all();
+            $magang = Magang::all();
+            $kunjungan = Kunjungan::all();
+            $asuransi = Asuransi::all();
+            $jasa_konsultasi = JasaKonsultasi::all();
+            $survey = Survey::all();
+            $layanan_data = LayananData::all();
+        } catch (\Exception $e) {
+            Log::error('Database query failed in AdminController::dashboard', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            
+            // Return empty collections if database queries fail
+            $sewa_alat = collect([]);
+            $magang = collect([]);
+            $kunjungan = collect([]);
+            $asuransi = collect([]);
+            $jasa_konsultasi = collect([]);
+            $survey = collect([]);
+            $layanan_data = collect([]);
+        }
         
         // Helper function untuk count dengan mapping status untuk Sewa Alat
         $countSewaAlatByDisplayStatus = function($collection, $displayStatus) {

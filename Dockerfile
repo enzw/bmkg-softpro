@@ -61,10 +61,18 @@ RUN chown -R www-data:www-data storage bootstrap/cache
 # IMPORTANT: expose platform port
 EXPOSE 8080
 
+# Set default environment variables
+ENV PORT=8080 \
+    APP_ENV=production
+
 # Start Laravel HTTP server
-CMD if [ "$RESET_DB" = "true" ]; then \
+CMD set -e; \
+    echo "🔄 Running migrations..."; \
+    if [ "$RESET_DB" = "true" ]; then \
       php artisan migrate:fresh --force --seed; \
     else \
       php artisan migrate --force; \
-    fi \
- && php artisan serve --host=0.0.0.0 --port=${PORT}
+    fi; \
+    echo "✅ Migrations completed"; \
+    echo "🚀 Starting Laravel server on port ${PORT}..."; \
+    php artisan serve --host=0.0.0.0 --port=${PORT}
