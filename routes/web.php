@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DialogflowWebhookController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardPelayananController;
+use App\Http\Controllers\AdminDownloadAreaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -157,6 +158,12 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
     Route::middleware(['auth', 'auth.admin', 'session.timeout'])->prefix('admin')->name('admin.')->group(function () {
         Route::redirect('/', 'dashboard');
         Route::get('dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+        
+        // Download Area Routes
+        Route::get('download-area', [AdminDownloadAreaController::class, 'index'])->name('download-area.index');
+        Route::get('download-area/preview', [AdminDownloadAreaController::class, 'preview'])->name('download-area.preview');
+        Route::post('download-area/download', [AdminDownloadAreaController::class, 'download'])->name('download-area.download');
+        
         Route::resource('sewa-alat', AdminSewaAlatController::class);
         Route::get('sewa-alat/{id}/download-file/{fileName}', [AdminSewaAlatController::class, 'downloadFile'])->name('sewa-alat.download-file');
         Route::get('sewa-alat/{sewa_alat}/download', [AdminSewaAlatController::class, 'download'])->name('sewa-alat.download');

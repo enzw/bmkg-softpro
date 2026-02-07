@@ -52,6 +52,17 @@
                 <i class="fa-solid fa-users w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110"></i>
                 <span>Permohonan Kunjungan</span>
             </a>
+
+            <!-- Download Area -->
+            <a href="{{ route('admin.download-area.index') }}"
+                @class([
+                    'group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
+                    'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' => !request()->routeIs('admin.download-area.*'),
+                    'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border-l-2 border-indigo-500' => request()->routeIs('admin.download-area.*'),
+                ])>
+                <i class="fa-solid fa-download w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110"></i>
+                <span>Download Area</span>
+            </a>
         </nav>
 
         <!-- Footer Stats -->
