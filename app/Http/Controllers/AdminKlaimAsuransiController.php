@@ -151,6 +151,12 @@ class AdminKlaimAsuransiController extends Controller
     {
         try {
             $asuransi = Asuransi::findOrFail($id);
+            
+            // Delete associated file
+            if ($asuransi->surat_permohonan) {
+                Storage::disk('local')->delete($asuransi->surat_permohonan);
+            }
+            
             $asuransi->delete();
             
             if (request()->wantsJson()) {

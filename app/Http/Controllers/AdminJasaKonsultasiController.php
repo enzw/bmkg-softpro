@@ -137,7 +137,27 @@ class AdminJasaKonsultasiController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $jasa_konsultasi = JasaKonsultasi::findOrFail($id);
+            
+            // Delete associated file
+            if ($jasa_konsultasi->surat_permohonan) {
+                Storage::disk('local')->delete($jasa_konsultasi->surat_permohonan);
+            }
+            
+            $jasa_konsultasi->delete();
+            
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan berhasil dihapus']);
+            }
+            return back()->with('success', 'Permohonan berhasil dihapus');
+        } catch (Exception $error) {
+            \Log::error('Admin Jasa Konsultasi Destroy Error: ' . $error->getMessage());
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan gagal dihapus: ' . $error->getMessage()], 500);
+            }
+            return back()->with('error', 'Permohonan gagal dihapus: ' . $error->getMessage());
+        }
     }
 
     /**

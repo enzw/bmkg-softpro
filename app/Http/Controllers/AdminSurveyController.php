@@ -137,7 +137,27 @@ class AdminSurveyController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $survey = Survey::findOrFail($id);
+            
+            // Delete associated file
+            if ($survey->surat_permohonan) {
+                Storage::disk('local')->delete($survey->surat_permohonan);
+            }
+            
+            $survey->delete();
+            
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan berhasil dihapus']);
+            }
+            return back()->with('success', 'Permohonan berhasil dihapus');
+        } catch (Exception $error) {
+            \Log::error('Admin Survey Destroy Error: ' . $error->getMessage());
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan gagal dihapus: ' . $error->getMessage()], 500);
+            }
+            return back()->with('error', 'Permohonan gagal dihapus: ' . $error->getMessage());
+        }
     }
 
     /**

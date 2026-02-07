@@ -137,7 +137,27 @@ class AdminLayananDataController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $layanan_data = LayananData::findOrFail($id);
+            
+            // Delete associated file
+            if ($layanan_data->surat_permohonan) {
+                Storage::disk('local')->delete($layanan_data->surat_permohonan);
+            }
+            
+            $layanan_data->delete();
+            
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan berhasil dihapus']);
+            }
+            return back()->with('success', 'Permohonan berhasil dihapus');
+        } catch (Exception $error) {
+            \Log::error('Admin Layanan Data Destroy Error: ' . $error->getMessage());
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Permohonan gagal dihapus: ' . $error->getMessage()], 500);
+            }
+            return back()->with('error', 'Permohonan gagal dihapus: ' . $error->getMessage());
+        }
     }
 
     /**

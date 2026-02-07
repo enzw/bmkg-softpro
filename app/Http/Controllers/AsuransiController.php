@@ -126,6 +126,11 @@ class AsuransiController extends Controller
                 return back()->with('error', 'Anda tidak memiliki akses untuk menghapus permohonan ini');
             }
             
+            // Delete associated file
+            if ($permohonan_kunjungan->surat_permohonan) {
+                Storage::disk('local')->delete($permohonan_kunjungan->surat_permohonan);
+            }
+            
             $permohonan_kunjungan->delete();
             
             if (request()->wantsJson()) {
