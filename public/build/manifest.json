@@ -32,17 +32,13 @@
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.woff2"
   },
   "public/css/app.css": {
-    "file": "assets/app-e297ec4e.css",
+    "file": "assets/app-a176e82b.css",
     "isEntry": true,
     "src": "public/css/app.css"
   },
   "public/images/slides/0.jpeg": {
     "file": "assets/0-64b6bd8c.jpeg",
     "src": "public/images/slides/0.jpeg"
-  },
-  "public/images/slides/8.jpg": {
-    "file": "assets/8-ce6d1a5f.jpg",
-    "src": "public/images/slides/8.jpg"
   },
   "public/js/app.css": {
     "file": "assets/app-50acba4b.css",
@@ -62,7 +58,7 @@
     "css": [
       "assets/app-50acba4b.css"
     ],
-    "file": "assets/app-d9121f36.js",
+    "file": "assets/app-ac387784.js",
     "isEntry": true,
     "src": "public/js/app.js"
   }
