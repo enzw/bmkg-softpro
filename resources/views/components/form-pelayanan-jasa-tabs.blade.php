@@ -1,3 +1,8 @@
+@php
+    $is_edit = $is_edit ?? false;
+    $permohonan = $permohonan ?? null;
+@endphp
+
 <style>
 input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(0) brightness(1);
