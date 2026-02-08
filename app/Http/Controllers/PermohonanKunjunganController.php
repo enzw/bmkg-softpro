@@ -166,7 +166,7 @@ class PermohonanKunjunganController extends Controller
     public function edit(Kunjungan $kunjungan)
     {
         $this->authorize('update', $kunjungan);
-        return view('permohonan-kunjungan.edit', compact('kunjungan'));
+        return view('pages.layanan.permohonan-kunjungan-edit', compact('kunjungan'));
     }
 
     public function update(Request $request, Kunjungan $kunjungan)
@@ -187,29 +187,89 @@ class PermohonanKunjunganController extends Controller
         // Remove file objects from validated to avoid storing temp paths
         unset($validated['surat_permohonan'], $validated['ktp']);
 
+        // Handle surat_permohonan upload
         if ($request->hasFile('surat_permohonan')) {
-            if ($kunjungan->surat_permohonan) {
-                Storage::disk('local')->delete($kunjungan->surat_permohonan);
+            try {
+                $file = $request->file('surat_permohonan');
+                $directory = 'permohonan/kunjungan';
+                
+                // Create directory if it doesn't exist
+                $fullPath = Storage::disk('local')->path($directory);
+                if (!is_dir($fullPath)) {
+                    mkdir($fullPath, 0777, true);
+                    \Log::info('Created directory: ' . $fullPath);
+                }
+                
+                // Delete old file if exists
+                if ($kunjungan->surat_permohonan) {
+                    Storage::disk('local')->delete($kunjungan->surat_permohonan);
+                }
+                
+                // Create safe filename
+                $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
+                \Log::info('Storing surat_permohonan as: ' . $filename);
+                
+                // Store the file
+                $result = $file->storeAs($directory, $filename, 'local');
+                
+                // Verify file exists
+                $storedPath = Storage::disk('local')->path($result);
+                if (file_exists($storedPath)) {
+                    $validated['surat_permohonan'] = $result;
+                    \Log::info('Surat Permohonan updated successfully: ' . $result);
+                } else {
+                    \Log::error('File stored but not found at: ' . $storedPath);
+                    return back()->withInput()->with('error', 'File tidak ditemukan setelah upload');
+                }
+            } catch (\Exception $fileError) {
+                \Log::error('Surat Permohonan upload error: ' . $fileError->getMessage());
+                return back()->withInput()->with('error', 'Error: ' . $fileError->getMessage());
             }
-            $file = $request->file('surat_permohonan');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('permohonan/kunjungan', $filename, 'local');
-            $validated['surat_permohonan'] = $path;
         }
 
+        // Handle KTP upload
         if ($request->hasFile('ktp')) {
-            if ($kunjungan->ktp) {
-                Storage::disk('local')->delete($kunjungan->ktp);
+            try {
+                $file = $request->file('ktp');
+                $directory = 'permohonan/kunjungan';
+                
+                // Create directory if it doesn't exist
+                $fullPath = Storage::disk('local')->path($directory);
+                if (!is_dir($fullPath)) {
+                    mkdir($fullPath, 0777, true);
+                    \Log::info('Created directory: ' . $fullPath);
+                }
+                
+                // Delete old file if exists
+                if ($kunjungan->ktp) {
+                    Storage::disk('local')->delete($kunjungan->ktp);
+                }
+                
+                // Create safe filename
+                $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
+                \Log::info('Storing KTP as: ' . $filename);
+                
+                // Store the file
+                $result = $file->storeAs($directory, $filename, 'local');
+                
+                // Verify file exists
+                $storedPath = Storage::disk('local')->path($result);
+                if (file_exists($storedPath)) {
+                    $validated['ktp'] = $result;
+                    \Log::info('KTP updated successfully: ' . $result);
+                } else {
+                    \Log::error('File stored but not found at: ' . $storedPath);
+                    return back()->withInput()->with('error', 'File tidak ditemukan setelah upload');
+                }
+            } catch (\Exception $fileError) {
+                \Log::error('KTP upload error: ' . $fileError->getMessage());
+                return back()->withInput()->with('error', 'Error: ' . $fileError->getMessage());
             }
-            $file = $request->file('ktp');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('permohonan/kunjungan', $filename, 'local');
-            $validated['ktp'] = $path;
         }
 
         $kunjungan->update($validated);
 
-        return redirect()->route('dashboard')
+        return redirect()->route('permohonan-kunjungan.create')
             ->with('success', 'Permohonan kunjungan berhasil diperbarui.');
     }
 
@@ -228,10 +288,14 @@ class PermohonanKunjunganController extends Controller
                 'kunjungan_id' => $kunjungan->id,
             ]);
             
-            // Delete the uploaded file if exists
+            // Delete the uploaded files if they exist
             if ($kunjungan->surat_permohonan) {
                 Storage::disk('local')->delete($kunjungan->surat_permohonan);
-                Log::info('File deleted', ['file' => $kunjungan->surat_permohonan]);
+                Log::info('Surat Permohonan deleted', ['file' => $kunjungan->surat_permohonan]);
+            }
+            if ($kunjungan->ktp) {
+                Storage::disk('local')->delete($kunjungan->ktp);
+                Log::info('KTP deleted', ['file' => $kunjungan->ktp]);
             }
 
             // Delete the record

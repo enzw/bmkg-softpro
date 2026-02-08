@@ -262,16 +262,18 @@ class AdminPermohonanKunjunganController extends Controller
     {
         $kunjungan = Kunjungan::findOrFail($id);
 
-        // Security: validate that the file belongs to this record
-        if (!$kunjungan->surat_permohonan || !str_contains($kunjungan->surat_permohonan, $fileName)) {
+        // Determine which file is being requested
+        $fileField = null;
+        if ($kunjungan->surat_permohonan && str_contains($kunjungan->surat_permohonan, $fileName)) {
+            $fileField = 'surat_permohonan';
+        } elseif ($kunjungan->ktp && str_contains($kunjungan->ktp, $fileName)) {
+            $fileField = 'ktp';
+        }
+
+        if (!$fileField || !Storage::disk('local')->exists($kunjungan->$fileField)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        // Check if file exists in private storage
-        if (!Storage::disk('local')->exists($kunjungan->surat_permohonan)) {
-            abort(404, 'File tidak ditemukan.');
-        }
-
-        return Storage::disk('local')->download($kunjungan->surat_permohonan, $fileName);
+        return Storage::disk('local')->download($kunjungan->$fileField, $fileName);
     }
 }

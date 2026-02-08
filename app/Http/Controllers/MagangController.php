@@ -7,9 +7,11 @@ use App\Models\Asuransi;
 use App\Models\LayananData;
 use App\Models\Survey;
 use App\Models\JasaKonsultasi;
+use App\Models\Kunjungan;
 use App\Services\TelegramService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -367,7 +369,31 @@ class MagangController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        // Find permohonan in all possible tables
+        $permohonan = Magang::find($id) 
+            ?? Asuransi::find($id)
+            ?? LayananData::find($id)
+            ?? Survey::find($id)
+            ?? JasaKonsultasi::find($id);
+
+        if (!$permohonan) {
+            return redirect()->route('pelayanan-jasa.index')->with('error', 'Permohonan tidak ditemukan');
+        }
+
+        // Pastikan user hanya bisa edit miliknya sendiri
+        $this->authorize('update', $permohonan);
+
+        // Pass ke view dengan jenis_layanan type
+        $jenis_layanan = match(get_class($permohonan)) {
+            Magang::class => 'Magang',
+            Asuransi::class => 'Layanan Klaim Asuransi',
+            LayananData::class => 'Layanan Data',
+            Survey::class => 'Layanan Survey',
+            JasaKonsultasi::class => 'Layanan Konsultasi',
+            default => null
+        };
+
+        return view('pages.layanan.permohonan-magang-edit', compact('permohonan', 'jenis_layanan'));
     }
 
     /**
@@ -375,7 +401,202 @@ class MagangController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Find dalam semua tabel yang mungkin
+        $permohonan = Magang::find($id) 
+            ?? Asuransi::find($id)
+            ?? LayananData::find($id)
+            ?? Survey::find($id)
+            ?? JasaKonsultasi::find($id);
+
+        if (!$permohonan) {
+            return back()->with('error', 'Permohonan tidak ditemukan');
+        }
+
+        // Pastikan user hanya bisa edit miliknya sendiri
+        $this->authorize('update', $permohonan);
+
+        // Tentukan jenis_layanan berdasarkan class
+        $jenis_layanan = match(get_class($permohonan)) {
+            Magang::class => 'Magang',
+            Asuransi::class => 'Layanan Klaim Asuransi',
+            LayananData::class => 'Layanan Data',
+            Survey::class => 'Layanan Survey',
+            JasaKonsultasi::class => 'Layanan Konsultasi',
+            default => null
+        };
+
+        if (!$jenis_layanan) {
+            return back()->with('error', 'Jenis layanan tidak valid');
+        }
+
+        // Validate based on service type (with optional files)
+        $validated = $this->validateByServiceTypeForUpdate($request, $jenis_layanan);
+
+        if ($validated instanceof \Illuminate\Http\RedirectResponse) {
+            return $validated;
+        }
+
+        // Handle surat_permohonan upload (optional)
+        if ($request->hasFile('surat_permohonan')) {
+            try {
+                $directoryMap = [
+                    'Magang' => 'permohonan/magang',
+                    'Layanan Kunjungan Teknis' => 'permohonan/kunjungan-teknis',
+                    'Layanan Klaim Asuransi' => 'permohonan/layanan-asuransi',
+                    'Layanan Data' => 'permohonan/layanan-data',
+                    'Layanan Survey' => 'permohonan/layanan-survey',
+                    'Layanan Konsultasi' => 'permohonan/layanan-konsultasi',
+                ];
+                
+                $directory = $directoryMap[$jenis_layanan] ?? 'permohonan/lainnya';
+                
+                // Delete old file
+                if ($permohonan->surat_permohonan) {
+                    Storage::disk('local')->delete($permohonan->surat_permohonan);
+                }
+                
+                // Store new file
+                $file = $request->file('surat_permohonan');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 'local');
+                
+                if ($path && file_exists(Storage::disk('local')->path($path))) {
+                    $validated['surat_permohonan'] = $path;
+                }
+            } catch (Exception $fileError) {
+                \Log::warning('File upload error: ' . $fileError->getMessage());
+                // Continue without file
+            }
+        }
+
+        // Handle ktp upload (optional)
+        if ($request->hasFile('ktp')) {
+            try {
+                $directoryMap = [
+                    'Magang' => 'permohonan/magang',
+                    'Layanan Kunjungan Teknis' => 'permohonan/kunjungan-teknis',
+                    'Layanan Klaim Asuransi' => 'permohonan/layanan-asuransi',
+                    'Layanan Data' => 'permohonan/layanan-data',
+                    'Layanan Survey' => 'permohonan/layanan-survey',
+                    'Layanan Konsultasi' => 'permohonan/layanan-konsultasi',
+                ];
+                
+                $directory = $directoryMap[$jenis_layanan] ?? 'permohonan/lainnya';
+                
+                // Delete old file
+                if ($permohonan->ktp) {
+                    Storage::disk('local')->delete($permohonan->ktp);
+                }
+                
+                // Store new file
+                $file = $request->file('ktp');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 'local');
+                
+                if ($path && file_exists(Storage::disk('local')->path($path))) {
+                    $validated['ktp'] = $path;
+                }
+            } catch (Exception $fileError) {
+                \Log::warning('File upload error: ' . $fileError->getMessage());
+                // Continue without file
+            }
+        }
+
+        // Handle kartu_identitas upload untuk Kunjungan (optional)
+        if ($request->hasFile('kartu_identitas') && in_array($jenis_layanan, ['Layanan Kunjungan Teknis'])) {
+            try {
+                $directory = 'permohonan/kunjungan-teknis';
+                
+                // Delete old file
+                if ($permohonan->kartu_identitas ?? null) {
+                    Storage::disk('local')->delete($permohonan->kartu_identitas);
+                }
+                
+                // Store new file
+                $file = $request->file('kartu_identitas');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 'local');
+                
+                if ($path && file_exists(Storage::disk('local')->path($path))) {
+                    $validated['kartu_identitas'] = $path;
+                }
+            } catch (Exception $fileError) {
+                \Log::warning('File upload error: ' . $fileError->getMessage());
+                // Continue without file
+            }
+        }
+
+        try {
+            $permohonan->update($validated);
+            return back()->with('success', "Permohonan $jenis_layanan berhasil diperbarui");
+        } catch (Exception $error) {
+            \Log::error('Update error: ' . $error->getMessage());
+            return back()->with('error', "Permohonan $jenis_layanan gagal diperbarui: " . $error->getMessage())->withInput();
+        }
+    }
+
+    private function validateByServiceTypeForUpdate(Request $request, string $jenis_layanan)
+    {
+        $rules = [
+            'jenis_layanan' => 'required|string',
+            'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ];
+        
+        match($jenis_layanan) {
+            'Magang' => $rules = array_merge($rules, [
+                'nama_lengkap' => 'nullable|string',
+                'no_whatsapp' => 'nullable|string',
+                'email' => 'nullable|email',
+                'universitas' => 'required|string',
+                'fakultas' => 'required|string',
+                'prodi' => 'required|string',
+                'tanggal_mulai' => 'required|date',
+                'tanggal_selesai' => 'required|date',
+                'kartu_mahasiswa' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            ]),
+            'Layanan Kunjungan Teknis' => $rules = array_merge($rules, [
+                'nama_user' => 'nullable|string',
+                'tanggal' => 'nullable|date',
+                'lokasi' => 'nullable|string',
+                'latitude' => 'nullable|numeric',
+                'longitude' => 'nullable|numeric',
+                'kartu_identitas' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            ]),
+            'Layanan Klaim Asuransi' => $rules = array_merge($rules, [
+                'nama_user' => 'nullable|string',
+                'no_whatsapp' => 'nullable|string',
+                'tanggal' => 'nullable|date',
+                'lokasi' => 'nullable|string',
+                'latitude' => 'nullable|numeric',
+                'longitude' => 'nullable|numeric',
+                'perusahaan' => 'required|string',
+                'kejadian' => 'required|string',
+            ]),
+            'Layanan Data' => $rules = array_merge($rules, [
+                'nama_lengkap' => 'nullable|string',
+                'no_whatsapp' => 'nullable|string',
+                'email' => 'nullable|email',
+                'keterangan' => 'nullable|string',
+            ]),
+            'Layanan Survey' => $rules = array_merge($rules, [
+                'nama_lengkap' => 'nullable|string',
+                'no_whatsapp' => 'nullable|string',
+                'email' => 'nullable|email',
+                'keterangan' => 'nullable|string',
+            ]),
+            'Layanan Konsultasi' => $rules = array_merge($rules, [
+                'nama_lengkap' => 'nullable|string',
+                'no_whatsapp' => 'nullable|string',
+                'email' => 'nullable|email',
+                'keterangan' => 'nullable|string',
+            ]),
+            default => null
+        };
+        
+        $validated = $request->validate($rules);
+        
+        return $validated;
     }
 
     /**

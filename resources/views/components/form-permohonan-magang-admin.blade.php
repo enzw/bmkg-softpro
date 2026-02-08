@@ -234,7 +234,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                         Surat Permohonan <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
-                        <input id="magang_surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" required
+                        <input id="magang_surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" {{ !$is_edit ? 'required' : '' }}
                             class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                     </div>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
@@ -260,7 +260,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                         KTP <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
-                        <input id="magang_ktp" type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
+                        <input id="magang_ktp" type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" {{ !$is_edit ? 'required' : '' }}
                             class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                     </div>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
@@ -355,7 +355,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Surat Permohonan <span class="text-red-500">*</span></label>
-                <input type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" required
+                <input type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" {{ !$is_edit ? 'required' : '' }}
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Format: PDF, JPG, PNG. Maksimal 2MB</p>
                 @if ($is_edit && $permohonan && $permohonan->surat_permohonan)
@@ -375,7 +375,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <div>
                 <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">KTP <span class="text-red-500">*</span></label>
                 <div class="relative">
-                    <input type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
+                    <input type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" {{ !$is_edit ? 'required' : '' }}
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB</p>
@@ -426,7 +426,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <div>
                 <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Surat Permohonan <span class="text-red-500">*</span></label>
                 <div class="relative">
-                    <input type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" required
+                    <input type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" {{ !$is_edit ? 'required' : '' }}
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB</p>
@@ -447,7 +447,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <div>
                 <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">KTP <span class="text-red-500">*</span></label>
                 <div class="relative">
-                    <input type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
+                    <input type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" {{ !$is_edit ? 'required' : '' }}
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB</p>
@@ -498,7 +498,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <div>
                 <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Surat Permohonan <span class="text-red-500">*</span></label>
                 <div class="relative">
-                    <input type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" required
+                    <input type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" {{ !$is_edit ? 'required' : '' }}
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB</p>
@@ -519,7 +519,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <div>
                 <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">KTP <span class="text-red-500">*</span></label>
                 <div class="relative">
-                    <input type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
+                    <input type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" {{ !$is_edit ? 'required' : '' }}
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB</p>
@@ -570,7 +570,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <div>
                 <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Surat Permohonan <span class="text-red-500">*</span></label>
                 <div class="relative">
-                    <input type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" required
+                    <input type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" {{ !$is_edit ? 'required' : '' }}
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB</p>
@@ -591,7 +591,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <div>
                 <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">KTP <span class="text-red-500">*</span></label>
                 <div class="relative">
-                    <input type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
+                    <input type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" {{ !$is_edit ? 'required' : '' }}
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB</p>
