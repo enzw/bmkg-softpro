@@ -30,7 +30,7 @@ class AdminSewaAlatController extends Controller
 
         $data = [
             'title' => 'Sewa Alat',
-            'permohonan' => SewaAlat::all(),
+            'permohonan' => SewaAlat::orderBy('created_at', 'desc')->get(),
         ];
 
         return view('pages.admin.sewa-alat.index', $data);

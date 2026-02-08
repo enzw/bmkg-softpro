@@ -202,12 +202,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600" />
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Maksimal ukuran file: 2MB</p>
             <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
-
-            <x-input-label for="ktp" class="mt-4">KTP <span class="text-red-500">*</span></x-input-label>
-            <input id="ktp" type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
-                class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600" />
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Maksimal ukuran file: 2MB</p>
-            <x-input-error :messages="$errors->get('ktp')" class="mt-2" />
         </div>
 
         <button type="submit" id="submitBtn" disabled

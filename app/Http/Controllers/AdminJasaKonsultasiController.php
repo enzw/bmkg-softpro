@@ -28,7 +28,7 @@ class AdminJasaKonsultasiController extends Controller
     {
         $data = [
             'title' => 'Jasa Konsultasi',
-            'permohonan' => JasaKonsultasi::all(),
+            'permohonan' => JasaKonsultasi::orderBy('created_at', 'desc')->get(),
         ];
         return view('pages.admin.jasa-konsultasi.index', $data);
     }

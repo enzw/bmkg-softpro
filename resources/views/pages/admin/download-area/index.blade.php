@@ -17,21 +17,22 @@
         <!-- Download Form -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm dark:shadow-lg p-8 border border-gray-100 dark:border-gray-700/50">
             <form action="{{ route('admin.download-area.preview') }}" method="GET" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Service Selection -->
-                    <div>
-                        <label for="service" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                            Pilih Layanan <span class="text-red-500">*</span>
-                        </label>
-                        <select id="service" name="service" required
-                            class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition">
-                            <option value="">-- Pilih Layanan --</option>
-                            @foreach($services as $key => $name)
-                                <option value="{{ $key }}">{{ $name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                <!-- Service Selection -->
+                <div>
+                    <label for="service" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                        Pilih Layanan <span class="text-red-500">*</span>
+                    </label>
+                    <select id="service" name="service" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition">
+                        <option value="">-- Pilih Layanan --</option>
+                        @foreach($services as $key => $name)
+                            <option value="{{ $key }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
+                <!-- Date Range -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Start Date -->
                     <div>
                         <label for="start_date" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">

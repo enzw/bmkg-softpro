@@ -28,7 +28,7 @@ class AdminPermohonanKunjunganController extends Controller
     {
         $data = [
             'title' => 'Permohonan Kunjungan Teknis',
-            'permohonan' => Kunjungan::all(),
+            'permohonan' => Kunjungan::orderBy('created_at', 'desc')->get(),
         ];
         return view('pages.admin.permohonan-kunjungan.index', $data);
     }

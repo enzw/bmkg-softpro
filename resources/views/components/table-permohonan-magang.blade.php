@@ -200,7 +200,7 @@
                                             </div>
 
                                             <div>
-                                                <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Perusahaan Asuransi</p>
+                                                <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Perusahaan</p>
                                                 <p class="text-gray-900 dark:text-white font-semibold">{{ $item->perusahaan ?? '-' }}</p>
                                             </div>
 

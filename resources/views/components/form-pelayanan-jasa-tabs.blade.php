@@ -209,20 +209,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <x-input-error :messages="$errors->get('kartu_mahasiswa')" class="mt-2" />
             </div>
 
-            <div>
-                <label for="ktp_magang" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                    KTP <span class="text-red-500">*</span>
-                </label>
-                <div class="relative">
-                    <input id="ktp_magang" type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" {{ !isset($permohonan) || !$is_edit ? 'required' : '' }}
-                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
-                </div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
-                </p>
-                <x-input-error :messages="$errors->get('ktp')" class="mt-2" />
-            </div>
-
             <button type="submit" class="w-full py-3 px-6 rounded-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800 text-white font-semibold shadow-lg hover:shadow-xl transition duration-200 transform hover:scale-105">
                 <i class="fas fa-paper-plane mr-2"></i>Kirim Permohonan
             </button>
@@ -267,7 +253,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
             <div>
                 <label for="perusahaan_asuransi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                    Nama Perusahaan Asuransi <span class="text-red-500">*</span>
+                    Nama Perusahaan<span class="text-red-500">*</span>
                 </label>
                 <input id="perusahaan_asuransi" type="text" name="perusahaan" :value="old('perusahaan')" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="Nama perusahaan" />
