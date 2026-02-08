@@ -88,10 +88,6 @@
                                 class="flex-1 px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-semibold text-sm transition">
                                 <i class="fas fa-eye mr-2"></i>Detail
                             </button>
-                            <a href="{{ route('permohonan-kunjungan.edit', $item) }}"
-                                class="flex-1 px-4 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30 font-semibold text-sm transition inline-flex items-center justify-center">
-                                <i class="fas fa-edit mr-2"></i>Edit
-                            </a>
                             <button type="button" onclick="confirmDelete({{ $item->id }}, null)"
                                 class="flex-1 px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30 font-semibold text-sm transition">
                                 <i class="fas fa-trash mr-2"></i>Hapus

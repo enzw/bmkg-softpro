@@ -93,15 +93,10 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
                 Route::get('/', 'index')->name('index'); // index halaman sewa alat
                 Route::get('/permohonan', 'create')->name('create'); // menampilkan form permohonan sewa alat
                 Route::post('/permohonan/tambah', 'store')->name('store'); // submit permohonan sewa alat
-                Route::get('/permohonan/{sewa_alat}/ubah', 'edit')->name('edit'); // menampilkan form ubaha data permohonan by id
-                Route::put('/permohonan/{sewa_alat}/ubah', 'update')->name('update'); // ubaha data permohonan by id
                 Route::delete('/permohonan/{sewa_alat}/hapus', 'destroy')->name('destroy'); // hapus data permohonan by id
                 Route::get('/permohonan/{sewa_alat}/download', 'download')->name('download-permohonan'); // download permohonan
                 Route::get('/permohonan/{sewa_alat}/download-file', 'downloadFile')->name('download-file'); // download any file (ktp, surat, etc)
             });
-
-        // Update resource sewa-alat to support layanan prefix route
-        Route::put('/sewa-alat/{sewa_alat}', [SewaAlatController::class, 'update'])->name('sewa-alat.update');
         Route::delete('/sewa-alat/{sewa_alat}', [SewaAlatController::class, 'destroy'])->name('sewa-alat.destroy');
 
         Route::name('jasa-konsultasi.')
@@ -137,7 +132,10 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
                 Route::get('/permohonan/{layanan_data}/download', 'download')->name('download');
             });
 
-        Route::resource('pelayanan-jasa', MagangController::class);
+        Route::post('pelayanan-jasa', [MagangController::class, 'store'])->name('pelayanan-jasa.store');
+        Route::get('pelayanan-jasa', [MagangController::class, 'index'])->name('pelayanan-jasa.index');
+        Route::get('pelayanan-jasa/{permohonan_magang}', [MagangController::class, 'show'])->name('pelayanan-jasa.show');
+        Route::delete('pelayanan-jasa/{permohonan_magang}', [MagangController::class, 'destroy'])->name('pelayanan-jasa.destroy');
         Route::get('permohonan-magang/{permohonan_magang}', [MagangController::class, 'download'])
             ->name('permohonan-magang.download');
         Route::get('pelayanan-jasa/{id}/download-file/{fileName}', [MagangController::class, 'downloadFile'])
@@ -148,8 +146,6 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
         });
         Route::get('permohonan-kunjungan/create', [PermohonanKunjunganController::class, 'create'])->name('permohonan-kunjungan.create');
         Route::post('permohonan-kunjungan', [PermohonanKunjunganController::class, 'store'])->name('permohonan-kunjungan.store');
-        Route::get('permohonan-kunjungan/{kunjungan}/edit', [PermohonanKunjunganController::class, 'edit'])->name('permohonan-kunjungan.edit')->where('kunjungan', '[0-9]+');
-        Route::put('permohonan-kunjungan/{kunjungan}', [PermohonanKunjunganController::class, 'update'])->name('permohonan-kunjungan.update')->where('kunjungan', '[0-9]+');
         Route::delete('permohonan-kunjungan/{kunjungan}', [PermohonanKunjunganController::class, 'destroy'])->name('permohonan-kunjungan.destroy')->where('kunjungan', '[0-9]+');
         Route::get('permohonan-kunjungan/{id}/download/{fileName}', [PermohonanKunjunganController::class, 'downloadFile'])->name('permohonan-kunjungan.download-file');
         Route::resource('permohonan-asuransi', AsuransiController::class);
