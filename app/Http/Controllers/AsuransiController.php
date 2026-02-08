@@ -42,14 +42,16 @@ class AsuransiController extends Controller
         \Log::info('Form submission:', $request->all());
         
         $validated = $request->validate([
+            'nama_user' => 'required|string',
+            'no_whatsapp' => 'required|string',
             'perusahaan' => 'required|string',
-            'tanggal' => 'required|date',
-            'jumlah_rombongan' => 'required|string',
-            'nama_lengkap' => 'required|string',
-            'nomor_whatsapp' => 'required|string',
             'kejadian' => 'required|string',
-            'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'tanggal' => 'required|date',
+            'lokasi' => 'required|string',
+            'latitude' => 'nullable|numeric|min:-90|max:90',
+            'longitude' => 'nullable|numeric|min:-180|max:180',
+            'surat_permohonan' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'ktp' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
         if ($request->hasFile('surat_permohonan')) {
@@ -107,9 +109,9 @@ class AsuransiController extends Controller
                 $user = Auth::user();
                 
                 $telegramData = [
-                    'nama_lengkap' => $validated['nama_lengkap'],
+                    'nama_lengkap' => $validated['nama_user'],
                     'email' => $user->email,
-                    'no_whatsapp' => $validated['nomor_whatsapp'],
+                    'no_whatsapp' => $validated['no_whatsapp'],
                     'jenis_asuransi' => $validated['perusahaan'],
                     'keterangan' => $validated['kejadian'] ?? '-',
                     'surat_permohonan' => $validated['surat_permohonan'] ?? null,
