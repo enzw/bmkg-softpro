@@ -48,14 +48,60 @@ class AsuransiController extends Controller
             'nama_lengkap' => 'required|string',
             'nomor_whatsapp' => 'required|string',
             'kejadian' => 'required|string',
+            'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
+
+        if ($request->hasFile('surat_permohonan')) {
+            try {
+                $directory = 'permohonan/asuransi';
+                if (!Storage::disk('local')->exists($directory)) {
+                    Storage::disk('local')->makeDirectory($directory, 0755, true);
+                }
+                
+                $file = $request->file('surat_permohonan');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 'local');
+                
+                if ($path) {
+                    $validated['surat_permohonan'] = $path;
+                } else {
+                    \Log::error('Surat Permohonan upload returned false');
+                }
+            } catch (Exception $fileError) {
+                \Log::error('Surat Permohonan upload error: ' . $fileError->getMessage());
+                return back()->with('error', 'Gagal upload surat permohonan: ' . $fileError->getMessage());
+            }
+        }
+
+        if ($request->hasFile('ktp')) {
+            try {
+                $directory = 'permohonan/asuransi';
+                if (!Storage::disk('local')->exists($directory)) {
+                    Storage::disk('local')->makeDirectory($directory, 0755, true);
+                }
+                
+                $file = $request->file('ktp');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 'local');
+                
+                if ($path) {
+                    $validated['ktp'] = $path;
+                } else {
+                    \Log::error('KTP upload returned false');
+                }
+            } catch (Exception $fileError) {
+                \Log::error('KTP upload error: ' . $fileError->getMessage());
+                return back()->with('error', 'Gagal upload KTP: ' . $fileError->getMessage());
+            }
+        }
 
         $validated['user_id'] = Auth::id();
 
         try {
             $asuransi = Asuransi::create($validated);
             
-            // Send Telegram notification with document
+            // Send Telegram notification with documents
             try {
                 $telegramService = new TelegramService();
                 $user = Auth::user();
@@ -66,12 +112,27 @@ class AsuransiController extends Controller
                     'no_whatsapp' => $validated['nomor_whatsapp'],
                     'jenis_asuransi' => $validated['perusahaan'],
                     'keterangan' => $validated['kejadian'] ?? '-',
+                    'surat_permohonan' => $validated['surat_permohonan'] ?? null,
+                    'ktp' => $validated['ktp'] ?? null,
                     'created_at' => $asuransi->created_at->format('d-m-Y H:i'),
                 ];
                 
-                // Asuransi tidak memiliki surat_permohonan, jadi documentPath selalu null
-                // Ini hanya mengirim notifikasi tanpa dokumen
-                $telegramService->sendPermohonanWithDocument('asuransi', $telegramData, null);
+                // Get the full paths to documents if they exist
+                $suratPermohonanPath = null;
+                $ktpPath = null;
+                if (!empty($validated['surat_permohonan'])) {
+                    $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
+                }
+                if (!empty($validated['ktp'])) {
+                    $ktpPath = Storage::disk('local')->path($validated['ktp']);
+                }
+                
+                // Send notification with documents
+                if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
+                    $telegramService->sendPermohonanWithDocument('asuransi', $telegramData, $suratPermohonanPath, $ktpPath);
+                } else {
+                    $telegramService->sendPermohonanNotification('asuransi', $telegramData);
+                }
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails

@@ -22,6 +22,7 @@ return new class extends Migration
                 $table->integer('jumlah_rombongan')->nullable();
                 $table->text('rencana_kunjungan')->nullable();
                 $table->string('surat_permohonan')->nullable();
+                $table->string('ktp')->nullable();
                 $table->string('status')->default('pending');
                 $table->timestamps();
             });

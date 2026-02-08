@@ -179,6 +179,37 @@ class MagangController extends Controller
                 return back()->with('error', 'Gagal upload kartu mahasiswa: ' . $fileError->getMessage())->withInput();
             }
         }
+
+        // Handle KTP upload untuk semua layanan
+        if ($request->hasFile('ktp')) {
+            try {
+                $directoryMap = [
+                    'Magang' => 'permohonan/magang',
+                    'Layanan Kunjungan Teknis' => 'permohonan/kunjungan-teknis',
+                    'Layanan Klaim Asuransi' => 'permohonan/layanan-asuransi',
+                    'Layanan Data' => 'permohonan/layanan-data',
+                    'Layanan Survey' => 'permohonan/layanan-survey',
+                    'Layanan Konsultasi' => 'permohonan/layanan-konsultasi',
+                ];
+                
+                $directory = $directoryMap[$jenis_layanan] ?? 'permohonan/lainnya';
+                
+                if (!Storage::disk('local')->exists($directory)) {
+                    Storage::disk('local')->makeDirectory($directory, 0755, true);
+                }
+                
+                $file = $request->file('ktp');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 'local');
+                
+                if ($path) {
+                    $validated['ktp'] = $path;
+                }
+            } catch (Exception $fileError) {
+                report($fileError->getMessage());
+                return back()->with('error', 'Gagal upload KTP: ' . $fileError->getMessage())->withInput();
+            }
+        }
         
         $validated['user_id'] = Auth::id();
         $validated['status'] = 'Menunggu';
@@ -230,14 +261,22 @@ class MagangController extends Controller
                     $telegramData = $validated;
                     $telegramData['created_at'] = $permohonan->created_at->format('d-m-Y H:i');
                     
-                    // Get the full path to the document if it exists
-                    $documentPath = null;
+                    // Get the full paths to documents if they exist
+                    $suratPermohonanPath = null;
+                    $ktpPath = null;
                     if (!empty($validated['surat_permohonan'])) {
-                        $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                        $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
+                    }
+                    if (!empty($validated['ktp'])) {
+                        $ktpPath = Storage::disk('local')->path($validated['ktp']);
                     }
                     
-                    // Send notification with document
-                    $telegramService->sendPermohonanWithDocument($telegramType, $telegramData, $documentPath);
+                    // Send notification with documents
+                    if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
+                        $telegramService->sendPermohonanWithDocument($telegramType, $telegramData, $suratPermohonanPath, $ktpPath);
+                    } else {
+                        $telegramService->sendPermohonanNotification($telegramType, $telegramData);
+                    }
                 }
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
@@ -256,6 +295,7 @@ class MagangController extends Controller
         $rules = [
             'jenis_layanan' => 'required|string',
             'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ];
         
         match($jenis_layanan) {

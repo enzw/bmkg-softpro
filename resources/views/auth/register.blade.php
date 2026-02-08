@@ -78,7 +78,7 @@
                         type="text" 
                         name="telp" 
                         required
-                        placeholder="62812345678" />
+                        placeholder="62..." />
                     <x-input-error :messages="$errors->get('telp')" class="mt-2 text-sm" />
                 </div>
 
@@ -127,7 +127,7 @@
                 <!-- No. Identitas -->
                 <div>
                     <label for="no_identitas" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        No. Identitas (KTP/SIM) <span class="text-red-500">*</span>
+                        No. Identitas (KTP) <span class="text-red-500">*</span>
                     </label>
                     <x-text-input 
                         id="no_identitas" 

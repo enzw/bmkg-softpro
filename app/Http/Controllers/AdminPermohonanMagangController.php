@@ -126,40 +126,63 @@ class AdminPermohonanMagangController extends Controller
                     'tanggal_mulai' => 'required|date',
                     'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                     'kartu_mahasiswa' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
                 ]);
                 $validated['user_id'] = auth()->id();
                 
                 // Handle file uploads
                 if ($request->hasFile('surat_permohonan')) {
-                    $file = $request->file('surat_permohonan');
-                    $path = $file->store('permohonan/magang');
-                    $validated['surat_permohonan'] = $path;
+                    try {
+                        $file = $request->file('surat_permohonan');
+                        $path = $file->store('permohonan/magang');
+                        $validated['surat_permohonan'] = $path;
+                    } catch (Exception $e) {
+                        \Log::error('Surat Permohonan upload error: ' . $e->getMessage());
+                    }
+                }
+
+                if ($request->hasFile('ktp')) {
+                    try {
+                        $file = $request->file('ktp');
+                        $path = $file->store('permohonan/magang');
+                        $validated['ktp'] = $path;
+                    } catch (Exception $e) {
+                        \Log::error('KTP upload error: ' . $e->getMessage());
+                    }
                 }
                 
                 if ($request->hasFile('kartu_mahasiswa')) {
-                    $file = $request->file('kartu_mahasiswa');
-                    $path = $file->store('permohonan/magang');
-                    $validated['kartu_mahasiswa'] = $path;
+                    try {
+                        $file = $request->file('kartu_mahasiswa');
+                        $path = $file->store('permohonan/magang');
+                        $validated['kartu_mahasiswa'] = $path;
+                    } catch (Exception $e) {
+                        \Log::error('Kartu Mahasiswa upload error: ' . $e->getMessage());
+                    }
                 }
                 
                 $permohonan = Magang::create($validated);
                 
-                // Send Telegram notification with document
+                // Send Telegram notification with documents
                 try {
                     $telegramService = new TelegramService();
                     $telegramData = $validated;
                     $telegramData['created_at'] = $permohonan->created_at->format('d-m-Y H:i');
                     
-                    // Get the full path to the document if it exists
-                    $documentPath = null;
+                    // Get the full paths to documents if they exist
+                    $suratPermohonanPath = null;
+                    $ktpPath = null;
                     if (!empty($validated['surat_permohonan'])) {
-                        $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                        $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
+                    }
+                    if (!empty($validated['ktp'])) {
+                        $ktpPath = Storage::disk('local')->path($validated['ktp']);
                     }
                     
-                    // Send notification with document
-                    if ($documentPath && file_exists($documentPath)) {
-                        $telegramService->sendPermohonanWithDocument('magang', $telegramData, $documentPath);
+                    // Send notification with documents
+                    if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
+                        $telegramService->sendPermohonanWithDocument('magang', $telegramData, $suratPermohonanPath, $ktpPath);
                     } else {
                         $telegramService->sendPermohonanNotification('magang', $telegramData);
                     }
@@ -177,33 +200,52 @@ class AdminPermohonanMagangController extends Controller
                     'latitude' => 'nullable|numeric',
                     'longitude' => 'nullable|numeric',
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                 ]);
                 $validated['user_id'] = auth()->id();
                 
                 // Handle file uploads
                 if ($request->hasFile('surat_permohonan')) {
-                    $file = $request->file('surat_permohonan');
-                    $path = $file->store('permohonan/asuransi');
-                    $validated['surat_permohonan'] = $path;
+                    try {
+                        $file = $request->file('surat_permohonan');
+                        $path = $file->store('permohonan/asuransi');
+                        $validated['surat_permohonan'] = $path;
+                    } catch (Exception $e) {
+                        \Log::error('Surat Permohonan upload error: ' . $e->getMessage());
+                    }
+                }
+
+                if ($request->hasFile('ktp')) {
+                    try {
+                        $file = $request->file('ktp');
+                        $path = $file->store('permohonan/asuransi');
+                        $validated['ktp'] = $path;
+                    } catch (Exception $e) {
+                        \Log::error('KTP upload error: ' . $e->getMessage());
+                    }
                 }
                 
                 $permohonan = Asuransi::create($validated);
                 
-                // Send Telegram notification with document
+                // Send Telegram notification with documents
                 try {
                     $telegramService = new TelegramService();
                     $telegramData = $validated;
                     $telegramData['created_at'] = $permohonan->created_at->format('d-m-Y H:i');
                     
-                    // Get the full path to the document if it exists
-                    $documentPath = null;
+                    // Get the full paths to documents if they exist
+                    $suratPermohonanPath = null;
+                    $ktpPath = null;
                     if (!empty($validated['surat_permohonan'])) {
-                        $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                        $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
+                    }
+                    if (!empty($validated['ktp'])) {
+                        $ktpPath = Storage::disk('local')->path($validated['ktp']);
                     }
                     
-                    // Send notification with document
-                    if ($documentPath && file_exists($documentPath)) {
-                        $telegramService->sendPermohonanWithDocument('asuransi', $telegramData, $documentPath);
+                    // Send notification with documents
+                    if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
+                        $telegramService->sendPermohonanWithDocument('asuransi', $telegramData, $suratPermohonanPath, $ktpPath);
                     } else {
                         $telegramService->sendPermohonanNotification('asuransi', $telegramData);
                     }
@@ -219,14 +261,29 @@ class AdminPermohonanMagangController extends Controller
                     'email' => 'required|email',
                     'keterangan' => 'required|string',
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                 ]);
                 $validated['user_id'] = auth()->id();
                 
                 // Handle file upload
                 if ($request->hasFile('surat_permohonan')) {
-                    $file = $request->file('surat_permohonan');
-                    $path = $file->store('permohonan/data');
-                    $validated['surat_permohonan'] = $path;
+                    try {
+                        $file = $request->file('surat_permohonan');
+                        $path = $file->store('permohonan/data');
+                        $validated['surat_permohonan'] = $path;
+                    } catch (Exception $e) {
+                        \Log::error('Surat Permohonan upload error: ' . $e->getMessage());
+                    }
+                }
+
+                if ($request->hasFile('ktp')) {
+                    try {
+                        $file = $request->file('ktp');
+                        $path = $file->store('permohonan/data');
+                        $validated['ktp'] = $path;
+                    } catch (Exception $e) {
+                        \Log::error('KTP upload error: ' . $e->getMessage());
+                    }
                 }
                 
                 $permohonan = LayananData::create($validated);
@@ -237,15 +294,19 @@ class AdminPermohonanMagangController extends Controller
                     $telegramData = $validated;
                     $telegramData['created_at'] = $permohonan->created_at->format('d-m-Y H:i');
                     
-                    // Get the full path to the document if it exists
-                    $documentPath = null;
+                    // Get the full paths to documents if they exist
+                    $suratPermohonanPath = null;
+                    $ktpPath = null;
                     if (!empty($validated['surat_permohonan'])) {
-                        $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                        $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
+                    }
+                    if (!empty($validated['ktp'])) {
+                        $ktpPath = Storage::disk('local')->path($validated['ktp']);
                     }
                     
-                    // Send notification with document
-                    if ($documentPath && file_exists($documentPath)) {
-                        $telegramService->sendPermohonanWithDocument('layanan_data', $telegramData, $documentPath);
+                    // Send notification with documents
+                    if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
+                        $telegramService->sendPermohonanWithDocument('layanan_data', $telegramData, $suratPermohonanPath, $ktpPath);
                     } else {
                         $telegramService->sendPermohonanNotification('layanan_data', $telegramData);
                     }
@@ -261,14 +322,29 @@ class AdminPermohonanMagangController extends Controller
                     'email' => 'nullable|email',
                     'keterangan' => 'nullable|string',
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                 ]);
                 $validated['user_id'] = auth()->id();
                 
                 // Handle file upload
                 if ($request->hasFile('surat_permohonan')) {
-                    $file = $request->file('surat_permohonan');
-                    $path = $file->store('permohonan/survey');
-                    $validated['surat_permohonan'] = $path;
+                    try {
+                        $file = $request->file('surat_permohonan');
+                        $path = $file->store('permohonan/survey');
+                        $validated['surat_permohonan'] = $path;
+                    } catch (Exception $e) {
+                        \Log::error('Surat Permohonan upload error: ' . $e->getMessage());
+                    }
+                }
+
+                if ($request->hasFile('ktp')) {
+                    try {
+                        $file = $request->file('ktp');
+                        $path = $file->store('permohonan/survey');
+                        $validated['ktp'] = $path;
+                    } catch (Exception $e) {
+                        \Log::error('KTP upload error: ' . $e->getMessage());
+                    }
                 }
                 
                 $permohonan = Survey::create($validated);
@@ -279,15 +355,19 @@ class AdminPermohonanMagangController extends Controller
                     $telegramData = $validated;
                     $telegramData['created_at'] = $permohonan->created_at->format('d-m-Y H:i');
                     
-                    // Get the full path to the document if it exists
-                    $documentPath = null;
+                    // Get the full paths to documents if they exist
+                    $suratPermohonanPath = null;
+                    $ktpPath = null;
                     if (!empty($validated['surat_permohonan'])) {
-                        $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                        $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
+                    }
+                    if (!empty($validated['ktp'])) {
+                        $ktpPath = Storage::disk('local')->path($validated['ktp']);
                     }
                     
-                    // Send notification with document
-                    if ($documentPath && file_exists($documentPath)) {
-                        $telegramService->sendPermohonanWithDocument('survey', $telegramData, $documentPath);
+                    // Send notification with documents
+                    if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
+                        $telegramService->sendPermohonanWithDocument('survey', $telegramData, $suratPermohonanPath, $ktpPath);
                     } else {
                         $telegramService->sendPermohonanNotification('survey', $telegramData);
                     }
@@ -303,14 +383,29 @@ class AdminPermohonanMagangController extends Controller
                     'email' => 'nullable|email',
                     'keterangan' => 'nullable|string',
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                 ]);
                 $validated['user_id'] = auth()->id();
                 
                 // Handle file upload
                 if ($request->hasFile('surat_permohonan')) {
-                    $file = $request->file('surat_permohonan');
-                    $path = $file->store('permohonan/konsultasi');
-                    $validated['surat_permohonan'] = $path;
+                    try {
+                        $file = $request->file('surat_permohonan');
+                        $path = $file->store('permohonan/konsultasi');
+                        $validated['surat_permohonan'] = $path;
+                    } catch (Exception $e) {
+                        \Log::error('Surat Permohonan upload error: ' . $e->getMessage());
+                    }
+                }
+
+                if ($request->hasFile('ktp')) {
+                    try {
+                        $file = $request->file('ktp');
+                        $path = $file->store('permohonan/konsultasi');
+                        $validated['ktp'] = $path;
+                    } catch (Exception $e) {
+                        \Log::error('KTP upload error: ' . $e->getMessage());
+                    }
                 }
                 
                 $permohonan = JasaKonsultasi::create($validated);
@@ -321,15 +416,19 @@ class AdminPermohonanMagangController extends Controller
                     $telegramData = $validated;
                     $telegramData['created_at'] = $permohonan->created_at->format('d-m-Y H:i');
                     
-                    // Get the full path to the document if it exists
-                    $documentPath = null;
+                    // Get the full paths to documents if they exist
+                    $suratPermohonanPath = null;
+                    $ktpPath = null;
                     if (!empty($validated['surat_permohonan'])) {
-                        $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                        $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
+                    }
+                    if (!empty($validated['ktp'])) {
+                        $ktpPath = Storage::disk('local')->path($validated['ktp']);
                     }
                     
-                    // Send notification with document
-                    if ($documentPath && file_exists($documentPath)) {
-                        $telegramService->sendPermohonanWithDocument('jasa_konsultasi', $telegramData, $documentPath);
+                    // Send notification with documents
+                    if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
+                        $telegramService->sendPermohonanWithDocument('jasa_konsultasi', $telegramData, $suratPermohonanPath, $ktpPath);
                     } else {
                         $telegramService->sendPermohonanNotification('jasa_konsultasi', $telegramData);
                     }

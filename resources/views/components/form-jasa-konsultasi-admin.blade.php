@@ -112,6 +112,27 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
         </div>
 
+        <div>
+            <x-input-label for="ktp">KTP<span class="text-red-500">*</span></x-input-label>
+            <input id="ktp" type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
+                class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600" />
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Format: PDF, JPG, PNG. Maksimal ukuran file: 2MB</p>
+            @if ($is_edit && $permohonan && $permohonan->ktp)
+                <div class="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
+                    <p class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+                        <i class="fas fa-file text-blue-600 dark:text-blue-400"></i>
+                        File saat ini:
+                    </p>
+                    <a href="{{ route('pelayanan-jasa.download-file', ['id' => $permohonan->id, 'fileName' => basename($permohonan->ktp)]) }}" 
+                        class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
+                        <i class="fas fa-download"></i>
+                        {{ basename($permohonan->ktp) }}
+                    </a>
+                </div>
+            @endif
+            <x-input-error :messages="$errors->get('ktp')" class="mt-2" />
+        </div>
+
         <button type="submit" class="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-500 transition">
             {{ $is_edit ? 'Update' : 'Buat' }} Permohonan
         </button>

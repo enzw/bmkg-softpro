@@ -48,6 +48,7 @@ class JasaKonsultasiController extends Controller
             'email' => 'required|email',
             'keterangan' => 'nullable|string',
             'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
         if ($request->hasFile('surat_permohonan')) {
@@ -71,6 +72,27 @@ class JasaKonsultasiController extends Controller
             }
         }
 
+        if ($request->hasFile('ktp')) {
+            try {
+                $directory = 'permohonan/jasa-konsultasi';
+                if (!Storage::disk('local')->exists($directory)) {
+                    Storage::disk('local')->makeDirectory($directory, 0755, true);
+                }
+                
+                $file = $request->file('ktp');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 'local');
+                
+                if ($path) {
+                    $validated['ktp'] = $path;
+                } else {
+                    return back()->with('error', 'Gagal upload KTP file');
+                }
+            } catch (Exception $fileError) {
+                return back()->with('error', 'Gagal upload KTP file: ' . $fileError->getMessage());
+            }
+        }
+
         $validated['user_id'] = Auth::id();
         $validated['status'] = 'Menunggu';
 
@@ -87,17 +109,27 @@ class JasaKonsultasiController extends Controller
                     'no_whatsapp' => $validated['no_whatsapp'],
                     'keterangan' => $validated['keterangan'] ?? '-',
                     'surat_permohonan' => $validated['surat_permohonan'] ?? null,
+                    'surat_permohonan' => $validated['surat_permohonan'] ?? null,
+                    'ktp' => $validated['ktp'] ?? null,
                     'created_at' => $jasaKonsultasi->created_at->format('d-m-Y H:i'),
                 ];
                 
-                // Get the full path to the document if it exists
-                $documentPath = null;
+                // Get the full paths to documents if they exist
+                $suratPermohonanPath = null;
+                $ktpPath = null;
                 if (!empty($validated['surat_permohonan'])) {
-                    $documentPath = storage_path('app/' . $validated['surat_permohonan']);
+                    $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
+                }
+                if (!empty($validated['ktp'])) {
+                    $ktpPath = Storage::disk('local')->path($validated['ktp']);
                 }
                 
-                // Send notification with document
-                $telegramService->sendPermohonanWithDocument('jasa_konsultasi', $telegramData, $documentPath);
+                // Send notification with documents
+                if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
+                    $telegramService->sendPermohonanWithDocument('jasa_konsultasi', $telegramData, $suratPermohonanPath, $ktpPath);
+                } else {
+                    $telegramService->sendPermohonanNotification('jasa_konsultasi', $telegramData);
+                }
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails

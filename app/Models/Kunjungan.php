@@ -23,6 +23,7 @@ class Kunjungan extends Model
         'rencana_kunjungan',
         'surat_permohonan',
         'status',
+        'ktp',
     ];
 
     public function user()

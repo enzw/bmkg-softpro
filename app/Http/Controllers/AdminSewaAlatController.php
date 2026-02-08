@@ -64,6 +64,7 @@ class AdminSewaAlatController extends Controller
             'sewa_mulai' => 'required|date',
             'sewa_berakhir' => 'required|date|after_or_equal:sewa_mulai',
             'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'keterangan' => 'nullable',
         ]);
 
@@ -81,13 +82,29 @@ class AdminSewaAlatController extends Controller
                 
                 if ($path) {
                     $validated['surat_permohonan'] = $path;
-                    \Log::info('File uploaded successfully: ' . $path);
-                } else {
-                    \Log::error('File upload returned false');
                 }
             } catch (Exception $fileError) {
-                \Log::error('File upload error: ' . $fileError->getMessage());
-                return redirect()->route('admin.sewa-alat.create')->with('error', 'Gagal upload file: ' . $fileError->getMessage());
+                return back()->with('error', 'Gagal upload surat permohonan: ' . $fileError->getMessage());
+            }
+        }
+
+        // Handle KTP file upload if present
+        if ($request->hasFile('ktp')) {
+            try {
+                $directory = 'permohonan/sewa-alat';
+                if (!Storage::disk('local')->exists($directory)) {
+                    Storage::disk('local')->makeDirectory($directory, 0755, true);
+                }
+                
+                $file = $request->file('ktp');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 'local');
+                
+                if ($path) {
+                    $validated['ktp'] = $path;
+                }
+            } catch (Exception $fileError) {
+                return back()->with('error', 'Gagal upload KTP: ' . $fileError->getMessage());
             }
         }
 

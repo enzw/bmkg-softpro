@@ -29,13 +29,13 @@
             <div class="text-center md:text-left">
                 <h4 class="text-white font-semibold text-lg mb-4">Media Sosial</h4>
                 <div class="flex flex-col space-y-3 text-gray-400">
-                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
+                    <a href="https://www.instagram.com/stageofsleman/" target="_blank" rel="noopener noreferrer"
                        class="flex items-center gap-2 hover:text-white transition"
                        aria-label="Instagram BMKG">
                         <i class="fa-brands fa-instagram"></i> Instagram
                     </a>
 
-                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
+                    <a href="https://x.com/bmkgjogja" target="_blank" rel="noopener noreferrer"
                        class="flex items-center gap-2 hover:text-white transition"
                        aria-label="Twitter BMKG">
                         <i class="fa-brands fa-twitter"></i> Twitter / X

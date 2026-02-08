@@ -67,8 +67,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
             <div class="relative flex-1">
                 <x-input-label for="longitude">Full Name</x-input-label>
-                <x-text-input id="longitude" class="block w-full mt-1" type="text" name="longitude" :value="$is_edit ? old('longitude', $permohonan->longitude) : old('longitude')"
-                    required />
+                <x-text-input id="longitude" class="block w-full mt-1" type="text" name="longitude" :value="$is_edit ? old('longitude', $permohonan->longitude) : old('longitude')" />
                 <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
             </div>
 
@@ -82,8 +81,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <div class="flex gap-3">
                 <div class="relative flex-1">
                     <x-input-label for="latitude">Jumlah Rombongan</x-input-label>
-                    <x-text-input id="latitude" class="block w-full mt-1" type="text" name="latitude" :value="$is_edit ? old('latitude', $permohonan->latitude) : old('latitude')"
-                        required />
+                    <x-text-input id="latitude" class="block w-full mt-1" type="text" name="latitude" :value="$is_edit ? old('latitude', $permohonan->latitude) : old('latitude')" />
                     <x-input-error :messages="$errors->get('latitude')" class="mt-2" />
                 </div>
                 <div>
@@ -94,6 +92,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 </div>
             </div>
 
+            <div>
+                <x-input-label for="surat_permohonan">Surat Permohonan <span class="text-red-500">*</span></x-input-label>
+                <input id="surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" required
+                    class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600" />
+                <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="ktp">KTP <span class="text-red-500">*</span></x-input-label>
+                <input id="ktp" type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
+                    class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600" />
+                <x-input-error :messages="$errors->get('ktp')" class="mt-2" />
+            </div>
 
             @if ($is_edit)
             <div>

@@ -21,6 +21,7 @@ class LayananData extends Model
         'keterangan',
         'status',
         'surat_permohonan',
+        'ktp',
     ];
 
     public function user()

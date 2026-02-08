@@ -103,13 +103,14 @@
             <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Rencana Kunjungan <span class="text-red-500">*</span></label>
             <textarea name="rencana_kunjungan" id="rencana_kunjungan" rows="4" required
                 class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition resize-none">{{ $is_edit && $permohonan ? old('rencana_kunjungan', $permohonan->rencana_kunjungan) : old('rencana_kunjungan') }}</textarea>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Min. 20 karakter</p>
             <x-input-error :messages="$errors->get('rencana_kunjungan')" class="mt-2" />
         </div>
 
         <!-- Surat Permohonan -->
         <div>
-            <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Surat Permohonan <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span></label>
-            <input type="file" name="surat_permohonan" id="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+            <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Surat Permohonan <span class="text-red-500">*</span></label>
+            <input type="file" name="surat_permohonan" id="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" {{ !$is_edit ? 'required' : '' }}
                 class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB</p>
             <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
@@ -124,6 +125,29 @@
                         class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
                         <i class="fas fa-download"></i>
                         {{ basename($permohonan->surat_permohonan) }}
+                    </a>
+                </div>
+            @endif
+        </div>
+
+        <!-- KTP -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">KTP <span class="text-red-500">*</span></label>
+            <input type="file" name="ktp" id="ktp" accept=".pdf,.jpg,.jpeg,.png" {{ !$is_edit ? 'required' : '' }}
+                class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB</p>
+            <x-input-error :messages="$errors->get('ktp')" class="mt-2" />
+            
+            @if ($is_edit && $permohonan && $permohonan->ktp)
+                <div class="mt-4 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700">
+                    <p class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+                        <i class="fas fa-file text-blue-600 dark:text-blue-400"></i>
+                        File saat ini:
+                    </p>
+                    <a href="{{ route('admin.permohonan-kunjungan.download-file', ['id' => $permohonan->id, 'fileName' => basename($permohonan->ktp)]) }}" 
+                        class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
+                        <i class="fas fa-download"></i>
+                        {{ basename($permohonan->ktp) }}
                     </a>
                 </div>
             @endif

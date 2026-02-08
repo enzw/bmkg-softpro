@@ -36,6 +36,7 @@ class SewaAlatController extends Controller
             'sewa_mulai' => 'required|date',
             'sewa_berakhir' => 'required|date|after_or_equal:sewa_mulai',
             'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'keterangan' => 'nullable',
         ]);
 
@@ -59,6 +60,29 @@ class SewaAlatController extends Controller
             } catch (Exception $fileError) {
                 \Log::error('File upload error: ' . $fileError->getMessage());
                 return back()->with('error', 'Gagal upload file: ' . $fileError->getMessage());
+            }
+        }
+
+        if ($request->hasFile('ktp')) {
+            try {
+                $directory = 'permohonan/sewa-alat';
+                if (!Storage::disk('local')->exists($directory)) {
+                    Storage::disk('local')->makeDirectory($directory, 0755, true);
+                }
+                
+                $file = $request->file('ktp');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 'local');
+                
+                if ($path) {
+                    $validated['ktp'] = $path;
+                    \Log::info('KTP file uploaded successfully: ' . $path);
+                } else {
+                    \Log::error('KTP file upload returned false');
+                }
+            } catch (Exception $fileError) {
+                \Log::error('KTP file upload error: ' . $fileError->getMessage());
+                return back()->with('error', 'Gagal upload KTP file: ' . $fileError->getMessage());
             }
         }
 
@@ -102,18 +126,23 @@ class SewaAlatController extends Controller
                     'sewa_berakhir' => $validated['sewa_berakhir'],
                     'keterangan' => $validated['keterangan'] ?? '-',
                     'surat_permohonan' => $validated['surat_permohonan'] ?? null,
+                    'ktp' => $validated['ktp'] ?? null,
                     'created_at' => $sewaAlat->created_at->format('d-m-Y H:i'),
                 ];
                 
-                // Get full path to document if exists
-                $documentPath = null;
+                // Get full path to documents if exist
+                $suratPermohonanPath = null;
+                $ktpPath = null;
                 if (!empty($validated['surat_permohonan'])) {
-                    $documentPath = Storage::disk('local')->path($validated['surat_permohonan']);
+                    $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
+                }
+                if (!empty($validated['ktp'])) {
+                    $ktpPath = Storage::disk('local')->path($validated['ktp']);
                 }
                 
-                // Send notification with document if available
-                if ($documentPath && file_exists($documentPath)) {
-                    $telegramService->sendPermohonanWithDocument('sewa_alat', $telegramData, $documentPath);
+                // Send notification with documents if available
+                if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
+                    $telegramService->sendPermohonanWithDocument('sewa_alat', $telegramData, $suratPermohonanPath, $ktpPath);
                 } else {
                     $telegramService->sendPermohonanNotification('sewa_alat', $telegramData);
                 }
@@ -195,4 +224,39 @@ class SewaAlatController extends Controller
             return back()->with('error', 'Gagal mengunduh file: ' . $error->getMessage());
         }
     }
+
+    public function downloadFile(Request $request, SewaAlat $sewa_alat)
+    {
+        // Authorize - user can only download their own files
+        if ($sewa_alat->user_id !== Auth::id()) {
+            return back()->with('error', 'Anda tidak memiliki akses ke file ini');
+        }
+
+        $field = $request->get('field', 'ktp');
+        
+        // Validate field name
+        if (!in_array($field, ['ktp', 'surat_permohonan'])) {
+            return back()->with('error', 'Tipe file tidak valid');
+        }
+
+        if (!$sewa_alat->$field) {
+            return back()->with('error', "File {$field} tidak tersedia");
+        }
+
+        if (!Storage::disk('local')->exists($sewa_alat->$field)) {
+            \Log::error("File not found: {$field} at path " . $sewa_alat->$field);
+            return back()->with('error', 'File tidak ditemukan di sistem');
+        }
+
+        try {
+            $extension = pathinfo($sewa_alat->$field, PATHINFO_EXTENSION);
+            $downloadName = ($field === 'ktp' ? 'ktp' : 'surat-permohonan') . '.' . $extension;
+            
+            return Storage::disk('local')->download($sewa_alat->$field, $downloadName);
+        } catch (Exception $error) {
+            \Log::error("Download Error for {$field}: " . $error->getMessage());
+            return back()->with('error', 'Gagal mengunduh file: ' . $error->getMessage());
+        }
+    }
 }
+

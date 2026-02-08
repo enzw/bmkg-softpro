@@ -69,7 +69,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <label for="no_whatsapp" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                     Nomor WhatsApp <span class="text-red-500">*</span>
                 </label>
-                <input id="no_whatsapp" type="tel" name="no_whatsapp" placeholder="08xxxxxxxxxx" value="{{ old('no_whatsapp') }}" required
+                <input id="no_whatsapp" type="tel" name="no_whatsapp" placeholder="62..." value="{{ old('no_whatsapp') }}" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
                 <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
             </div>
@@ -136,16 +136,31 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <!-- File Upload -->
         <div>
             <label for="surat_permohonan" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                Surat Permohonan <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span>
+                Surat Permohonan <span class="text-red-500">*</span>
             </label>
             <div class="relative">
-                <input id="surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+                <input id="surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
             </div>
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
                 <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
             </p>
             <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
+        </div>
+
+        <!-- KTP Upload -->
+        <div>
+            <label for="ktp" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                KTP <span class="text-red-500">*</span>
+            </label>
+            <div class="relative">
+                <input id="ktp" type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
+            </p>
+            <x-input-error :messages="$errors->get('ktp')" class="mt-2" />
         </div>
 
         <!-- Submit Button -->

@@ -25,6 +25,7 @@ class Asuransi extends Model
         'no_whatsapp',
         'status',
         'surat_permohonan',
+        'ktp',
     ];
 
     public function user()

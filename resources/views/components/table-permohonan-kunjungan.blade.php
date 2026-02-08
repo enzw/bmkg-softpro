@@ -160,12 +160,20 @@
                                         <p class="text-gray-900 dark:text-white font-semibold">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</p>
                                     </div>
 
-                                    @if($item->surat_permohonan)
-                                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
-                                            <a href="{{ route('permohonan-kunjungan.download-file', ['id' => $item->id, 'fileName' => basename($item->surat_permohonan)]) }}"
-                                                class="inline-flex items-center justify-center w-full px-4 py-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30 font-semibold text-sm transition">
-                                                <i class="fas fa-download mr-2"></i>Download Surat Permohonan
-                                            </a>
+                                    @if($item->surat_permohonan || $item->ktp)
+                                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+                                            @if($item->surat_permohonan)
+                                                <a href="{{ route('permohonan-kunjungan.download-file', ['id' => $item->id, 'fileName' => basename($item->surat_permohonan)]) }}"
+                                                    class="inline-flex items-center justify-center w-full px-4 py-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30 font-semibold text-sm transition">
+                                                    <i class="fas fa-file-pdf mr-2"></i>Download Surat Permohonan
+                                                </a>
+                                            @endif
+                                            @if($item->ktp)
+                                                <a href="{{ route('permohonan-kunjungan.download-file', ['id' => $item->id, 'fileName' => basename($item->ktp)]) }}"
+                                                    class="inline-flex items-center justify-center w-full px-4 py-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-semibold text-sm transition">
+                                                    <i class="fas fa-id-card mr-2"></i>Download KTP/Identitas
+                                                </a>
+                                            @endif
                                         </div>
                                     @endif
                                 </div>

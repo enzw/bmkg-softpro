@@ -175,10 +175,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
             <div>
                 <label for="surat_permohonan_magang" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                    Surat Permohonan <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span>
+                    Surat Permohonan <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
-                    <input id="surat_permohonan_magang" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+                    <input id="surat_permohonan_magang" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" required
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
@@ -199,6 +199,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                     <i class="fas fa-info-circle mr-1"></i>Format: JPG, PNG. Maksimal 2MB
                 </p>
                 <x-input-error :messages="$errors->get('kartu_mahasiswa')" class="mt-2" />
+            </div>
+
+            <div>
+                <label for="ktp_magang" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                    KTP <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                    <input id="ktp_magang" type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
+                </p>
+                <x-input-error :messages="$errors->get('ktp')" class="mt-2" />
             </div>
 
             <button type="submit" class="w-full py-3 px-6 rounded-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800 text-white font-semibold shadow-lg hover:shadow-xl transition duration-200 transform hover:scale-105">
@@ -270,18 +284,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label for="latitude_asuransi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                        Lintang (Latitude) <span class="text-red-500">*</span>
+                        Lintang (Latitude) <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span>
                     </label>
-                    <input id="latitude_asuransi" type="number" step="0.00000001" min="-90" max="90" name="latitude" :value="old('latitude')" required
+                    <input id="latitude_asuransi" type="number" step="0.00000001" min="-90" max="90" name="latitude" :value="old('latitude')"
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="-90 hingga 90" />
                     <x-input-error :messages="$errors->get('latitude')" class="mt-2" />
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Range: -90 hingga 90</p>
                 </div>
                 <div>
                     <label for="longitude_asuransi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                        Bujur (Longitude) <span class="text-red-500">*</span>
+                        Bujur (Longitude) <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span>
                     </label>
-                    <input id="longitude_asuransi" type="number" step="0.00000001" min="-180" max="180" name="longitude" :value="old('longitude')" required
+                    <input id="longitude_asuransi" type="number" step="0.00000001" min="-180" max="180" name="longitude" :value="old('longitude')"
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="-180 hingga 180" />
                     <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Range: -180 hingga 180</p>
@@ -299,16 +313,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
             <div>
                 <label for="surat_permohonan_asuransi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                    Surat Permohonan <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span>
+                    Surat Permohonan <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
-                    <input id="surat_permohonan_asuransi" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+                    <input id="surat_permohonan_asuransi" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" required
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
                     <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
                 </p>
                 <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
+            </div>
+
+            <div>
+                <label for="ktp_asuransi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                    KTP <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                    <input id="ktp_asuransi" type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
+                </p>
+                <x-input-error :messages="$errors->get('ktp')" class="mt-2" />
             </div>
 
             <button type="submit" class="w-full py-3 px-6 rounded-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800 text-white font-semibold shadow-lg hover:shadow-xl transition duration-200 transform hover:scale-105">
@@ -375,16 +403,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <!-- Common Fields -->
             <div>
                 <label for="surat_permohonan_data" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                    Surat Permohonan <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span>
+                    Surat Permohonan <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
-                    <input id="surat_permohonan_data" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+                    <input id="surat_permohonan_data" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" required
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
                     <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
                 </p>
                 <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
+            </div>
+
+            <div>
+                <label for="ktp_data" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                    KTP <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                    <input id="ktp_data" type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
+                </p>
+                <x-input-error :messages="$errors->get('ktp')" class="mt-2" />
             </div>
 
             <button type="submit" class="w-full py-3 px-6 rounded-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800 text-white font-semibold shadow-lg hover:shadow-xl transition duration-200 transform hover:scale-105">
@@ -447,16 +489,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
             <div>
                 <label for="surat_permohonan_survey" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                    Surat Permohonan <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span>
+                    Surat Permohonan <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
-                    <input id="surat_permohonan_survey" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+                    <input id="surat_permohonan_survey" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" required
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
                     <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
                 </p>
                 <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
+            </div>
+
+            <div>
+                <label for="ktp_survey" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                    KTP <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                    <input id="ktp_survey" type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
+                </p>
+                <x-input-error :messages="$errors->get('ktp')" class="mt-2" />
             </div>
 
             <button type="submit" class="w-full py-3 px-6 rounded-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800 text-white font-semibold shadow-lg hover:shadow-xl transition duration-200 transform hover:scale-105">
@@ -519,16 +575,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
             <div>
                 <label for="surat_permohonan_konsultasi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                    Surat Permohonan <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span>
+                    Surat Permohonan <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
-                    <input id="surat_permohonan_konsultasi" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
+                    <input id="surat_permohonan_konsultasi" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png" required
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
                     <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
                 </p>
                 <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
+            </div>
+
+            <div>
+                <label for="ktp_konsultasi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                    KTP <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                    <input id="ktp_konsultasi" type="file" name="ktp" accept=".pdf,.jpg,.jpeg,.png" required
+                        class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
+                </p>
+                <x-input-error :messages="$errors->get('ktp')" class="mt-2" />
             </div>
 
             <button type="submit" class="w-full py-3 px-6 rounded-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800 text-white font-semibold shadow-lg hover:shadow-xl transition duration-200 transform hover:scale-105">

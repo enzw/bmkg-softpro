@@ -26,6 +26,7 @@ class SewaAlat extends Model
         'status',
         'expedisi',
         'resi',
+        'ktp',
     ];
 
     protected $casts = [

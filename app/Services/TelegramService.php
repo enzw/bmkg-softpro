@@ -53,21 +53,30 @@ class TelegramService
         return $this->sendMessage($message);
     }
 
-    public function sendPermohonanWithDocument($type, $data, $documentPath = null)
+    public function sendPermohonanWithDocument($type, $data, $suratPermohonanPath = null, $ktpPath = null)
     {
         // Kirim notifikasi teks terlebih dahulu
         $this->sendPermohonanNotification($type, $data);
 
-        // Jika ada dokumen, kirim dokumen dengan caption
-        if ($documentPath && file_exists($documentPath)) {
+        // Kirim surat permohonan jika ada
+        if ($suratPermohonanPath && file_exists($suratPermohonanPath)) {
             $caption = "📎 <b>Dokumen Lampiran:</b>\n" .
                        "<b>Layanan:</b> " . $this->getServiceName($type) . "\n" .
-                       "<b>File:</b> " . basename($documentPath);
+                       "<b>File:</b> " . basename($suratPermohonanPath) . "\n" .
+                       "<b>Tipe:</b> Surat Permohonan";
             
-            return $this->sendDocument($documentPath, $caption);
+            $this->sendDocument($suratPermohonanPath, $caption);
         }
 
-        return null;
+        // Kirim KTP jika ada
+        if ($ktpPath && file_exists($ktpPath)) {
+            $caption = "📎 <b>Dokumen Lampiran:</b>\n" .
+                       "<b>Layanan:</b> " . $this->getServiceName($type) . "\n" .
+                       "<b>File:</b> " . basename($ktpPath) . "\n" .
+                       "<b>Tipe:</b> KTP/Identitas";
+            
+            $this->sendDocument($ktpPath, $caption);
+        }
     }
 
     private function getServiceName($type)
@@ -156,7 +165,8 @@ class TelegramService
             "<b>Tanggal Mulai:</b> " . htmlspecialchars($data['sewa_mulai'] ?? '-') . "\n" .
             "<b>Tanggal Berakhir:</b> " . htmlspecialchars($data['sewa_berakhir'] ?? '-') . "\n" .
             "<b>Keterangan:</b> " . htmlspecialchars($data['keterangan'] ?? '-') . "\n" .
-            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
+            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n" .
+            "<b>KTP/Identitas:</b> " . (isset($data['ktp']) && $data['ktp'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
             "🕐 <b>Tanggal Permohonan:</b> " . htmlspecialchars($data['created_at'] ?? '-');
     }
 
@@ -167,7 +177,8 @@ class TelegramService
             "<b>Email:</b> " . htmlspecialchars($data['email'] ?? '-') . "\n" .
             "<b>No. WhatsApp:</b> " . $this->formatWhatsAppLink($data['no_whatsapp'] ?? '') . "\n\n" .
             "<b>Topik dan Detail Konsultasi:</b> " . htmlspecialchars($data['keterangan'] ?? '-') . "\n" .
-            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
+            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n" .
+            "<b>KTP/Identitas:</b> " . (isset($data['ktp']) && $data['ktp'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
             "🕐 <b>Tanggal Permohonan:</b> " . htmlspecialchars($data['created_at'] ?? '-');
     }
 
@@ -182,7 +193,8 @@ class TelegramService
             "<b>Program Studi:</b> " . htmlspecialchars($data['prodi'] ?? '-') . "\n" .
             "<b>Tanggal Mulai:</b> " . htmlspecialchars($data['tanggal_mulai'] ?? '-') . "\n" .
             "<b>Tanggal Selesai:</b> " . htmlspecialchars($data['tanggal_selesai'] ?? '-') . "\n" .
-            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
+            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n" .
+            "<b>KTP/Identitas:</b> " . (isset($data['ktp']) && $data['ktp'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
             "🕐 <b>Tanggal Permohonan:</b> " . htmlspecialchars($data['created_at'] ?? '-');
     }
 
@@ -195,7 +207,8 @@ class TelegramService
             "<b>No. WhatsApp:</b> " . $this->formatWhatsAppLink($data['no_whatsapp'] ?? '') . "\n" .
             "<b>Jumlah Rombongan:</b> " . htmlspecialchars($data['jumlah_rombongan'] ?? '-') . "\n\n" .
             "<b>Rencana Kunjungan:</b>\n" . htmlspecialchars($data['rencana_kunjungan'] ?? '-') . "\n\n" .
-            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
+            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n" .
+            "<b>KTP/Identitas:</b> " . (isset($data['ktp']) && $data['ktp'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
             "🕐 <b>Tanggal Permohonan:</b> " . htmlspecialchars($data['created_at'] ?? '-');
     }
 
@@ -210,7 +223,8 @@ class TelegramService
             "<b>Alamat Lokasi:</b> " . htmlspecialchars($data['lokasi'] ?? '-') . "\n" .
             "<b>Lintang (Latitude):</b> " . htmlspecialchars($data['latitude'] ?? '-') . "\n" .
             "<b>Bujur (Longitude):</b> " . htmlspecialchars($data['longitude'] ?? '-') . "\n" .
-            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
+            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n" .
+            "<b>KTP/Identitas:</b> " . (isset($data['ktp']) && $data['ktp'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
             "🕐 <b>Tanggal Permohonan:</b> " . htmlspecialchars($data['created_at'] ?? '-');
     }
 
@@ -221,7 +235,8 @@ class TelegramService
             "<b>Email:</b> " . htmlspecialchars($data['email'] ?? '-') . "\n" .
             "<b>No. WhatsApp:</b> " . $this->formatWhatsAppLink($data['no_whatsapp'] ?? '') . "\n\n" .
             "<b>Deskripsi Data yang Dibutuhkan:</b> " . htmlspecialchars($data['keterangan'] ?? '-') . "\n" .
-            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
+            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n" .
+            "<b>KTP/Identitas:</b> " . (isset($data['ktp']) && $data['ktp'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
             "🕐 <b>Tanggal Permohonan:</b> " . htmlspecialchars($data['created_at'] ?? '-');
     }
 
@@ -232,7 +247,8 @@ class TelegramService
             "<b>Email:</b> " . htmlspecialchars($data['email'] ?? '-') . "\n" .
             "<b>No. WhatsApp:</b> " . $this->formatWhatsAppLink($data['no_whatsapp'] ?? '') . "\n\n" .
             "<b>Topik dan Detail Konsultasi:</b> " . htmlspecialchars($data['keterangan'] ?? '-') . "\n" .
-            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
+            "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n" .
+            "<b>KTP/Identitas:</b> " . (isset($data['ktp']) && $data['ktp'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n\n" .
             "🕐 <b>Tanggal Permohonan:</b> " . htmlspecialchars($data['created_at'] ?? '-');
     }
 

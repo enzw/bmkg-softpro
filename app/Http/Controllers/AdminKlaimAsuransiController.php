@@ -57,19 +57,34 @@ class AdminKlaimAsuransiController extends Controller
             'latitude' => 'required',
             'longitude' => 'required',
             'kejadian' => 'required',
-            // 'surat_permohonan' => 'nullable|max:2048',
-            // 'keterangan' => 'nullable',
+            'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
         $validated['user_id'] = Auth::id();
 
-        if (array_key_exists('surat_permohonan', $validated)) {
-            Storage::delete($request->surat_permohonan);
+        if ($request->hasFile('surat_permohonan')) {
+            try {
+                Storage::delete($request->surat_permohonan);
 
-            $file = $request->file('surat_permohonan');
-            $file_name = 'klaim-asuransi_user:' . $request->user()->id . '_date:' . Carbon::now() . '.' . $file->getClientOriginalExtension();
-            $path_permohonan = $file->storeAs('permohonan/klaim-asuransi', $file_name);
-            $validated['surat_permohonan'] = $path_permohonan;
+                $file = $request->file('surat_permohonan');
+                $file_name = 'klaim-asuransi_user:' . $request->user()->id . '_date:' . Carbon::now() . '.' . $file->getClientOriginalExtension();
+                $path_permohonan = $file->storeAs('permohonan/klaim-asuransi', $file_name);
+                $validated['surat_permohonan'] = $path_permohonan;
+            } catch (Exception $error) {
+                return back()->with('error', 'Gagal upload surat permohonan: ' . $error->getMessage());
+            }
+        }
+
+        if ($request->hasFile('ktp')) {
+            try {
+                $file = $request->file('ktp');
+                $file_name = 'ktp_klaim-asuransi_user:' . $request->user()->id . '_date:' . Carbon::now() . '.' . $file->getClientOriginalExtension();
+                $path_ktp = $file->storeAs('permohonan/klaim-asuransi', $file_name);
+                $validated['ktp'] = $path_ktp;
+            } catch (Exception $error) {
+                return back()->with('error', 'Gagal upload KTP: ' . $error->getMessage());
+            }
         }
 
         try {

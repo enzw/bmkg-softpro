@@ -109,8 +109,8 @@
                 <li><a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : '/dashboard-pelayanan' }}" class="px-5 py-3 rounded-full dark:text-white">Dashboard</a></li>
             @endif
 
-            <li><a href="/berita" class="px-5 py-3 rounded-full dark:text-white">Berita</a></li>
-            <li><a href="/kontak" class="px-5 py-3 rounded-full dark:text-white">Hubungi kami</a></li>
+            {{-- <li><a href="/berita" class="px-5 py-3 rounded-full dark:text-white">Berita</a></li>
+            <li><a href="/kontak" class="px-5 py-3 rounded-full dark:text-white">Hubungi kami</a></li> --}}
 
             @if (Auth::user())
                 <li class="border-t border-gray-700 mt-4 pt-4">

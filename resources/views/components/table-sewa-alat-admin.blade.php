@@ -247,17 +247,25 @@
                             @endif
 
                             <!-- Document -->
-                            @if($item->surat_permohonan)
+                            @if($item->surat_permohonan || $item->ktp)
                                 <div>
                                     <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                                         <i class="fas fa-file text-red-600 dark:text-red-400"></i>
-                                        Surat Permohonan
+                                        Dokumen
                                     </h4>
-                                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                                        <a href="{{ route('admin.sewa-alat.download', ['sewa_alat' => $item]) }}"
-                                            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white font-semibold text-sm transition">
-                                            <i class="fas fa-download mr-2"></i>Download Surat
-                                        </a>
+                                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
+                                        @if($item->surat_permohonan)
+                                            <a href="{{ route('admin.sewa-alat.download', ['sewa_alat' => $item]) }}"
+                                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold text-sm transition w-full justify-center">
+                                                <i class="fas fa-file-pdf mr-2"></i>Download Surat Permohonan
+                                            </a>
+                                        @endif
+                                        @if($item->ktp)
+                                            <a href="{{ route('admin.sewa-alat.download', ['sewa_alat' => $item, 'document' => 'ktp']) }}"
+                                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold text-sm transition w-full justify-center">
+                                                <i class="fas fa-id-card mr-2"></i>Download KTP/Identitas
+                                            </a>
+                                        @endif
                                     </div>
                                 </div>
                             @endif

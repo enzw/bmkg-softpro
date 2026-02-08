@@ -27,6 +27,7 @@ class Magang extends Model
         'surat_permohonan',
         'surat_ijin_magang',
         'kartu_mahasiswa',
+        'ktp',
     ];
 
     public function user()
