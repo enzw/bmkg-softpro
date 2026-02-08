@@ -40,7 +40,35 @@
                             <tr class="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
                                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">ID</th>
                                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Nama Pengguna</th>
-                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Informasi</th>
+                                @if($service === 'sewa-alat')
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Nama Pemesan</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Alat</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Unit</th>
+                                @elseif($service === 'kunjungan')
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Jenis Kunjungan</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Nama Instansi</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Nama Lengkap</th>
+                                @elseif($service === 'magang')
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Nama Lengkap</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Universitas</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Program Studi</th>
+                                @elseif($service === 'asuransi')
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Nama</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Lokasi</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Perusahaan</th>
+                                @elseif($service === 'layanan-data')
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Nama Lengkap</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Email</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">No. WhatsApp</th>
+                                @elseif($service === 'survey')
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Nama Lengkap</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Email</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">No. WhatsApp</th>
+                                @elseif($service === 'jasa-konsultasi')
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Nama Lengkap</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Email</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">No. WhatsApp</th>
+                                @endif
                                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Status</th>
                                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Tanggal</th>
                             </tr>
@@ -54,23 +82,35 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <span class="font-semibold text-gray-900 dark:text-white">{{ $item->user->name ?? 'N/A' }}</span>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">
-                                        @if($service === 'sewa-alat')
-                                            {{ $item->nama_alat ?? 'N/A' }}
-                                        @elseif($service === 'kunjungan')
-                                            {{ $item->nama_instansi ?? 'N/A' }}
-                                        @elseif($service === 'magang')
-                                            {{ $item->universitas ?? 'N/A' }}
-                                        @elseif($service === 'asuransi')
-                                            {{ $item->no_identitas ?? 'N/A' }}
-                                        @elseif($service === 'layanan-data')
-                                            {{ $item->nama_lembaga ?? 'N/A' }}
-                                        @elseif($service === 'survey')
-                                            {{ $item->lokasi_survey ?? 'N/A' }}
-                                        @elseif($service === 'jasa-konsultasi')
-                                            {{ Str::limit($item->keterangan, 30) ?? 'N/A' }}
-                                        @endif
-                                    </td>
+                                    @if($service === 'sewa-alat')
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->nama ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->alat->nama ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->banyak_unit ?? 'N/A' }}</td>
+                                    @elseif($service === 'kunjungan')
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->jenis_kunjungan ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->nama_instansi ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->nama_lengkap ?? 'N/A' }}</td>
+                                    @elseif($service === 'magang')
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->nama_lengkap ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->universitas ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->prodi ?? 'N/A' }}</td>
+                                    @elseif($service === 'asuransi')
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->nama_user ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->lokasi ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->perusahaan ?? 'N/A' }}</td>
+                                    @elseif($service === 'layanan-data')
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->nama_lengkap ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->email ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->no_whatsapp ?? 'N/A' }}</td>
+                                    @elseif($service === 'survey')
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->nama_lengkap ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->email ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->no_whatsapp ?? 'N/A' }}</td>
+                                    @elseif($service === 'jasa-konsultasi')
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->nama_lengkap ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->email ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->no_whatsapp ?? 'N/A' }}</td>
+                                    @endif
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium
                                             @if($item->status === 'pending' || $item->status === 'Menunggu')

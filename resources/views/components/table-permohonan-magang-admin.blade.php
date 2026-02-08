@@ -82,7 +82,7 @@
                         <i class="fas fa-eye mr-2"></i>Detail
                     </button>
                     <a href="{{ route('admin.pelayanan-jasa.edit', ['pelayanan_jasa' => $item]) }}"
-                        class="flex-1 px-4 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30 font-semibold text-sm transition">
+                        class="flex-1 px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-semibold text-sm transition">
                         <i class="fas fa-edit mr-2"></i>Edit
                     </a>
                     <button type="button" onclick="openModal('modal-delete-{{ $loop->index }}')"

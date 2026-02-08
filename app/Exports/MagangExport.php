@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
@@ -20,15 +21,22 @@ class MagangExport implements FromCollection, WithHeadings, WithColumnWidths, Wi
     public function collection()
     {
         return $this->data->map(function ($item) {
+            $mulai = Carbon::parse($item->tanggal_mulai);
+            $selesai = Carbon::parse($item->tanggal_selesai);
+            $durasi = $selesai->diffInDays($mulai);
+            
             return [
                 $item->id,
                 $item->user->name ?? 'N/A',
                 $item->nama_lengkap,
                 $item->universitas,
-                $item->jurusan,
+                $item->fakultas,
+                $item->prodi,
                 $item->email,
                 $item->no_whatsapp,
-                $item->durasi_magang_hari,
+                $mulai->format('Y-m-d'),
+                $selesai->format('Y-m-d'),
+                $durasi . ' hari',
                 $item->status,
                 $item->created_at?->format('Y-m-d H:i:s'),
                 $item->updated_at?->format('Y-m-d H:i:s'),
@@ -43,10 +51,13 @@ class MagangExport implements FromCollection, WithHeadings, WithColumnWidths, Wi
             'Nama Pengguna',
             'Nama Lengkap',
             'Universitas',
-            'Jurusan',
+            'Fakultas',
+            'Program Studi',
             'Email',
             'No. WhatsApp',
-            'Durasi Magang (Hari)',
+            'Tanggal Mulai',
+            'Tanggal Selesai',
+            'Durasi (Hari)',
             'Status',
             'Dibuat',
             'Diupdate',
@@ -61,12 +72,15 @@ class MagangExport implements FromCollection, WithHeadings, WithColumnWidths, Wi
             'C' => 20,
             'D' => 20,
             'E' => 15,
-            'F' => 20,
-            'G' => 15,
-            'H' => 18,
-            'I' => 12,
-            'J' => 20,
-            'K' => 20,
+            'F' => 15,
+            'G' => 20,
+            'H' => 15,
+            'I' => 15,
+            'J' => 15,
+            'K' => 12,
+            'L' => 12,
+            'M' => 20,
+            'N' => 20,
         ];
     }
 
