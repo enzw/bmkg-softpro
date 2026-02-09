@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-12">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mt-12 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumb Navigation -->
             <nav class="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-8">
                 @if(auth()->user()->role === 'admin' || auth()->user()->role === 'superuser')

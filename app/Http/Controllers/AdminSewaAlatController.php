@@ -112,7 +112,7 @@ class AdminSewaAlatController extends Controller
 
         try {
             SewaAlat::create($validated);
-            return redirect()->route('admin.sewa-alat.create')->with('success', 'Permohonan berhasil dibuat');
+            return redirect()->route('admin.sewa-alat.index')->with('success', 'Permohonan berhasil dibuat');
         } catch (Exception $error) {
             \Log::error('Admin Sewa Alat Error: ' . $error->getMessage());
             return redirect()->route('admin.sewa-alat.create')->with('error', 'Permohonan gagal dibuat: ' . $error->getMessage());
