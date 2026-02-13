@@ -17,8 +17,8 @@
                     'completed' => 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300',
                 ];
                 $currentStatusColor = $statusColor[$item->status] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
-                
-                $statusLabel = match($item->status) {
+
+                $statusLabel = match ($item->status) {
                     'pending' => 'Menunggu',
                     'approved' => 'Disetujui',
                     'rejected' => 'Ditolak',
@@ -27,13 +27,15 @@
                 };
             @endphp
 
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition group">
+            <div
+                class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition group">
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-2">
                             <div class="w-3 h-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600"></div>
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->nama_lengkap }}</h3>
-                            <span class="text-sm px-3 py-1 rounded-full border bg-cyan-50 dark:bg-cyan-900/20 border-cyan-200 dark:border-cyan-800/50 text-cyan-700 dark:text-cyan-300">
+                            <span
+                                class="text-sm px-3 py-1 rounded-full border bg-cyan-50 dark:bg-cyan-900/20 border-cyan-200 dark:border-cyan-800/50 text-cyan-700 dark:text-cyan-300">
                                 {{ $item->jenis_kunjungan }}
                             </span>
                         </div>
@@ -53,7 +55,8 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <div>
                         <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Tanggal</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}</p>
+                        <p class="font-semibold text-gray-900 dark:text-white">
+                            {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">No WhatsApp</p>
@@ -61,7 +64,8 @@
                     </div>
                     <div>
                         <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Jam</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->created_at)->format('H:i') }}</p>
+                        <p class="font-semibold text-gray-900 dark:text-white">
+                            {{ \Carbon\Carbon::parse($item->created_at)->format('H:i') }}</p>
                     </div>
                 </div>
 
@@ -79,11 +83,14 @@
                         <i class="fas fa-trash mr-2"></i>Hapus
                     </button>
                     <!-- Delete Modal -->
-                    <div id="modal-delete-{{ $loop->index }}" class="hidden fixed inset-0 z-50 overflow-auto bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300">
-                        <div class="bg-white dark:bg-gray-800 rounded-3xl max-w-sm w-full shadow-2xl transform transition-all duration-300 scale-95 hover:scale-100">
+                    <div id="modal-delete-{{ $loop->index }}"
+                        class="hidden fixed inset-0 z-50 overflow-auto bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300">
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-3xl max-w-sm w-full shadow-2xl transform transition-all duration-300 scale-95 hover:scale-100">
                             <!-- Icon -->
                             <div class="flex justify-center pt-8">
-                                <div class="w-16 h-16 rounded-full bg-red-50 dark:bg-red-900/30 flex items-center justify-center">
+                                <div
+                                    class="w-16 h-16 rounded-full bg-red-50 dark:bg-red-900/30 flex items-center justify-center">
                                     <i class="fas fa-trash text-2xl text-red-600 dark:text-red-400"></i>
                                 </div>
                             </div>
@@ -91,7 +98,8 @@
                             <div class="px-8 pt-6 pb-8 text-center">
                                 <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Hapus Permohonan?</h3>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                                    Permohonan <strong class="text-gray-900 dark:text-white">{{ $item->nama_lengkap }}</strong> akan dihapus secara permanen.
+                                    Permohonan <strong class="text-gray-900 dark:text-white">{{ $item->nama_lengkap }}</strong>
+                                    akan dihapus secara permanen.
                                 </p>
                             </div>
                             <!-- Divider -->
@@ -102,7 +110,8 @@
                                     class="flex-1 px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition-all duration-200 hover:shadow-md">
                                     Batal
                                 </button>
-                                <button type="button" onclick="deleteRecord('{{ $item->id }}', 'modal-delete-{{ $loop->index }}')"
+                                <button type="button" id="btn-delete-{{ $loop->index }}"
+                                    onclick="deleteRecord('{{ $item->id }}', 'modal-delete-{{ $loop->index }}')"
                                     class="flex-1 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition-all duration-200 hover:shadow-md">
                                     Hapus
                                 </button>
@@ -112,7 +121,8 @@
                 </div>
 
                 <!-- Detail Modal -->
-                <div id="modal-detail-{{ $loop->index }}" class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+                <div id="modal-detail-{{ $loop->index }}"
+                    class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
                     <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto">
                         <!-- Header -->
                         <div class="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 p-6">
@@ -121,7 +131,7 @@
                                     <h3 class="text-xl font-bold text-gray-900 dark:text-white">Detail Permohonan Kunjungan</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">ID: #{{ $item->id }}</p>
                                 </div>
-                                <button type="button" onclick="closeDetailModal('modal-detail-{{ $loop->index }}')" 
+                                <button type="button" onclick="closeDetailModal('modal-detail-{{ $loop->index }}')"
                                     class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
                                     <i class="fas fa-times text-2xl"></i>
                                 </button>
@@ -139,15 +149,18 @@
                                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Jenis Kunjungan:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->jenis_kunjungan }}</span>
+                                        <span
+                                            class="font-semibold text-gray-900 dark:text-white">{{ $item->jenis_kunjungan }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Instansi:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->nama_instansi }}</span>
+                                        <span
+                                            class="font-semibold text-gray-900 dark:text-white">{{ $item->nama_instansi }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Jumlah Rombongan:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->jumlah_rombongan }} orang</span>
+                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->jumlah_rombongan }}
+                                            orang</span>
                                     </div>
                                 </div>
                             </div>
@@ -161,11 +174,13 @@
                                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Nama Lengkap:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->nama_lengkap }}</span>
+                                        <span
+                                            class="font-semibold text-gray-900 dark:text-white">{{ $item->nama_lengkap }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">No WhatsApp:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->no_whatsapp }}</span>
+                                        <span
+                                            class="font-semibold text-gray-900 dark:text-white">{{ $item->no_whatsapp }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -177,7 +192,8 @@
                                     Rencana Kunjungan
                                 </h4>
                                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                                    <p class="text-gray-900 dark:text-white text-sm whitespace-pre-wrap">{{ $item->rencana_kunjungan }}</p>
+                                    <p class="text-gray-900 dark:text-white text-sm whitespace-pre-wrap">
+                                        {{ $item->rencana_kunjungan }}</p>
                                 </div>
                             </div>
 
@@ -188,7 +204,8 @@
                                     Status
                                 </h4>
                                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                                    <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold border {{ $currentStatusColor }}">
+                                    <span
+                                        class="inline-block px-3 py-1 rounded-full text-sm font-semibold border {{ $currentStatusColor }}">
                                         {{ $statusLabel }}
                                     </span>
                                 </div>
@@ -227,18 +244,21 @@
                                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Dibuat:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</span>
+                                        <span
+                                            class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Diperbarui:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->updated_at)->format('d/m/Y H:i') }}</span>
+                                        <span
+                                            class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->updated_at)->format('d/m/Y H:i') }}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Footer -->
-                        <div class="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 p-6 flex gap-3">
+                        <div
+                            class="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 p-6 flex gap-3">
                             <button type="button" onclick="closeDetailModal('modal-detail-{{ $loop->index }}')"
                                 class="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
                                 Tutup
@@ -275,19 +295,32 @@
     }
 
     function deleteRecord(recordId, modalId) {
-        closeModal(modalId);
+        // Get the button element based on modal ID
+        const buttonId = modalId.replace('modal-delete-', 'btn-delete-');
+        const deleteBtn = document.getElementById(buttonId);
         
+        let originalText = 'Hapus';
+        if (deleteBtn) {
+            originalText = deleteBtn.textContent;
+            deleteBtn.textContent = 'Menghapus...';
+            deleteBtn.disabled = true;
+        }
+
         let csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
         if (!csrfToken) {
             const tokenInput = document.querySelector('input[name="_token"]');
             if (tokenInput) csrfToken = tokenInput.value;
         }
-        
+
         if (!csrfToken) {
             alert('CSRF token tidak ditemukan');
+            if (deleteBtn) {
+                deleteBtn.textContent = originalText;
+                deleteBtn.disabled = false;
+            }
             return;
         }
-        
+
         fetch(`/admin/permohonan-kunjungan/${recordId}`, {
             method: 'DELETE',
             headers: {
@@ -296,23 +329,31 @@
                 'Accept': 'application/json'
             }
         })
-        .then(response => {
-            return response.json().then(data => {
-                return { status: response.status, ok: response.ok, data: data };
-            });
-        })
-        .then(result => {
-            if (result.ok) {
-                window.location.href = window.location.href;
-            } else {
-                const errorMsg = result.data && result.data.message ? String(result.data.message) : 'Gagal menghapus permohonan';
+            .then(response => {
+                return response.json().then(data => {
+                    return { status: response.status, ok: response.ok, data: data };
+                });
+            })
+            .then(result => {
+                if (result.ok) {
+                    closeModal(modalId);
+                    window.location.reload();
+                } else {
+                    const errorMsg = result.data && result.data.message ? String(result.data.message) : 'Gagal menghapus permohonan';
+                    alert(errorMsg);
+                    if (deleteBtn) {
+                        deleteBtn.textContent = originalText;
+                        deleteBtn.disabled = false;
+                    }
+                }
+            })
+            .catch(error => {
+                const errorMsg = error && error.message ? String(error.message) : 'Terjadi kesalahan';
                 alert(errorMsg);
-            }
-        })
-        .catch(error => {
-            const errorMsg = error && error.message ? String(error.message) : 'Terjadi kesalahan';
-            alert(errorMsg);
-        });
+                if (deleteBtn) {
+                    deleteBtn.textContent = originalText;
+                    deleteBtn.disabled = false;
+                }
+            });
     }
 </script>
-
