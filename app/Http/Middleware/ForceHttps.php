@@ -3,11 +3,19 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ForceHttps
 {
+    protected $app;
+
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -15,8 +23,8 @@ class ForceHttps
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Force HTTPS for production and development
-        if (! $request->secure() && env('APP_URL') && str_starts_with(env('APP_URL'), 'https')) {
+        // Only force HTTPS in production
+        if (! $request->secure() && $this->app->environment('production') && env('APP_URL') && str_starts_with(env('APP_URL'), 'https')) {
             return redirect()->secure($request->getRequestUri(), 301);
         }
 

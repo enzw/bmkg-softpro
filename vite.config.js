@@ -11,15 +11,4 @@ export default defineConfig({
             refresh: true,
         }),
     ],
-    server: {
-        hmr: {
-            host: 'localhost',
-            port: 5173,
-            protocol: 'wss',
-        },
-        https: true,
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-        },
-    },
 });
