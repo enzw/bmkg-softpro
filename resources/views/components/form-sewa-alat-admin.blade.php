@@ -127,32 +127,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             </div>
         </div>
 
-        @if ($is_edit)
-        <!-- Status (Admin Only) -->
-        <div>
-            <label for="status" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                Status <span class="text-red-500">*</span>
-            </label>
-            <select name="status" id="status" required
-                class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition">
-                @php
-                    $statusOptions = [
-                        'Belum Lunas' => 'Menunggu (Belum Lunas)',
-                        'Siap Diambil' => 'Diproses (Siap Diambil)',
-                        'Dibawa' => 'Diproses (Dibawa)',
-                        'Dikembalikan' => 'Selesai (Dikembalikan)',
-                    ];
-                @endphp
-                @foreach ($statusOptions as $dbValue => $displayLabel)
-                    <option value="{{ $dbValue }}" @selected(old('status', $is_edit ? $permohonan->status : '') == $dbValue)>
-                        {{ $displayLabel }}
-                    </option>
-                @endforeach
-            </select>
-            <x-input-error :messages="$errors->get('status')" class="mt-2" />
-        </div>
-        @endif
-
         <!-- Description -->
         <div>
             <label for="keterangan" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">

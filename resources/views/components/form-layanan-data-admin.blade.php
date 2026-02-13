@@ -77,20 +77,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
         </div>
 
-        @if ($is_edit)
-        <div>
-            <x-input-label for="status">Status</x-input-label>
-            <select name="status" id="status"
-                class="block w-full mt-1 truncate border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600">
-                <option value="">Pilih status...</option>
-                <option value="Menunggu" @selected(old('status', $permohonan->status) == 'Menunggu')>Menunggu</option>
-                <option value="Diproses" @selected(old('status', $permohonan->status) == 'Diproses')>Diproses</option>
-                <option value="Selesai" @selected(old('status', $permohonan->status) == 'Selesai')>Selesai</option>
-            </select>
-            <x-input-error :messages="$errors->get('status')" class="mt-2" />
-        </div>
-        @endif
-
         <div>
             <x-input-label for="surat_permohonan">Surat Permohonan (PDF) - Opsional</x-input-label>
             <input id="surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
@@ -132,6 +118,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             @endif
             <x-input-error :messages="$errors->get('ktp')" class="mt-2" />
         </div>
+
+        @if ($is_edit)
+        <div>
+            <x-input-label for="status">Status</x-input-label>
+            <select name="status" id="status"
+                class="block w-full mt-1 truncate border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600">
+                <option value="">Pilih status...</option>
+                <option value="Menunggu" @selected(old('status', $permohonan->status) == 'Menunggu')>Menunggu</option>
+                <option value="Diproses" @selected(old('status', $permohonan->status) == 'Diproses')>Diproses</option>
+                <option value="Selesai" @selected(old('status', $permohonan->status) == 'Selesai')>Selesai</option>
+            </select>
+            <x-input-error :messages="$errors->get('status')" class="mt-2" />
+        </div>
+        @endif
 
         <button type="submit" class="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-500 transition">
             {{ $is_edit ? 'Update' : 'Buat' }} Permohonan
