@@ -46,12 +46,13 @@ class SewaAlatController extends Controller
         if ($request->hasFile('surat_permohonan')) {
             try {
                 $directory = 'permohonan/sewa-alat';
-                
+
                 $file = $request->file('surat_permohonan');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 's3');                if ($path) {
+                $path = $file->storeAs($directory, $fileName, 's3');
+                if ($path) {
                     $validated['surat_permohonan'] = $path;
-                }                
+                }
                 if ($path) {
                     $validated['surat_permohonan'] = $path;
                     \Log::info('File uploaded successfully: ' . $path);
@@ -67,12 +68,13 @@ class SewaAlatController extends Controller
         if ($request->hasFile('ktp')) {
             try {
                 $directory = 'permohonan/sewa-alat';
-                
+
                 $file = $request->file('ktp');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 's3');                if ($path) {
+                $path = $file->storeAs($directory, $fileName, 's3');
+                if ($path) {
                     $validated['ktp'] = $path;
-                }                
+                }
                 if ($path) {
                     $validated['ktp'] = $path;
                     \Log::info('KTP file uploaded successfully: ' . $path);
@@ -107,13 +109,13 @@ class SewaAlatController extends Controller
 
         try {
             $sewaAlat = SewaAlat::create($validated);
-            
+
             // Send Telegram notification
             try {
                 $telegramService = new TelegramService();
                 $alat = Alat::find($validated['alat_id']);
                 $user = Auth::user();
-                
+
                 $telegramData = [
                     'user_name' => $user->name,
                     'email' => $user->email,
@@ -128,14 +130,14 @@ class SewaAlatController extends Controller
                     'ktp' => $validated['ktp'] ?? null,
                     'created_at' => $sewaAlat->created_at->format('d-m-Y H:i'),
                 ];
-                
+
                 // Send notification (documents are on S3)
                 $telegramService->sendPermohonanNotification('sewa_alat', $telegramData);
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails
             }
-            
+
             return back()->with('success', 'Permohonan berhasil dibuat');
         } catch (Exception $error) {
             \Log::error('Sewa Alat Error: ' . $error->getMessage());
@@ -148,7 +150,7 @@ class SewaAlatController extends Controller
         try {
             // Authorize the delete action via policy
             $this->authorize('delete', $sewa_alat);
-            
+
             // Delete associated files from Cloudflare S3
             if ($sewa_alat->surat_permohonan) {
                 Storage::disk('s3')->delete($sewa_alat->surat_permohonan);
@@ -156,9 +158,9 @@ class SewaAlatController extends Controller
             if ($sewa_alat->ktp) {
                 Storage::disk('s3')->delete($sewa_alat->ktp);
             }
-            
+
             $sewa_alat->delete();
-            
+
             if (request()->wantsJson()) {
                 return response()->json(['message' => 'Permohonan berhasil dibatalkan']);
             }
@@ -190,11 +192,9 @@ class SewaAlatController extends Controller
         return $this->redirectToTemporaryUrl($sewa_alat->surat_permohonan, 60);
     }
 
-    public function downloadFile($id, $fileName)
+    public function downloadFile(SewaAlat $sewaAlat, $fileName)
     {
         try {
-            $sewaAlat = SewaAlat::findOrFail($id);
-
             // Authorize - user can only download their own files
             if ($sewaAlat->user_id !== Auth::id()) {
                 abort(403, 'Anda tidak memiliki akses ke file ini');
@@ -220,8 +220,8 @@ class SewaAlatController extends Controller
 
             return $this->redirectToTemporaryUrl($filePath, 60);
         } catch (\Exception $e) {
-            report($e);
-            abort(500, 'Error mengakses file: ' . $e->getMessage());
+            \Log::error('Error download file: ' . $e->getMessage());
+            abort(500, 'Error mengakses file.');
         }
     }
 }
