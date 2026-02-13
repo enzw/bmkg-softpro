@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kunjungan;
+use App\Traits\HandlesFileDownload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PermohonanKunjunganController extends Controller
 {
+    use HandlesFileDownload;
     protected $telegramService;
 
     public function __construct(TelegramService $telegramService)
@@ -46,36 +48,13 @@ class PermohonanKunjunganController extends Controller
             try {
                 $file = $request->file('surat_permohonan');
                 $directory = 'permohonan/kunjungan';
-                \Log::info('Starting file upload: ' . $file->getClientOriginalName());
-                \Log::info('Storage disk root: ' . Storage::disk('local')->path(''));
-                
-                // Create directory with full path
-                $fullPath = Storage::disk('local')->path($directory);
-                if (!is_dir($fullPath)) {
-                    mkdir($fullPath, 0777, true);
-                    \Log::info('Created directory: ' . $fullPath);
-                }
-                
-                // Use simple filename
-                $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
-                \Log::info('Storing file as: ' . $filename . ' in ' . $directory);
-                
-                // Store the file
-                $result = $file->storeAs($directory, $filename, 'local');
-                \Log::info('storeAs result: ' . var_export($result, true));
-                
-                // Verify file exists
-                $storedPath = Storage::disk('local')->path($result);
-                if (file_exists($storedPath)) {
+                $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $result = $file->storeAs($directory, $filename, 's3');
+                if ($result) {
                     $validated['surat_permohonan'] = $result;
-                    \Log::info('Surat Permohonan uploaded successfully: ' . $result . ' at ' . $storedPath);
-                } else {
-                    \Log::error('File stored but not found at: ' . $storedPath);
-                    return back()->withInput()->with('error', 'File tidak ditemukan setelah upload');
                 }
             } catch (Exception $fileError) {
                 \Log::error('Surat Permohonan upload error: ' . $fileError->getMessage());
-                \Log::error('Stack trace: ' . $fileError->getTraceAsString());
                 return back()->withInput()->with('error', 'Error: ' . $fileError->getMessage());
             }
         }
@@ -84,35 +63,13 @@ class PermohonanKunjunganController extends Controller
             try {
                 $file = $request->file('ktp');
                 $directory = 'permohonan/kunjungan';
-                \Log::info('Starting file upload: ' . $file->getClientOriginalName());
-                
-                // Create directory with full path
-                $fullPath = Storage::disk('local')->path($directory);
-                if (!is_dir($fullPath)) {
-                    mkdir($fullPath, 0777, true);
-                    \Log::info('Created directory: ' . $fullPath);
-                }
-                
-                // Use simple filename
-                $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
-                \Log::info('Storing file as: ' . $filename . ' in ' . $directory);
-                
-                // Store the file
-                $result = $file->storeAs($directory, $filename, 'local');
-                \Log::info('storeAs result: ' . var_export($result, true));
-                
-                // Verify file exists
-                $storedPath = Storage::disk('local')->path($result);
-                if (file_exists($storedPath)) {
+                $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $result = $file->storeAs($directory, $filename, 's3');
+                if ($result) {
                     $validated['ktp'] = $result;
-                    \Log::info('KTP uploaded successfully: ' . $result . ' at ' . $storedPath);
-                } else {
-                    \Log::error('File stored but not found at: ' . $storedPath);
-                    return back()->withInput()->with('error', 'File tidak ditemukan setelah upload');
                 }
             } catch (Exception $fileError) {
                 \Log::error('KTP upload error: ' . $fileError->getMessage());
-                \Log::error('Stack trace: ' . $fileError->getTraceAsString());
                 return back()->withInput()->with('error', 'Error: ' . $fileError->getMessage());
             }
         }
@@ -124,25 +81,10 @@ class PermohonanKunjunganController extends Controller
             \Log::info('Creating Kunjungan with validated data', ['surat_permohonan' => $validated['surat_permohonan'] ?? 'not set', 'ktp' => $validated['ktp'] ?? 'not set']);
             $kunjungan = Kunjungan::create($validated);
 
-            // Send Telegram notification with documents
+            // Send Telegram notification
             try {
-                $suratPermohonanPath = null;
-                $ktpPath = null;
-                if (!empty($validated['surat_permohonan'])) {
-                    $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
-                }
-                if (!empty($validated['ktp'])) {
-                    $ktpPath = Storage::disk('local')->path($validated['ktp']);
-                }
-                
                 $telegramData = $kunjungan->toArray();
-                $telegramData['ktp'] = $validated['ktp'] ?? null;
-                
-                if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
-                    $this->telegramService->sendPermohonanWithDocument('kunjungan', $telegramData, $suratPermohonanPath, $ktpPath);
-                } else {
-                    $this->telegramService->sendPermohonanNotification('kunjungan', $telegramData);
-                }
+                $this->telegramService->sendPermohonanNotification('kunjungan', $telegramData);
             } catch (\Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails
@@ -193,33 +135,16 @@ class PermohonanKunjunganController extends Controller
                 $file = $request->file('surat_permohonan');
                 $directory = 'permohonan/kunjungan';
                 
-                // Create directory if it doesn't exist
-                $fullPath = Storage::disk('local')->path($directory);
-                if (!is_dir($fullPath)) {
-                    mkdir($fullPath, 0777, true);
-                    \Log::info('Created directory: ' . $fullPath);
-                }
-                
                 // Delete old file if exists
                 if ($kunjungan->surat_permohonan) {
-                    Storage::disk('local')->delete($kunjungan->surat_permohonan);
+                    Storage::disk('s3')->delete($kunjungan->surat_permohonan);
                 }
                 
-                // Create safe filename
-                $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
-                \Log::info('Storing surat_permohonan as: ' . $filename);
+                $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $result = $file->storeAs($directory, $filename, 's3');
                 
-                // Store the file
-                $result = $file->storeAs($directory, $filename, 'local');
-                
-                // Verify file exists
-                $storedPath = Storage::disk('local')->path($result);
-                if (file_exists($storedPath)) {
+                if ($result) {
                     $validated['surat_permohonan'] = $result;
-                    \Log::info('Surat Permohonan updated successfully: ' . $result);
-                } else {
-                    \Log::error('File stored but not found at: ' . $storedPath);
-                    return back()->withInput()->with('error', 'File tidak ditemukan setelah upload');
                 }
             } catch (\Exception $fileError) {
                 \Log::error('Surat Permohonan upload error: ' . $fileError->getMessage());
@@ -233,33 +158,15 @@ class PermohonanKunjunganController extends Controller
                 $file = $request->file('ktp');
                 $directory = 'permohonan/kunjungan';
                 
-                // Create directory if it doesn't exist
-                $fullPath = Storage::disk('local')->path($directory);
-                if (!is_dir($fullPath)) {
-                    mkdir($fullPath, 0777, true);
-                    \Log::info('Created directory: ' . $fullPath);
-                }
-                
                 // Delete old file if exists
                 if ($kunjungan->ktp) {
-                    Storage::disk('local')->delete($kunjungan->ktp);
+                    Storage::disk('s3')->delete($kunjungan->ktp);
                 }
                 
-                // Create safe filename
-                $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
-                \Log::info('Storing KTP as: ' . $filename);
-                
-                // Store the file
-                $result = $file->storeAs($directory, $filename, 'local');
-                
-                // Verify file exists
-                $storedPath = Storage::disk('local')->path($result);
-                if (file_exists($storedPath)) {
+                $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $result = $file->storeAs($directory, $filename, 's3');
+                if ($result) {
                     $validated['ktp'] = $result;
-                    \Log::info('KTP updated successfully: ' . $result);
-                } else {
-                    \Log::error('File stored but not found at: ' . $storedPath);
-                    return back()->withInput()->with('error', 'File tidak ditemukan setelah upload');
                 }
             } catch (\Exception $fileError) {
                 \Log::error('KTP upload error: ' . $fileError->getMessage());
@@ -290,11 +197,11 @@ class PermohonanKunjunganController extends Controller
             
             // Delete the uploaded files if they exist
             if ($kunjungan->surat_permohonan) {
-                Storage::disk('local')->delete($kunjungan->surat_permohonan);
+                Storage::disk('s3')->delete($kunjungan->surat_permohonan);
                 Log::info('Surat Permohonan deleted', ['file' => $kunjungan->surat_permohonan]);
             }
             if ($kunjungan->ktp) {
-                Storage::disk('local')->delete($kunjungan->ktp);
+                Storage::disk('s3')->delete($kunjungan->ktp);
                 Log::info('KTP deleted', ['file' => $kunjungan->ktp]);
             }
 
@@ -367,10 +274,12 @@ class PermohonanKunjunganController extends Controller
             $fileField = 'ktp';
         }
 
-        if (!$fileField || !Storage::disk('local')->exists($kunjungan->$fileField)) {
+        if (!$fileField) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        return Storage::disk('local')->download($kunjungan->$fileField, $fileName);
+        // Redirect to temporary presigned URL from R2 (valid for 1 hour)
+        // File downloads directly from Cloudflare R2, not through Laravel
+        return $this->redirectToTemporaryUrl($kunjungan->$fileField, 60);
     }
 }

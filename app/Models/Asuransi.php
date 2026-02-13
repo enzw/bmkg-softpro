@@ -25,7 +25,6 @@ class Asuransi extends Model
         'latitude',
         'longitude',
         'perusahaan',
-        'kejadian',
         'no_whatsapp',
         'status',
         'surat_permohonan',

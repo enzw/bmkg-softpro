@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Survey;
 use Illuminate\Support\Facades\Auth;
-use Exception;
+use App\Traits\HandlesFileDownload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 class AdminSurveyController extends Controller
 {
+    use HandlesFileDownload;
+
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -104,9 +106,9 @@ class AdminSurveyController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Survey $survey)
     {
-        $permohonan = Survey::where('id', $id)->first();
+        $permohonan = $survey;
 
         $data = [
             'title' => 'Update Permohonan',
@@ -152,14 +154,17 @@ class AdminSurveyController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Survey $survey)
     {
         try {
-            $survey = Survey::findOrFail($id);
+            $this->authorize('delete', $survey);
             
-            // Delete associated file
+            // Delete associated files from Cloudflare S3
             if ($survey->surat_permohonan) {
-                Storage::disk('local')->delete($survey->surat_permohonan);
+                Storage::disk('s3')->delete($survey->surat_permohonan);
+            }
+            if ($survey->ktp) {
+                Storage::disk('s3')->delete($survey->ktp);
             }
             
             $survey->delete();
@@ -168,6 +173,11 @@ class AdminSurveyController extends Controller
                 return response()->json(['message' => 'Permohonan berhasil dihapus']);
             }
             return back()->with('success', 'Permohonan berhasil dihapus');
+        } catch (\Illuminate\Auth\Access\AuthorizationException $error) {
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Anda tidak memiliki akses untuk menghapus permohonan ini'], 403);
+            }
+            return back()->with('error', 'Anda tidak memiliki akses untuk menghapus permohonan ini');
         } catch (Exception $error) {
             \Log::error('Admin Survey Destroy Error: ' . $error->getMessage());
             if (request()->wantsJson()) {
@@ -184,17 +194,20 @@ class AdminSurveyController extends Controller
     {
         $survey = Survey::findOrFail($id);
 
+        // Authorization check - only admin or the owner can download
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $survey->user_id) {
+            abort(403, 'Anda tidak memiliki akses ke file ini');
+        }
+
         // Security: validate that the file belongs to this record
         if (!$survey->surat_permohonan || !str_contains($survey->surat_permohonan, $fileName)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        $filePath = storage_path('app/' . $survey->surat_permohonan);
-
-        if (!file_exists($filePath)) {
+        if (!Storage::disk('s3')->exists($survey->surat_permohonan)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        return response()->download($filePath, $fileName);
+        return $this->redirectToTemporaryUrl($survey->surat_permohonan, 60);
     }
 }

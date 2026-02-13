@@ -215,12 +215,11 @@ class TelegramService
     private function formatAsuransi($data)
     {
         return "📋 <b>KLAIM ASURANSI</b>\n\n" .
-            "<b>Nama:</b> " . htmlspecialchars($data['nama_user'] ?? '-') . "\n" .
+            "<b>Nama Lengkap:</b> " . htmlspecialchars($data['nama_user'] ?? '-') . "\n" .
             "<b>No. WhatsApp:</b> " . $this->formatWhatsAppLink($data['no_whatsapp'] ?? '') . "\n" .
-            "<b>Perusahaan:</b> " . htmlspecialchars($data['perusahaan'] ?? '-') . "\n" .
-            "<b>Deskripsi Kejadian:</b> " . htmlspecialchars($data['kejadian'] ?? '-') . "\n" .
-            "<b>Tanggal:</b> " . htmlspecialchars($data['tanggal'] ?? '-') . "\n" .
-            "<b>Alamat Lokasi:</b> " . htmlspecialchars($data['lokasi'] ?? '-') . "\n" .
+            "<b>Nama Instansi:</b> " . htmlspecialchars($data['perusahaan'] ?? '-') . "\n" .
+            "<b>Tanggal Kejadian:</b> " . htmlspecialchars($data['tanggal'] ?? '-') . "\n" .
+            "<b>Lokasi Kejadian:</b> " . htmlspecialchars($data['lokasi'] ?? '-') . "\n" .
             "<b>Lintang (Latitude):</b> " . htmlspecialchars($data['latitude'] ?? '-') . "\n" .
             "<b>Bujur (Longitude):</b> " . htmlspecialchars($data['longitude'] ?? '-') . "\n" .
             "<b>Surat Permohonan:</b> " . (isset($data['surat_permohonan']) && $data['surat_permohonan'] ? "✅ Tersedia" : "❌ Tidak ada") . "\n" .

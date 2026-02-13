@@ -80,7 +80,7 @@
                         class="flex-1 px-4 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30 font-semibold text-sm transition">
                         <i class="fas fa-eye mr-2"></i>Detail
                     </button>
-                    <a href="{{ route('admin.sewa-alat.edit', ['sewa_alat' => $item]) }}"
+                    <a href="{{ route('admin.sewa-alat.edit', $item->id) }}"
                         class="flex-1 px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-semibold text-sm transition">
                         <i class="fas fa-edit mr-2"></i>Edit
                     </a>
@@ -255,15 +255,15 @@
                                     </h4>
                                     <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
                                         @if($item->surat_permohonan)
-                                            <a href="{{ route('admin.sewa-alat.download', ['sewa_alat' => $item]) }}"
+                                            <a href="{{ route('admin.sewa-alat.download-file', ['id' => $item->id, 'fileName' => basename($item->surat_permohonan)]) }}"
                                                 class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold text-sm transition w-full justify-center">
                                                 <i class="fas fa-file-pdf mr-2"></i>Download Surat Permohonan
                                             </a>
                                         @endif
                                         @if($item->ktp)
-                                            <a href="{{ route('admin.sewa-alat.download', ['sewa_alat' => $item, 'document' => 'ktp']) }}"
+                                            <a href="{{ route('admin.sewa-alat.download-file', ['id' => $item->id, 'fileName' => basename($item->ktp)]) }}"
                                                 class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold text-sm transition w-full justify-center">
-                                                <i class="fas fa-id-card mr-2"></i>Download KTP/Identitas
+                                                <i class="fas fa-id-card mr-2"></i>Download KTP
                                             </a>
                                         @endif
                                     </div>
@@ -277,40 +277,51 @@
                                 class="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
                                 Tutup
                             </button>
-                            <a href="{{ route('admin.sewa-alat.edit', ['sewa_alat' => $item]) }}"
+                            <a href="{{ route('admin.sewa-alat.edit', $item->id) }}"
                                 class="flex-1 px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold transition">
                                 <i class="fas fa-edit mr-2"></i>Edit Permohonan
                             </a>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Delete Confirmation Modal -->
-            <div id="modal-delete-{{ $loop->index }}" class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-                <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full shadow-2xl">
-                    <div class="flex items-center justify-center w-16 h-16 mx-auto mt-6 rounded-full bg-red-100 dark:bg-red-900/20">
-                        <i class="fas fa-exclamation-triangle text-3xl text-red-600 dark:text-red-400"></i>
-                    </div>
-                    
-                    <div class="mt-4 text-center px-6">
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Hapus Permohonan?</h3>
-                        <p class="text-gray-600 dark:text-gray-400 mt-2">Yakin ingin menghapus permohonan untuk <strong>{{ $item->alat->nama }}</strong>?</p>
-                        <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">Tindakan ini tidak dapat dibatalkan.</p>
-                    </div>
+                <!-- Delete Modal -->
+                <div id="modal-delete-{{ $loop->index }}" class="hidden fixed inset-0 z-50 overflow-auto bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300">
+                    <div class="bg-white dark:bg-gray-800 rounded-3xl max-w-sm w-full shadow-2xl transform transition-all duration-300 scale-95 hover:scale-100">
+                        <!-- Icon -->
+                        <div class="flex justify-center pt-8">
+                            <div class="w-16 h-16 rounded-full bg-red-50 dark:bg-red-900/30 flex items-center justify-center">
+                                <i class="fas fa-trash text-2xl text-red-600 dark:text-red-400"></i>
+                            </div>
+                        </div>
 
-                    <div class="flex gap-3 p-6">
-                        <button type="button" onclick="closeModal('modal-delete-{{ $loop->index }}')"
-                            class="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
-                            Batal
-                        </button>
-                        <button type="button" onclick="deleteRecord({{ $item->id }})"
-                            class="flex-1 px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white font-semibold transition">
-                            Hapus
-                        </button>
+                        <!-- Content -->
+                        <div class="px-8 pt-6 pb-8 text-center">
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Hapus Sewa Alat?</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                                Permohonan sewa <strong class="text-gray-900 dark:text-white">{{ $item->alat->nama }}</strong> akan dihapus secara permanen.
+                            </p>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="h-px bg-gray-100 dark:bg-gray-700"></div>
+
+                        <!-- Actions -->
+                        <div class="flex gap-3 p-6">
+                            <button type="button" onclick="closeModal('modal-delete-{{ $loop->index }}')"
+                                class="flex-1 px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition-all duration-200 hover:shadow-md">
+                                Batal
+                            </button>
+                            <button type="button" id="btn-delete-{{ $loop->index }}" onclick="deleteRecord('{{ $item->id }}', 'modal-delete-{{ $loop->index }}')"
+                                class="flex-1 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition-all duration-200 hover:shadow-md">
+                                Hapus
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
+
+
         @endforeach
     @endif
 </div>
@@ -336,7 +347,16 @@ function closeDetailModal(id) {
     document.body.style.overflow = 'auto';
 }
 
-function deleteRecord(recordId) {
+function deleteRecord(recordId, modalId) {
+    // Get the button element based on modal ID
+    const buttonId = modalId.replace('modal-delete-', 'btn-delete-');
+    const deleteBtn = document.getElementById(buttonId);
+    
+    // Store original text and disable button
+    const originalText = deleteBtn.textContent;
+    deleteBtn.textContent = 'Menghapus...';
+    deleteBtn.disabled = true;
+    
     let csrfToken = null;
     const metaTag = document.querySelector('meta[name="csrf-token"]');
     if (metaTag) {
@@ -351,11 +371,15 @@ function deleteRecord(recordId) {
     }
     
     if (!csrfToken) {
-        alert('Error: CSRF token tidak ditemukan');
+        alert('CSRF token tidak ditemukan');
+        deleteBtn.textContent = originalText;
+        deleteBtn.disabled = false;
         return;
     }
     
-    fetch(`/admin/sewa-alat/${recordId}`, {
+    const url = '/admin/sewa-alat/' + recordId;
+    
+    fetch(url, {
         method: 'DELETE',
         headers: {
             'X-CSRF-TOKEN': csrfToken,
@@ -364,17 +388,22 @@ function deleteRecord(recordId) {
         }
     })
     .then(response => {
-        if (response.ok) {
-            window.location.reload();
+        return response.json().then(data => {
+            return { status: response.status, ok: response.ok, data: data };
+        });
+    })
+    .then(result => {
+        if (result.ok) {
+            closeModal(modalId);
+            window.location.href = window.location.href;
         } else {
-            return response.json().then(data => {
-                throw new Error(data.message || 'Gagal menghapus permohonan');
-            });
+            const errorMsg = result.data && result.data.message ? String(result.data.message) : 'Gagal menghapus permohonan';
+            alert(errorMsg);
         }
     })
     .catch(error => {
-        alert('Error: ' + error.message);
-        console.error('Error:', error);
+        const errorMsg = error && error.message ? String(error.message) : 'Terjadi kesalahan';
+        alert(errorMsg);
     });
 }
 </script>

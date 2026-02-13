@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\JasaKonsultasi;
 use App\Services\TelegramService;
-use Exception;
+use App\Traits\HandlesFileDownload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class JasaKonsultasiController extends Controller
 {
+    use HandlesFileDownload;
     /**
      * Display a listing of the resource.
      */
@@ -54,13 +55,10 @@ class JasaKonsultasiController extends Controller
         if ($request->hasFile('surat_permohonan')) {
             try {
                 $directory = 'permohonan/jasa-konsultasi';
-                if (!Storage::disk('local')->exists($directory)) {
-                    Storage::disk('local')->makeDirectory($directory, 0755, true);
-                }
                 
                 $file = $request->file('surat_permohonan');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
+                $path = $file->storeAs($directory, $fileName, 's3');
                 
                 if ($path) {
                     $validated['surat_permohonan'] = $path;
@@ -75,13 +73,10 @@ class JasaKonsultasiController extends Controller
         if ($request->hasFile('ktp')) {
             try {
                 $directory = 'permohonan/jasa-konsultasi';
-                if (!Storage::disk('local')->exists($directory)) {
-                    Storage::disk('local')->makeDirectory($directory, 0755, true);
-                }
                 
                 $file = $request->file('ktp');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
+                $path = $file->storeAs($directory, $fileName, 's3');
                 
                 if ($path) {
                     $validated['ktp'] = $path;
@@ -114,22 +109,8 @@ class JasaKonsultasiController extends Controller
                     'created_at' => $jasaKonsultasi->created_at->format('d-m-Y H:i'),
                 ];
                 
-                // Get the full paths to documents if they exist
-                $suratPermohonanPath = null;
-                $ktpPath = null;
-                if (!empty($validated['surat_permohonan'])) {
-                    $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
-                }
-                if (!empty($validated['ktp'])) {
-                    $ktpPath = Storage::disk('local')->path($validated['ktp']);
-                }
-                
-                // Send notification with documents
-                if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
-                    $telegramService->sendPermohonanWithDocument('jasa_konsultasi', $telegramData, $suratPermohonanPath, $ktpPath);
-                } else {
-                    $telegramService->sendPermohonanNotification('jasa_konsultasi', $telegramData);
-                }
+                // Send notification (documents are on S3)
+                $telegramService->sendPermohonanNotification('jasa_konsultasi', $telegramData);
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails
@@ -180,9 +161,14 @@ class JasaKonsultasiController extends Controller
         }
 
         try {
+            // Delete associated files from Cloudflare S3
             if ($jasa_konsultasi->surat_permohonan) {
-                Storage::disk('local')->delete($jasa_konsultasi->surat_permohonan);
+                Storage::disk('s3')->delete($jasa_konsultasi->surat_permohonan);
             }
+            if ($jasa_konsultasi->ktp) {
+                Storage::disk('s3')->delete($jasa_konsultasi->ktp);
+            }
+            
             $jasa_konsultasi->delete();
             
             // Return JSON if it's an AJAX request, otherwise redirect
@@ -203,7 +189,19 @@ class JasaKonsultasiController extends Controller
 
     public function download(JasaKonsultasi $jasa_konsultasi)
     {
-        // This method can be used for downloading documents if needed in the future
-        return back()->with('error', 'Download tidak tersedia untuk saat ini');
+        // Authorize - user can only download their own files
+        if ($jasa_konsultasi->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
+            return back()->with('error', 'Anda tidak memiliki akses ke file ini');
+        }
+
+        if (!$jasa_konsultasi->surat_permohonan) {
+            return back()->with('error', 'File permohonan tidak tersedia');
+        }
+
+        if (!Storage::disk('s3')->exists($jasa_konsultasi->surat_permohonan)) {
+            return back()->with('error', 'File tidak ditemukan di sistem');
+        }
+
+        return $this->redirectToTemporaryUrl($jasa_konsultasi->surat_permohonan, 60);
     }
 }

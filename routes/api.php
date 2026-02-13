@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DialogflowWebhookController;
+use App\Http\Controllers\FileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BeritaController;
@@ -20,6 +21,15 @@ Route::get('/berita', [BeritaController::class, 'api']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+// File Management API Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::delete('/file/{filename}', [FileController::class, 'delete']);
+    Route::post('/file/delete-by-path', [FileController::class, 'deleteByPath']);
+    Route::get('/files/folder/{serviceType}', [FileController::class, 'listByFolder']);
+    Route::get('/files/stats/{serviceType}', [FileController::class, 'folderStats']);
+    Route::delete('/files/folder/{serviceType}', [FileController::class, 'deleteFolderContents']);
 });
 
 Route::post('/webhook', [DialogflowWebhookController::class, 'handleWebhook']);

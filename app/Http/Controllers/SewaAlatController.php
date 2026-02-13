@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Alat;
 use App\Models\SewaAlat;
 use App\Services\TelegramService;
+use App\Traits\HandlesFileDownload;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\Storage;
 
 class SewaAlatController extends Controller
 {
+    use HandlesFileDownload;
+
     public function index()
     {
         $alats = Alat::all();
@@ -43,14 +46,12 @@ class SewaAlatController extends Controller
         if ($request->hasFile('surat_permohonan')) {
             try {
                 $directory = 'permohonan/sewa-alat';
-                if (!Storage::disk('local')->exists($directory)) {
-                    Storage::disk('local')->makeDirectory($directory, 0755, true);
-                }
                 
                 $file = $request->file('surat_permohonan');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
-                
+                $path = $file->storeAs($directory, $fileName, 's3');                if ($path) {
+                    $validated['surat_permohonan'] = $path;
+                }                
                 if ($path) {
                     $validated['surat_permohonan'] = $path;
                     \Log::info('File uploaded successfully: ' . $path);
@@ -66,14 +67,12 @@ class SewaAlatController extends Controller
         if ($request->hasFile('ktp')) {
             try {
                 $directory = 'permohonan/sewa-alat';
-                if (!Storage::disk('local')->exists($directory)) {
-                    Storage::disk('local')->makeDirectory($directory, 0755, true);
-                }
                 
                 $file = $request->file('ktp');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
-                
+                $path = $file->storeAs($directory, $fileName, 's3');                if ($path) {
+                    $validated['ktp'] = $path;
+                }                
                 if ($path) {
                     $validated['ktp'] = $path;
                     \Log::info('KTP file uploaded successfully: ' . $path);
@@ -130,22 +129,8 @@ class SewaAlatController extends Controller
                     'created_at' => $sewaAlat->created_at->format('d-m-Y H:i'),
                 ];
                 
-                // Get full path to documents if exist
-                $suratPermohonanPath = null;
-                $ktpPath = null;
-                if (!empty($validated['surat_permohonan'])) {
-                    $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
-                }
-                if (!empty($validated['ktp'])) {
-                    $ktpPath = Storage::disk('local')->path($validated['ktp']);
-                }
-                
-                // Send notification with documents if available
-                if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
-                    $telegramService->sendPermohonanWithDocument('sewa_alat', $telegramData, $suratPermohonanPath, $ktpPath);
-                } else {
-                    $telegramService->sendPermohonanNotification('sewa_alat', $telegramData);
-                }
+                // Send notification (documents are on S3)
+                $telegramService->sendPermohonanNotification('sewa_alat', $telegramData);
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails
@@ -158,27 +143,20 @@ class SewaAlatController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(SewaAlat $sewa_alat)
     {
         try {
-            // Find the sewa_alat record by ID
-            $sewa_alat = SewaAlat::findOrFail($id);
+            // Authorize the delete action via policy
+            $this->authorize('delete', $sewa_alat);
             
-            // Check permission: only uploader or admin can delete
-            $user = Auth::user();
-            $isAdmin = $user && ($user->role === 'admin' || $user->role === 'superuser');
-            $isOwner = $sewa_alat->user_id === $user?->id;
-            
-            if (!($isOwner || $isAdmin)) {
-                if (request()->wantsJson()) {
-                    return response()->json(['message' => 'Anda tidak memiliki akses untuk menghapus permohonan ini'], 403);
-                }
-                return back()->with('error', 'Anda tidak memiliki akses untuk menghapus permohonan ini');
-            }
-            
+            // Delete associated files from Cloudflare S3
             if ($sewa_alat->surat_permohonan) {
-                Storage::disk('local')->delete($sewa_alat->surat_permohonan);
+                Storage::disk('s3')->delete($sewa_alat->surat_permohonan);
             }
+            if ($sewa_alat->ktp) {
+                Storage::disk('s3')->delete($sewa_alat->ktp);
+            }
+            
             $sewa_alat->delete();
             
             if (request()->wantsJson()) {
@@ -205,57 +183,45 @@ class SewaAlatController extends Controller
             return back()->with('error', 'File permohonan tidak tersedia');
         }
 
-        \Log::info('Download attempt - File path: ' . $sewa_alat->surat_permohonan);
-        
-        if (!Storage::disk('local')->exists($sewa_alat->surat_permohonan)) {
-            \Log::error('File not found at path: ' . $sewa_alat->surat_permohonan);
+        if (!Storage::disk('s3')->exists($sewa_alat->surat_permohonan)) {
             return back()->with('error', 'File permohonan tidak ditemukan di sistem');
         }
 
-        try {
-            // Extract original extension from stored path
-            $extension = pathinfo($sewa_alat->surat_permohonan, PATHINFO_EXTENSION);
-            $downloadName = 'surat-permohonan.' . $extension;
-            
-            \Log::info('Downloading file: ' . $sewa_alat->surat_permohonan . ' as ' . $downloadName);
-            return Storage::disk('local')->download($sewa_alat->surat_permohonan, $downloadName);
-        } catch (Exception $error) {
-            \Log::error('Download Error: ' . $error->getMessage() . ' | Trace: ' . $error->getTraceAsString());
-            return back()->with('error', 'Gagal mengunduh file: ' . $error->getMessage());
-        }
+        return $this->redirectToTemporaryUrl($sewa_alat->surat_permohonan, 60);
     }
 
-    public function downloadFile(Request $request, SewaAlat $sewa_alat)
+    public function downloadFile($id, $fileName)
     {
-        // Authorize - user can only download their own files
-        if ($sewa_alat->user_id !== Auth::id()) {
-            return back()->with('error', 'Anda tidak memiliki akses ke file ini');
-        }
-
-        $field = $request->get('field', 'ktp');
-        
-        // Validate field name
-        if (!in_array($field, ['ktp', 'surat_permohonan'])) {
-            return back()->with('error', 'Tipe file tidak valid');
-        }
-
-        if (!$sewa_alat->$field) {
-            return back()->with('error', "File {$field} tidak tersedia");
-        }
-
-        if (!Storage::disk('local')->exists($sewa_alat->$field)) {
-            \Log::error("File not found: {$field} at path " . $sewa_alat->$field);
-            return back()->with('error', 'File tidak ditemukan di sistem');
-        }
-
         try {
-            $extension = pathinfo($sewa_alat->$field, PATHINFO_EXTENSION);
-            $downloadName = ($field === 'ktp' ? 'ktp' : 'surat-permohonan') . '.' . $extension;
-            
-            return Storage::disk('local')->download($sewa_alat->$field, $downloadName);
-        } catch (Exception $error) {
-            \Log::error("Download Error for {$field}: " . $error->getMessage());
-            return back()->with('error', 'Gagal mengunduh file: ' . $error->getMessage());
+            $sewaAlat = SewaAlat::findOrFail($id);
+
+            // Authorize - user can only download their own files
+            if ($sewaAlat->user_id !== Auth::id()) {
+                abort(403, 'Anda tidak memiliki akses ke file ini');
+            }
+
+            // Check if file is surat_permohonan
+            $filePath = null;
+            if ($sewaAlat->surat_permohonan && basename($sewaAlat->surat_permohonan) === $fileName) {
+                $filePath = $sewaAlat->surat_permohonan;
+            }
+            // Check if file is ktp
+            elseif ($sewaAlat->ktp && basename($sewaAlat->ktp) === $fileName) {
+                $filePath = $sewaAlat->ktp;
+            }
+
+            if (!$filePath) {
+                abort(404, 'File tidak ditemukan.');
+            }
+
+            if (!Storage::disk('s3')->exists($filePath)) {
+                abort(404, 'File tidak ditemukan di sistem.');
+            }
+
+            return $this->redirectToTemporaryUrl($filePath, 60);
+        } catch (\Exception $e) {
+            report($e);
+            abort(500, 'Error mengakses file: ' . $e->getMessage());
         }
     }
 }

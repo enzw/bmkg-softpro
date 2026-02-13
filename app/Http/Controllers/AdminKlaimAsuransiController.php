@@ -8,9 +8,11 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Storage;
+use App\Traits\HandlesFileDownload;
 
 class AdminKlaimAsuransiController extends Controller
 {
+    use HandlesFileDownload;
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -28,7 +30,7 @@ class AdminKlaimAsuransiController extends Controller
     {
         $data = [
             'title' => 'Permohonan Kunjungan',
-            'permohonan' => Asuransi::all(),
+            'permohonan' => Asuransi::with('user')->get(),
         ];
         return view('pages.admin.klaim-asuransi.index', $data);
     }
@@ -51,25 +53,24 @@ class AdminKlaimAsuransiController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'perusahaan' => 'required',
+            'nama_user' => 'required|string',
+            'no_whatsapp' => 'required|string',
+            'perusahaan' => 'required|string',
             'tanggal' => 'required|date',
-            'lokasi' => 'required',
-            'latitude' => 'required',
-            'longitude' => 'required',
-            'kejadian' => 'required',
-            'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'lokasi' => 'required|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'surat_permohonan' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'ktp' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
         $validated['user_id'] = Auth::id();
 
         if ($request->hasFile('surat_permohonan')) {
             try {
-                Storage::delete($request->surat_permohonan);
-
                 $file = $request->file('surat_permohonan');
                 $file_name = 'klaim-asuransi_user:' . $request->user()->id . '_date:' . Carbon::now() . '.' . $file->getClientOriginalExtension();
-                $path_permohonan = $file->storeAs('permohonan/klaim-asuransi', $file_name);
+                $path_permohonan = $file->storeAs('permohonan/asuransi', $file_name, 's3');
                 $validated['surat_permohonan'] = $path_permohonan;
             } catch (Exception $error) {
                 return back()->with('error', 'Gagal upload surat permohonan: ' . $error->getMessage());
@@ -80,7 +81,7 @@ class AdminKlaimAsuransiController extends Controller
             try {
                 $file = $request->file('ktp');
                 $file_name = 'ktp_klaim-asuransi_user:' . $request->user()->id . '_date:' . Carbon::now() . '.' . $file->getClientOriginalExtension();
-                $path_ktp = $file->storeAs('permohonan/klaim-asuransi', $file_name);
+                $path_ktp = $file->storeAs('permohonan/asuransi', $file_name, 's3');
                 $validated['ktp'] = $path_ktp;
             } catch (Exception $error) {
                 return back()->with('error', 'Gagal upload KTP: ' . $error->getMessage());
@@ -89,10 +90,10 @@ class AdminKlaimAsuransiController extends Controller
 
         try {
             Asuransi::create($validated);
-            return redirect()->route('admin.permohonan-kunjungan.create')->with('success', 'Permohonan berhasil dibuat');
+            return redirect()->route('admin.klaim-asuransi.index')->with('success', 'Klaim asuransi berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
-            return redirect()->route('admin.permohonan-kunjungan.create')->with('error', 'Permohonan gagal dibuat');
+            return redirect()->route('admin.klaim-asuransi.index')->with('error', 'Klaim asuransi gagal dibuat');
         }
     }
 
@@ -108,16 +109,19 @@ class AdminKlaimAsuransiController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        $permohonan = Asuransi::where('id', $id)->first();
-
+        $klaim_asuransi = Asuransi::with('user')->find($id);
+        
+        if (!$klaim_asuransi) {
+            return redirect()->route('admin.klaim-asuransi.index')->with('error', 'Klaim asuransi tidak ditemukan');
+        }
+        
         $data = [
-            'title' => 'Update Permohonan',
-            'permohonan' => $permohonan,
+            'title' => 'Update Klaim Asuransi',
+            'permohonan' => $klaim_asuransi,
         ];
 
-        // return dd($data);
         return view('pages.admin.klaim-asuransi.edit', $data);
     }
 
@@ -127,49 +131,39 @@ class AdminKlaimAsuransiController extends Controller
     public function update(Request $request, Asuransi $klaim_asuransi)
     {
         $validated = $request->validate([
-            'perusahaan' => 'required',
+            'nama_user' => 'required|string',
+            'no_whatsapp' => 'required|string',
+            'perusahaan' => 'required|string',
             'tanggal' => 'required|date',
-            'lokasi' => 'required',
-            'latitude' => 'required',
-            'longitude' => 'required',
-            'kejadian' => 'required',
-            'status' => 'required',
-            // 'surat_permohonan' => 'nullable|max:2048',
-            // 'keterangan' => 'nullable',
+            'lokasi' => 'required|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'status' => 'required|string',
         ]);
-
-        // $validated['user_id'] = Auth::id();
-        $validated['status'] = $request->input('status');
-
-        if (array_key_exists('surat_permohonan', $validated)) {
-            Storage::delete($klaim_asuransi->surat_permohonan);
-
-            $file = $klaim_asuransi->file('surat_permohonan');
-            $file_name = 'klaim-asuransi_user:' . $request->user()->id . '_date:' . Carbon::now() . '.' . $file->getClientOriginalExtension();
-            $path_permohonan = $file->storeAs('permohonan/klaim-asuransi', $file_name);
-            $validated['surat_permohonan'] = $path_permohonan;
-        }
 
         try {
             $klaim_asuransi->update($validated);
-            return redirect()->route('admin.permohonan-kunjungan.index')->with('success', 'Permohonan berhasil diupdate');
+            return redirect()->route('admin.klaim-asuransi.index')->with('success', 'Klaim asuransi berhasil diupdate');
         } catch (Exception $error) {
             report($error->getMessage());
-            return redirect()->route('admin.permohonan-kunjungan.edit')->with('error', 'Permohonan gagal diupdate');
+            return redirect()->route('admin.klaim-asuransi.index')->with('error', 'Klaim asuransi gagal diupdate');
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Asuransi $asuransi)
     {
         try {
-            $asuransi = Asuransi::findOrFail($id);
+            $this->authorize('delete', $asuransi);
             
-            // Delete associated file
+            // Delete associated files from Cloudflare S3
             if ($asuransi->surat_permohonan) {
-                Storage::disk('local')->delete($asuransi->surat_permohonan);
+                Storage::disk('s3')->delete($asuransi->surat_permohonan);
+            }
+            if ($asuransi->ktp) {
+                Storage::disk('s3')->delete($asuransi->ktp);
             }
             
             $asuransi->delete();
@@ -178,6 +172,11 @@ class AdminKlaimAsuransiController extends Controller
                 return response()->json(['message' => 'Permohonan berhasil dihapus']);
             }
             return back()->with('success', 'Permohonan berhasil dihapus');
+        } catch (\Illuminate\Auth\Access\AuthorizationException $error) {
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Anda tidak memiliki izin untuk menghapus permohonan ini'], 403);
+            }
+            return back()->with('error', 'Anda tidak memiliki izin untuk menghapus permohonan ini')->setStatusCode(403);
         } catch (Exception $error) {
             \Log::error('Admin Klaim Asuransi Destroy Error: ' . $error->getMessage());
             if (request()->wantsJson()) {
@@ -185,5 +184,26 @@ class AdminKlaimAsuransiController extends Controller
             }
             return back()->with('error', 'Permohonan gagal dihapus: ' . $error->getMessage());
         }
+    }
+
+    public function downloadFile($id, $fileName)
+    {
+        $asuransi = Asuransi::findOrFail($id);
+
+        // Authorization check - only admin or the owner can download
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $asuransi->user_id) {
+            abort(403, 'Anda tidak memiliki akses ke file ini');
+        }
+
+        // Security: validate that the file belongs to this record
+        if (!$asuransi->surat_permohonan || !str_contains($asuransi->surat_permohonan, $fileName)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        if (!Storage::disk('s3')->exists($asuransi->surat_permohonan)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        return $this->redirectToTemporaryUrl($asuransi->surat_permohonan, 60);
     }
 }

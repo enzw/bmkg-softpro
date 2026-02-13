@@ -29,7 +29,7 @@
                                         data.pemohon = `{{ $item->user->nama }}`;
                                         {{-- data.perihal = `{{ $item->alat->nama }}`; --}}
                                         data.tanggal = `{{ $item->created_at }}`;
-                                        edit = `{{ route('admin.sewa-alat.edit', ['sewa_alat' => $item]) }}`;
+                                        edit = `{{ route('admin.sewa-alat.edit', $item->id) }}`;
                                     ">
                             <td class="p-3 align-top max-w-[200px]">
                                 {{ $item->user->name }}

@@ -8,9 +8,17 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * NOTE: This migration is disabled because it contained incorrect column renames.
+     * Use 2026_02_09_fix_asuransi_column_names.php instead to fix the schema.
      */
     public function up(): void
     {
+        // DISABLED: This migration had incorrect renames
+        // The corrections are now in 2026_02_09_fix_asuransi_column_names.php
+        return;
+        
+        /* Original (incorrect) code:
         if (Schema::hasTable('asuransis')) {
             Schema::table('asuransis', function (Blueprint $table) {
                 // Rename columns to match form labels
@@ -25,6 +33,7 @@ return new class extends Migration
                 }
             });
         }
+        */
     }
 
     /**

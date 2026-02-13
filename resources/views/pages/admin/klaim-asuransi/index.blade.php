@@ -5,15 +5,15 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                                Permohonan Kunjungan
+                                Klaim Asuransi
                             </h1>
                             <p class="text-gray-600 dark:text-gray-400">
-                                Kelola semua permohonan kunjungan di sini.
+                                Kelola semua klaim asuransi di sini.
                             </p>
                         </div>
-                        <a href="{{ route('admin.permohonan-kunjungan.create') }}"
+                        <a href="{{ route('admin.klaim-asuransi.create') }}"
                             class="px-4 py-3 text-white bg-green-600 rounded hover:bg-green-500 transition">
-                            + Permohonan
+                            + Klaim Asuransi
                         </a>
                     </div>
                 </div>

@@ -43,7 +43,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         </div>
     @endif
 
-    <form action="{{ $is_edit ? route('admin.jasa-konsultasi.update', ['jasa_konsultasi' => $permohonan]) : route('admin.jasa-konsultasi.store') }}" method="POST" class="grid grid-cols-1 gap-4" enctype="multipart/form-data">
+    <form action="{{ $is_edit ? route('admin.jasa-konsultasi.update', $permohonan->id) : route('admin.jasa-konsultasi.store') }}" method="POST" class="grid grid-cols-1 gap-4" enctype="multipart/form-data">
         @csrf
         @if ($is_edit)
         @method('put')

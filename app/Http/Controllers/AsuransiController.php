@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Asuransi;
 use App\Services\TelegramService;
 use Carbon\Carbon;
-use Exception;
+use App\Traits\HandlesFileDownload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class AsuransiController extends Controller
 {
+    use HandlesFileDownload;
     /**
      * Display a listing of the resource.
      */
@@ -45,7 +46,6 @@ class AsuransiController extends Controller
             'nama_user' => 'required|string',
             'no_whatsapp' => 'required|string',
             'perusahaan' => 'required|string',
-            'kejadian' => 'required|string',
             'tanggal' => 'required|date',
             'lokasi' => 'required|string',
             'latitude' => 'nullable|numeric|min:-90|max:90',
@@ -57,13 +57,10 @@ class AsuransiController extends Controller
         if ($request->hasFile('surat_permohonan')) {
             try {
                 $directory = 'permohonan/asuransi';
-                if (!Storage::disk('local')->exists($directory)) {
-                    Storage::disk('local')->makeDirectory($directory, 0755, true);
-                }
                 
                 $file = $request->file('surat_permohonan');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
+                $path = $file->storeAs($directory, $fileName, 's3');
                 
                 if ($path) {
                     $validated['surat_permohonan'] = $path;
@@ -79,13 +76,10 @@ class AsuransiController extends Controller
         if ($request->hasFile('ktp')) {
             try {
                 $directory = 'permohonan/asuransi';
-                if (!Storage::disk('local')->exists($directory)) {
-                    Storage::disk('local')->makeDirectory($directory, 0755, true);
-                }
                 
                 $file = $request->file('ktp');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
+                $path = $file->storeAs($directory, $fileName, 's3');
                 
                 if ($path) {
                     $validated['ktp'] = $path;
@@ -113,28 +107,13 @@ class AsuransiController extends Controller
                     'email' => $user->email,
                     'no_whatsapp' => $validated['no_whatsapp'],
                     'jenis_asuransi' => $validated['perusahaan'],
-                    'keterangan' => $validated['kejadian'] ?? '-',
                     'surat_permohonan' => $validated['surat_permohonan'] ?? null,
                     'ktp' => $validated['ktp'] ?? null,
                     'created_at' => $asuransi->created_at->format('d-m-Y H:i'),
                 ];
                 
-                // Get the full paths to documents if they exist
-                $suratPermohonanPath = null;
-                $ktpPath = null;
-                if (!empty($validated['surat_permohonan'])) {
-                    $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
-                }
-                if (!empty($validated['ktp'])) {
-                    $ktpPath = Storage::disk('local')->path($validated['ktp']);
-                }
-                
-                // Send notification with documents
-                if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
-                    $telegramService->sendPermohonanWithDocument('asuransi', $telegramData, $suratPermohonanPath, $ktpPath);
-                } else {
-                    $telegramService->sendPermohonanNotification('asuransi', $telegramData);
-                }
+                // Send notification (documents are on S3)
+                $telegramService->sendPermohonanNotification('asuransi', $telegramData);
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails
@@ -189,9 +168,12 @@ class AsuransiController extends Controller
                 return back()->with('error', 'Anda tidak memiliki akses untuk menghapus permohonan ini');
             }
             
-            // Delete associated file
+            // Delete associated files from Cloudflare S3
             if ($permohonan_kunjungan->surat_permohonan) {
-                Storage::disk('local')->delete($permohonan_kunjungan->surat_permohonan);
+                Storage::disk('s3')->delete($permohonan_kunjungan->surat_permohonan);
+            }
+            if ($permohonan_kunjungan->ktp) {
+                Storage::disk('s3')->delete($permohonan_kunjungan->ktp);
             }
             
             $permohonan_kunjungan->delete();
@@ -211,6 +193,55 @@ class AsuransiController extends Controller
 
     public function download(Asuransi $klaim_asuransi)
     {
-        Storage::download($klaim_asuransi->surat_permohonan_klaim);
+        // Authorize - user can only download their own files
+        if ($klaim_asuransi->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
+            return back()->with('error', 'Anda tidak memiliki akses ke file ini');
+        }
+
+        if (!$klaim_asuransi->surat_permohonan_klaim) {
+            return back()->with('error', 'File permohonan tidak tersedia');
+        }
+
+        if (!Storage::disk('s3')->exists($klaim_asuransi->surat_permohonan_klaim)) {
+            return back()->with('error', 'File tidak ditemukan di sistem');
+        }
+
+        return $this->redirectToTemporaryUrl($klaim_asuransi->surat_permohonan_klaim, 60);
+    }
+
+    public function downloadFile($id, $fileName)
+    {
+        try {
+            $asuransi = Asuransi::findOrFail($id);
+
+            // Authorization check - only owner can download
+            $user = Auth::user();
+            if ($asuransi->user_id !== $user?->id) {
+                abort(403, 'Anda tidak memiliki akses ke file ini');
+            }
+
+            // Check if file is surat_permohonan
+            $filePath = null;
+            if ($asuransi->surat_permohonan && basename($asuransi->surat_permohonan) === $fileName) {
+                $filePath = $asuransi->surat_permohonan;
+            }
+            // Check if file is ktp
+            elseif ($asuransi->ktp && basename($asuransi->ktp) === $fileName) {
+                $filePath = $asuransi->ktp;
+            }
+
+            if (!$filePath) {
+                abort(404, 'File tidak ditemukan.');
+            }
+
+            if (!Storage::disk('s3')->exists($filePath)) {
+                abort(404, 'File tidak ditemukan di sistem.');
+            }
+
+            return $this->redirectToTemporaryUrl($filePath, 60);
+        } catch (\Exception $e) {
+            report($e);
+            abort(500, 'Error mengakses file: ' . $e->getMessage());
+        }
     }
 }

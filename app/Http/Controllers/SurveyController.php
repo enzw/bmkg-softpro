@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Survey;
 use App\Services\TelegramService;
-use Exception;
+use App\Traits\HandlesFileDownload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class SurveyController extends Controller
 {
+    use HandlesFileDownload;
     /**
      * Display a listing of the resource.
      */
@@ -54,13 +55,10 @@ class SurveyController extends Controller
         if ($request->hasFile('surat_permohonan')) {
             try {
                 $directory = 'permohonan/survey';
-                if (!Storage::disk('local')->exists($directory)) {
-                    Storage::disk('local')->makeDirectory($directory, 0755, true);
-                }
                 
                 $file = $request->file('surat_permohonan');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
+                $path = $file->storeAs($directory, $fileName, 's3');
                 
                 if ($path) {
                     $validated['surat_permohonan'] = $path;
@@ -75,13 +73,11 @@ class SurveyController extends Controller
         if ($request->hasFile('ktp')) {
             try {
                 $directory = 'permohonan/survey';
-                if (!Storage::disk('local')->exists($directory)) {
-                    Storage::disk('local')->makeDirectory($directory, 0755, true);
-                }
+
                 
                 $file = $request->file('ktp');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
+                $path = $file->storeAs($directory, $fileName, 's3');
                 
                 if ($path) {
                     $validated['ktp'] = $path;
@@ -114,22 +110,8 @@ class SurveyController extends Controller
                     'created_at' => $survey->created_at->format('d-m-Y H:i'),
                 ];
                 
-                // Get the full paths to documents if they exist
-                $suratPermohonanPath = null;
-                $ktpPath = null;
-                if (!empty($validated['surat_permohonan'])) {
-                    $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
-                }
-                if (!empty($validated['ktp'])) {
-                    $ktpPath = Storage::disk('local')->path($validated['ktp']);
-                }
-                
-                // Send notification with documents
-                if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
-                    $telegramService->sendPermohonanWithDocument('survey', $telegramData, $suratPermohonanPath, $ktpPath);
-                } else {
-                    $telegramService->sendPermohonanNotification('survey', $telegramData);
-                }
+                // Send notification (documents are on S3)
+                $telegramService->sendPermohonanNotification('survey', $telegramData);
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails
@@ -172,9 +154,14 @@ class SurveyController extends Controller
     public function destroy(Survey $survey)
     {
         try {
+            // Delete associated files from Cloudflare S3
             if ($survey->surat_permohonan) {
-                Storage::disk('local')->delete($survey->surat_permohonan);
+                Storage::disk('s3')->delete($survey->surat_permohonan);
             }
+            if ($survey->ktp) {
+                Storage::disk('s3')->delete($survey->ktp);
+            }
+            
             $survey->delete();
             return back()->with('success', 'Permohonan layanan survey berhasil dihapus');
         } catch (Exception $error) {
@@ -185,7 +172,19 @@ class SurveyController extends Controller
 
     public function download(Survey $survey)
     {
-        // This method can be used for downloading documents if needed in the future
-        return back()->with('error', 'Download tidak tersedia untuk saat ini');
+        // Authorize - user can only download their own files
+        if ($survey->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
+            return back()->with('error', 'Anda tidak memiliki akses ke file ini');
+        }
+
+        if (!$survey->surat_permohonan) {
+            return back()->with('error', 'File permohonan tidak tersedia');
+        }
+
+        if (!Storage::disk('s3')->exists($survey->surat_permohonan)) {
+            return back()->with('error', 'File tidak ditemukan di sistem');
+        }
+
+        return $this->redirectToTemporaryUrl($survey->surat_permohonan, 60);
     }
 }

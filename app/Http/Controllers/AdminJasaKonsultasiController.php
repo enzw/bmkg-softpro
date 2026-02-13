@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\JasaKonsultasi;
 use Illuminate\Support\Facades\Auth;
-use Exception;
+use App\Traits\HandlesFileDownload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 class AdminJasaKonsultasiController extends Controller
 {
+    use HandlesFileDownload;
+
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -104,9 +106,9 @@ class AdminJasaKonsultasiController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(JasaKonsultasi $jasa_konsultasi)
     {
-        $permohonan = JasaKonsultasi::where('id', $id)->first();
+        $permohonan = $jasa_konsultasi;
 
         $data = [
             'title' => 'Update Permohonan',
@@ -152,22 +154,30 @@ class AdminJasaKonsultasiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(JasaKonsultasi $jasaKonsultasi)
     {
         try {
-            $jasa_konsultasi = JasaKonsultasi::findOrFail($id);
+            $this->authorize('delete', $jasaKonsultasi);
             
-            // Delete associated file
-            if ($jasa_konsultasi->surat_permohonan) {
-                Storage::disk('local')->delete($jasa_konsultasi->surat_permohonan);
+            // Delete associated files from Cloudflare S3
+            if ($jasaKonsultasi->surat_permohonan) {
+                Storage::disk('s3')->delete($jasaKonsultasi->surat_permohonan);
+            }
+            if ($jasaKonsultasi->ktp) {
+                Storage::disk('s3')->delete($jasaKonsultasi->ktp);
             }
             
-            $jasa_konsultasi->delete();
+            $jasaKonsultasi->delete();
             
             if (request()->wantsJson()) {
                 return response()->json(['message' => 'Permohonan berhasil dihapus']);
             }
             return back()->with('success', 'Permohonan berhasil dihapus');
+        } catch (\Illuminate\Auth\Access\AuthorizationException $error) {
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Anda tidak memiliki akses untuk menghapus permohonan ini'], 403);
+            }
+            return back()->with('error', 'Anda tidak memiliki akses untuk menghapus permohonan ini');
         } catch (Exception $error) {
             \Log::error('Admin Jasa Konsultasi Destroy Error: ' . $error->getMessage());
             if (request()->wantsJson()) {
@@ -184,17 +194,20 @@ class AdminJasaKonsultasiController extends Controller
     {
         $jasaKonsultasi = JasaKonsultasi::findOrFail($id);
 
+        // Authorization check - only admin or the owner can download
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $jasaKonsultasi->user_id) {
+            abort(403, 'Anda tidak memiliki akses ke file ini');
+        }
+
         // Security: validate that the file belongs to this record
         if (!$jasaKonsultasi->surat_permohonan || !str_contains($jasaKonsultasi->surat_permohonan, $fileName)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        $filePath = storage_path('app/' . $jasaKonsultasi->surat_permohonan);
-
-        if (!file_exists($filePath)) {
+        if (!Storage::disk('s3')->exists($jasaKonsultasi->surat_permohonan)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        return response()->download($filePath, $fileName);
+        return $this->redirectToTemporaryUrl($jasaKonsultasi->surat_permohonan, 60);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kunjungan;
+use App\Traits\HandlesFileDownload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminPermohonanKunjunganController extends Controller
 {
+    use HandlesFileDownload;
+
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -71,36 +74,16 @@ class AdminPermohonanKunjunganController extends Controller
             try {
                 $file = $request->file('surat_permohonan');
                 $directory = 'permohonan/kunjungan';
-                \Log::info('Starting file upload: ' . $file->getClientOriginalName());
-                \Log::info('Storage disk root: ' . Storage::disk('local')->path(''));
                 
-                // Create directory with full path
-                $fullPath = Storage::disk('local')->path($directory);
-                if (!is_dir($fullPath)) {
-                    mkdir($fullPath, 0777, true);
-                    \Log::info('Created directory: ' . $fullPath);
-                }
+                $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
                 
-                // Use simple filename
-                $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
-                \Log::info('Storing file as: ' . $filename . ' in ' . $directory);
-                
-                // Store the file
-                $result = $file->storeAs($directory, $filename, 'local');
-                \Log::info('storeAs result: ' . var_export($result, true));
-                
-                // Verify file exists
-                $storedPath = Storage::disk('local')->path($result);
-                if (file_exists($storedPath)) {
+                // Store the file to S3
+                $result = $file->storeAs($directory, $filename, 's3');
+                if ($result) {
                     $validated['surat_permohonan'] = $result;
-                    \Log::info('Admin Surat Permohonan uploaded successfully: ' . $result . ' at ' . $storedPath);
-                } else {
-                    \Log::error('File stored but not found at: ' . $storedPath);
-                    return back()->withInput()->with('error', 'File tidak ditemukan setelah upload');
                 }
             } catch (Exception $error) {
                 \Log::error('Surat Permohonan upload error: ' . $error->getMessage());
-                \Log::error('Stack trace: ' . $error->getTraceAsString());
                 return back()->withInput()->with('error', 'Error: ' . $error->getMessage());
             }
         }
@@ -109,35 +92,16 @@ class AdminPermohonanKunjunganController extends Controller
             try {
                 $file = $request->file('ktp');
                 $directory = 'permohonan/kunjungan';
-                \Log::info('Starting file upload: ' . $file->getClientOriginalName());
                 
-                // Create directory with full path
-                $fullPath = Storage::disk('local')->path($directory);
-                if (!is_dir($fullPath)) {
-                    mkdir($fullPath, 0777, true);
-                    \Log::info('Created directory: ' . $fullPath);
-                }
+                $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
                 
-                // Use simple filename
-                $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
-                \Log::info('Storing file as: ' . $filename . ' in ' . $directory);
-                
-                // Store the file
-                $result = $file->storeAs($directory, $filename, 'local');
-                \Log::info('storeAs result: ' . var_export($result, true));
-                
-                // Verify file exists
-                $storedPath = Storage::disk('local')->path($result);
-                if (file_exists($storedPath)) {
+                // Store the file to S3
+                $result = $file->storeAs($directory, $filename, 's3');
+                if ($result) {
                     $validated['ktp'] = $result;
-                    \Log::info('Admin KTP uploaded successfully: ' . $result . ' at ' . $storedPath);
-                } else {
-                    \Log::error('File stored but not found at: ' . $storedPath);
-                    return back()->withInput()->with('error', 'File tidak ditemukan setelah upload');
                 }
             } catch (Exception $error) {
                 \Log::error('KTP upload error: ' . $error->getMessage());
-                \Log::error('Stack trace: ' . $error->getTraceAsString());
                 return back()->withInput()->with('error', 'Error: ' . $error->getMessage());
             }
         }
@@ -197,27 +161,25 @@ class AdminPermohonanKunjunganController extends Controller
         if ($request->hasFile('surat_permohonan')) {
             // Delete old file if exists
             if ($permohonan_kunjungan->surat_permohonan) {
-                Storage::disk('local')->delete($permohonan_kunjungan->surat_permohonan);
+                Storage::disk('s3')->delete($permohonan_kunjungan->surat_permohonan);
             }
 
             $file = $request->file('surat_permohonan');
             $file_name = 'surat-permohonan_kunjungan_user:' . $permohonan_kunjungan->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
-            $path_permohonan = $file->storeAs('permohonan/kunjungan', $file_name, 'local');
+            $path_permohonan = $file->storeAs('permohonan/kunjungan', $file_name, 's3');
             $validated['surat_permohonan'] = $path_permohonan;
-            \Log::info('Admin Surat Permohonan updated: ' . $path_permohonan);
         }
 
         if ($request->hasFile('ktp')) {
             // Delete old file if exists
             if ($permohonan_kunjungan->ktp) {
-                Storage::disk('local')->delete($permohonan_kunjungan->ktp);
+                Storage::disk('s3')->delete($permohonan_kunjungan->ktp);
             }
 
             $file = $request->file('ktp');
             $file_name = 'ktp_kunjungan_user:' . $permohonan_kunjungan->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
-            $path_ktp = $file->storeAs('permohonan/kunjungan', $file_name, 'local');
+            $path_ktp = $file->storeAs('permohonan/kunjungan', $file_name, 's3');
             $validated['ktp'] = $path_ktp;
-            \Log::info('Admin KTP updated: ' . $path_ktp);
         }
 
         try {
@@ -225,7 +187,7 @@ class AdminPermohonanKunjunganController extends Controller
             return redirect()->route('admin.permohonan-kunjungan.index')->with('success', 'Permohonan berhasil diupdate');
         } catch (Exception $error) {
             report($error->getMessage());
-            return redirect()->route('admin.permohonan-kunjungan.edit', $permohonan_kunjungan)->with('error', 'Permohonan gagal diupdate');
+            return redirect()->route('admin.permohonan-kunjungan.edit', $permohonan_kunjungan->id)->with('error', 'Permohonan gagal diupdate');
         }
     }
 
@@ -235,9 +197,14 @@ class AdminPermohonanKunjunganController extends Controller
     public function destroy(Kunjungan $permohonan_kunjungan)
     {
         try {
-            // Delete file if exists
+            $this->authorize('delete', $permohonan_kunjungan);
+            
+            // Delete files if exist
             if ($permohonan_kunjungan->surat_permohonan) {
-                Storage::disk('local')->delete($permohonan_kunjungan->surat_permohonan);
+                Storage::disk('s3')->delete($permohonan_kunjungan->surat_permohonan);
+            }
+            if ($permohonan_kunjungan->ktp) {
+                Storage::disk('s3')->delete($permohonan_kunjungan->ktp);
             }
 
             $permohonan_kunjungan->delete();
@@ -246,6 +213,11 @@ class AdminPermohonanKunjunganController extends Controller
                 return response()->json(['message' => 'Permohonan berhasil dihapus']);
             }
             return back()->with('success', 'Permohonan berhasil dihapus');
+        } catch (\Illuminate\Auth\Access\AuthorizationException $error) {
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Anda tidak memiliki akses untuk menghapus permohonan ini'], 403);
+            }
+            return back()->with('error', 'Anda tidak memiliki akses untuk menghapus permohonan ini');
         } catch (Exception $error) {
             report($error->getMessage());
             if (request()->wantsJson()) {
@@ -262,6 +234,11 @@ class AdminPermohonanKunjunganController extends Controller
     {
         $kunjungan = Kunjungan::findOrFail($id);
 
+        // Authorization check - only admin or the owner can download
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $kunjungan->user_id) {
+            abort(403, 'Anda tidak memiliki akses ke file ini');
+        }
+
         // Determine which file is being requested
         $fileField = null;
         if ($kunjungan->surat_permohonan && str_contains($kunjungan->surat_permohonan, $fileName)) {
@@ -270,10 +247,10 @@ class AdminPermohonanKunjunganController extends Controller
             $fileField = 'ktp';
         }
 
-        if (!$fileField || !Storage::disk('local')->exists($kunjungan->$fileField)) {
+        if (!$fileField || !Storage::disk('s3')->exists($kunjungan->$fileField)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        return Storage::disk('local')->download($kunjungan->$fileField, $fileName);
+        return $this->redirectToTemporaryUrl($kunjungan->$fileField, 60);
     }
 }

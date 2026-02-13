@@ -101,7 +101,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             </p>
         </div>
         
-        <form action="{{ isset($permohonan) && $is_edit ? route('pelayanan-jasa.update', $permohonan) : route('pelayanan-jasa.store') }}" method="POST" class="space-y-5" enctype="multipart/form-data">
+        <form action="{{ isset($permohonan) && $is_edit ? route('pelayanan-jasa.update', $permohonan->id) : route('pelayanan-jasa.store') }}" method="POST" class="space-y-5" enctype="multipart/form-data">
             @csrf
             @if(isset($permohonan) && $is_edit)
                 @method('PUT')
@@ -112,7 +112,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <label for="nama_lengkap_magang" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                     Nama Lengkap <span class="text-red-500">*</span>
                 </label>
-                <input id="nama_lengkap_magang" type="text" name="nama_lengkap" :value="old('nama_lengkap')" required
+                <input id="nama_lengkap_magang" type="text" name="nama_lengkap" :value="old('nama_lengkap', Auth::user()->name ?? '')" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="Masukkan nama lengkap Anda" />
                 <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
             </div>
@@ -121,8 +121,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <label for="no_whatsapp_magang" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                     No WhatsApp <span class="text-red-500">*</span>
                 </label>
-                <input id="no_whatsapp_magang" type="text" name="no_whatsapp" :value="old('no_whatsapp')" required
-                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="08..." />
+                <input id="no_whatsapp_magang" type="text" name="no_whatsapp" :value="old('no_whatsapp', Auth::user()->telp ?? '')" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="62..." />
                 <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
             </div>
 
@@ -130,7 +130,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <label for="email_magang" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                     Email <span class="text-red-500">*</span>
                 </label>
-                <input id="email_magang" type="email" name="email" :value="old('email')" required
+                <input id="email_magang" type="email" name="email" :value="old('email', Auth::user()->email ?? '')" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="email@example.com" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
@@ -222,11 +222,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <i class="fas fa-info-circle mr-2 text-lg"></i>Klaim Asuransi untuk Bencana Alam
             </h3>
             <p class="text-sm text-orange-800 dark:text-orange-200">
-                Ajukan permohonan informasi geofisika untuk keperluan klaim asuransi bencana alam.
+                Ajukan permohonan Informasi geofisika untuk keperluan klaim asuransi (kejadian petir dan gempabumi)
             </p>
         </div>
         
-        <form action="{{ isset($permohonan) && $is_edit ? route('pelayanan-jasa.update', $permohonan) : route('pelayanan-jasa.store') }}" method="POST" class="space-y-5" enctype="multipart/form-data">
+        <form action="{{ isset($permohonan) && $is_edit ? route('pelayanan-jasa.update', $permohonan->id) : route('pelayanan-jasa.store') }}" method="POST" class="space-y-5" enctype="multipart/form-data">
             @csrf
             @if(isset($permohonan) && $is_edit)
                 @method('PUT')
@@ -237,7 +237,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <label for="nama_user_asuransi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                     Nama <span class="text-red-500">*</span>
                 </label>
-                <input id="nama_user_asuransi" type="text" name="nama_user" :value="old('nama_user')" required
+                <input id="nama_user_asuransi" type="text" name="nama_user" :value="old('nama_user', Auth::user()->name ?? '')" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="Masukkan nama Anda" />
                 <x-input-error :messages="$errors->get('nama_user')" class="mt-2" />
             </div>
@@ -246,7 +246,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <label for="no_whatsapp_asuransi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                     No WhatsApp <span class="text-red-500">*</span>
                 </label>
-                <input id="no_whatsapp_asuransi" type="text" name="no_whatsapp" :value="old('no_whatsapp')" required
+                <input id="no_whatsapp_asuransi" type="text" name="no_whatsapp" :value="old('no_whatsapp', Auth::user()->telp ?? '')" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="62..." />
                 <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
             </div>
@@ -258,15 +258,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <input id="perusahaan_asuransi" type="text" name="perusahaan" :value="old('perusahaan')" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="Nama perusahaan" />
                 <x-input-error :messages="$errors->get('perusahaan')" class="mt-2" />
-            </div>
-
-            <div>
-                <label for="kejadian_asuransi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                    Deskripsi Kejadian/Bencana <span class="text-red-500">*</span>
-                </label>
-                <textarea id="kejadian_asuransi" name="kejadian" rows="4" required
-                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition resize-none" placeholder="Jelaskan kejadian/bencana yang terjadi">{{ old('kejadian') }}</textarea>
-                <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
             </div>
 
             <div>
@@ -353,7 +344,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             </p>
         </div>
         
-        <form action="{{ isset($permohonan) && $is_edit ? route('pelayanan-jasa.update', $permohonan) : route('pelayanan-jasa.store') }}" method="POST" class="space-y-5" enctype="multipart/form-data">
+        <form action="{{ isset($permohonan) && $is_edit ? route('pelayanan-jasa.update', $permohonan->id) : route('pelayanan-jasa.store') }}" method="POST" class="space-y-5" enctype="multipart/form-data">
             @csrf
             @if(isset($permohonan) && $is_edit)
                 @method('PUT')
@@ -366,7 +357,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                     <label for="nama_lengkap_data" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                         Nama Lengkap <span class="text-red-500">*</span>
                     </label>
-                    <input id="nama_lengkap_data" type="text" name="nama_lengkap" :value="old('nama_lengkap')" required
+                    <input id="nama_lengkap_data" type="text" name="nama_lengkap" :value="old('nama_lengkap', Auth::user()->name ?? '')" required
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="Masukkan nama lengkap" />
                     <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
                 </div>
@@ -375,7 +366,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                     <label for="no_whatsapp_data" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                         No WhatsApp <span class="text-red-500">*</span>
                     </label>
-                    <input id="no_whatsapp_data" type="text" name="no_whatsapp" :value="old('no_whatsapp')" required
+                    <input id="no_whatsapp_data" type="text" name="no_whatsapp" :value="old('no_whatsapp', Auth::user()->telp ?? '')" required
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="62..." />
                     <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
                 </div>
@@ -384,7 +375,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                     <label for="email_data" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                         Email <span class="text-red-500">*</span>
                     </label>
-                    <input id="email_data" type="email" name="email" :value="old('email')" required
+                    <input id="email_data" type="email" name="email" :value="old('email', Auth::user()->email ?? '')" required
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="email@example.com" />
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
                 </div>
@@ -446,7 +437,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             </p>
         </div>
         
-        <form action="{{ isset($permohonan) && $is_edit ? route('pelayanan-jasa.update', $permohonan) : route('pelayanan-jasa.store') }}" method="POST" class="space-y-5" enctype="multipart/form-data">
+        <form action="{{ isset($permohonan) && $is_edit ? route('pelayanan-jasa.update', $permohonan->id) : route('pelayanan-jasa.store') }}" method="POST" class="space-y-5" enctype="multipart/form-data">
             @csrf
             @if(isset($permohonan) && $is_edit)
                 @method('PUT')
@@ -457,7 +448,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <label for="nama_lengkap_survey" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                     Nama Lengkap <span class="text-red-500">*</span>
                 </label>
-                <input id="nama_lengkap_survey" type="text" name="nama_lengkap" :value="old('nama_lengkap')" required
+                <input id="nama_lengkap_survey" type="text" name="nama_lengkap" :value="old('nama_lengkap', Auth::user()->name ?? '')" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="Masukkan nama lengkap Anda" />
                 <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
             </div>
@@ -466,7 +457,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <label for="no_whatsapp_survey" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                     No WhatsApp <span class="text-red-500">*</span>
                 </label>
-                <input id="no_whatsapp_survey" type="text" name="no_whatsapp" :value="old('no_whatsapp')" required
+                <input id="no_whatsapp_survey" type="text" name="no_whatsapp" :value="old('no_whatsapp', Auth::user()->telp ?? '')" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="62..." />
                 <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
             </div>
@@ -475,7 +466,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <label for="email_survey" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                     Email <span class="text-red-500">*</span>
                 </label>
-                <input id="email_survey" type="email" name="email" :value="old('email')" required
+                <input id="email_survey" type="email" name="email" :value="old('email', Auth::user()->email ?? '')" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="email@example.com" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
@@ -535,7 +526,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             </p>
         </div>
         
-        <form action="{{ isset($permohonan) && $is_edit ? route('pelayanan-jasa.update', $permohonan) : route('pelayanan-jasa.store') }}" method="POST" class="space-y-5" enctype="multipart/form-data">
+        <form action="{{ isset($permohonan) && $is_edit ? route('pelayanan-jasa.update', $permohonan->id) : route('pelayanan-jasa.store') }}" method="POST" class="space-y-5" enctype="multipart/form-data">
             @csrf
             @if(isset($permohonan) && $is_edit)
                 @method('PUT')
@@ -546,7 +537,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <label for="nama_lengkap_konsultasi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                     Nama Lengkap <span class="text-red-500">*</span>
                 </label>
-                <input id="nama_lengkap_konsultasi" type="text" name="nama_lengkap" :value="old('nama_lengkap')" required
+                <input id="nama_lengkap_konsultasi" type="text" name="nama_lengkap" :value="old('nama_lengkap', Auth::user()->name ?? '')" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="Masukkan nama lengkap Anda" />
                 <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
             </div>
@@ -555,7 +546,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <label for="no_whatsapp_konsultasi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                     No WhatsApp <span class="text-red-500">*</span>
                 </label>
-                <input id="no_whatsapp_konsultasi" type="text" name="no_whatsapp" :value="old('no_whatsapp')" required
+                <input id="no_whatsapp_konsultasi" type="text" name="no_whatsapp" :value="old('no_whatsapp', Auth::user()->telp ?? '')" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="62..." />
                 <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
             </div>
@@ -564,7 +555,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 <label for="email_konsultasi" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                     Email <span class="text-red-500">*</span>
                 </label>
-                <input id="email_konsultasi" type="email" name="email" :value="old('email')" required
+                <input id="email_konsultasi" type="email" name="email" :value="old('email', Auth::user()->email ?? '')" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="email@example.com" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>

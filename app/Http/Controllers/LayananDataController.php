@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LayananData;
 use App\Services\TelegramService;
+use App\Traits\HandlesFileDownload;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 class LayananDataController extends Controller
 {
+    use HandlesFileDownload;
     /**
      * Display a listing of the resource.
      */
@@ -54,13 +56,10 @@ class LayananDataController extends Controller
         if ($request->hasFile('surat_permohonan')) {
             try {
                 $directory = 'permohonan/layanan-data';
-                if (!Storage::disk('local')->exists($directory)) {
-                    Storage::disk('local')->makeDirectory($directory, 0755, true);
-                }
                 
                 $file = $request->file('surat_permohonan');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
+                $path = $file->storeAs($directory, $fileName, 's3');
                 
                 if ($path) {
                     $validated['surat_permohonan'] = $path;
@@ -75,13 +74,10 @@ class LayananDataController extends Controller
         if ($request->hasFile('ktp')) {
             try {
                 $directory = 'permohonan/layanan-data';
-                if (!Storage::disk('local')->exists($directory)) {
-                    Storage::disk('local')->makeDirectory($directory, 0755, true);
-                }
                 
                 $file = $request->file('ktp');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
+                $path = $file->storeAs($directory, $fileName, 's3');
                 
                 if ($path) {
                     $validated['ktp'] = $path;
@@ -114,22 +110,8 @@ class LayananDataController extends Controller
                     'created_at' => $layananData->created_at->format('d-m-Y H:i'),
                 ];
                 
-                // Get the full paths to documents if they exist
-                $suratPermohonanPath = null;
-                $ktpPath = null;
-                if (!empty($validated['surat_permohonan'])) {
-                    $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
-                }
-                if (!empty($validated['ktp'])) {
-                    $ktpPath = Storage::disk('local')->path($validated['ktp']);
-                }
-                
-                // Send notification with documents
-                if (($suratPermohonanPath && file_exists($suratPermohonanPath)) || ($ktpPath && file_exists($ktpPath))) {
-                    $telegramService->sendPermohonanWithDocument('layanan_data', $telegramData, $suratPermohonanPath, $ktpPath);
-                } else {
-                    $telegramService->sendPermohonanNotification('layanan_data', $telegramData);
-                }
+                // Send notification (documents are on S3)
+                $telegramService->sendPermohonanNotification('layanan_data', $telegramData);
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails
@@ -172,9 +154,14 @@ class LayananDataController extends Controller
     public function destroy(LayananData $layanan_data)
     {
         try {
+            // Delete associated files from Cloudflare S3
             if ($layanan_data->surat_permohonan) {
-                Storage::disk('local')->delete($layanan_data->surat_permohonan);
+                Storage::disk('s3')->delete($layanan_data->surat_permohonan);
             }
+            if ($layanan_data->ktp) {
+                Storage::disk('s3')->delete($layanan_data->ktp);
+            }
+            
             $layanan_data->delete();
             return back()->with('success', 'Permohonan layanan data berhasil dihapus');
         } catch (Exception $error) {
@@ -185,7 +172,19 @@ class LayananDataController extends Controller
 
     public function download(LayananData $layanan_data)
     {
-        // This method can be used for downloading documents if needed in the future
-        return back()->with('error', 'Download tidak tersedia untuk saat ini');
+        // Authorize - user can only download their own files
+        if ($layanan_data->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
+            return back()->with('error', 'Anda tidak memiliki akses ke file ini');
+        }
+
+        if (!$layanan_data->surat_permohonan) {
+            return back()->with('error', 'File permohonan tidak tersedia');
+        }
+
+        if (!Storage::disk('s3')->exists($layanan_data->surat_permohonan)) {
+            return back()->with('error', 'File tidak ditemukan di sistem');
+        }
+
+        return $this->redirectToTemporaryUrl($layanan_data->surat_permohonan, 60);
     }
 }

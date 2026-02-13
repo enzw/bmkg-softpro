@@ -88,7 +88,7 @@
                                 class="flex-1 px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-semibold text-sm transition">
                                 <i class="fas fa-eye mr-2"></i>Detail
                             </button>
-                            <button type="button" onclick="confirmDelete({{ $item->id }}, null)"
+                            <button type="button" onclick="confirmDelete('{{ $item->id }}', null)"
                                 class="flex-1 px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30 font-semibold text-sm transition">
                                 <i class="fas fa-trash mr-2"></i>Hapus
                             </button>
@@ -207,7 +207,7 @@
                                     class="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
                                     Batal
                                 </button>
-                                <button type="button" onclick="confirmDelete({{ $item->id }}, 'modal-delete-{{ $loop->index }}')"
+                                <button type="button" id="delete-btn-{{ $loop->index }}" onclick="confirmDelete('{{ $item->id }}', 'modal-delete-{{ $loop->index }}', this)"
                                     class="flex-1 px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white font-semibold transition">
                                     Hapus
                                 </button>
@@ -236,7 +236,7 @@ function openDeleteModal(recordId, modalId) {
     window.deleteRecordId = recordId;
 }
 
-function confirmDelete(recordId, modalId) {
+function confirmDelete(recordId, modalId, buttonElement) {
     let csrfToken = null;
     const metaTag = document.querySelector('meta[name="csrf-token"]');
     if (metaTag) {
@@ -253,6 +253,16 @@ function confirmDelete(recordId, modalId) {
     if (!csrfToken) {
         alert('Error: CSRF token tidak ditemukan');
         return;
+    }
+    
+    // Capture original button state for reset on error
+    const originalText = buttonElement ? buttonElement.textContent : null;
+    
+    // Update button state
+    if (buttonElement) {
+        buttonElement.textContent = 'Menghapus...';
+        buttonElement.disabled = true;
+        buttonElement.classList.add('opacity-70', 'cursor-not-allowed');
     }
     
     // Close the delete confirmation modal
@@ -306,6 +316,12 @@ function confirmDelete(recordId, modalId) {
     .catch(error => {
         console.error('Delete error:', error);
         alert('Error: ' + error.message);
+        // Reset button state on error
+        if (buttonElement && originalText) {
+            buttonElement.textContent = originalText;
+            buttonElement.disabled = false;
+            buttonElement.classList.remove('opacity-70', 'cursor-not-allowed');
+        }
     });
 }
 </script>

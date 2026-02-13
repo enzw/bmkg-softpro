@@ -9,7 +9,7 @@ use App\Models\Survey;
 use App\Models\JasaKonsultasi;
 use App\Models\Kunjungan;
 use App\Services\TelegramService;
-use Exception;
+use App\Traits\HandlesFileDownload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 
 class MagangController extends Controller
 {
+    use HandlesFileDownload;
     /**
      * Display a listing of the resource.
      */
@@ -116,7 +117,7 @@ class MagangController extends Controller
                 $directoryMap = [
                     'Magang' => 'permohonan/magang',
                     'Layanan Kunjungan Teknis' => 'permohonan/kunjungan-teknis',
-                    'Layanan Klaim Asuransi' => 'permohonan/layanan-asuransi',
+                    'Layanan Klaim Asuransi' => 'permohonan/asuransi',
                     'Layanan Data' => 'permohonan/layanan-data',
                     'Layanan Survey' => 'permohonan/layanan-survey',
                     'Layanan Konsultasi' => 'permohonan/layanan-konsultasi',
@@ -127,7 +128,7 @@ class MagangController extends Controller
                 // Store file in private local disk (NOT public for security)
                 $file = $request->file('surat_permohonan');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
+                $path = $file->storeAs($directory, $fileName, 's3');
                 
                 if ($path) {
                     $validated['surat_permohonan'] = $path;
@@ -171,7 +172,7 @@ class MagangController extends Controller
                 
                 $file = $request->file('kartu_mahasiswa');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
+                $path = $file->storeAs($directory, $fileName, 's3');
                 
                 if ($path) {
                     $validated['kartu_mahasiswa'] = $path;
@@ -182,6 +183,30 @@ class MagangController extends Controller
             }
         }
 
+        // Handle ktp upload untuk Asuransi, Layanan Data, Layanan Survey, Layanan Konsultasi
+        if ($request->hasFile('ktp') && in_array($jenis_layanan, ['Layanan Klaim Asuransi', 'Layanan Data', 'Layanan Survey', 'Layanan Konsultasi'])) {
+            try {
+                $directoryMap = [
+                    'Layanan Klaim Asuransi' => 'permohonan/asuransi',
+                    'Layanan Data' => 'permohonan/layanan-data',
+                    'Layanan Survey' => 'permohonan/layanan-survey',
+                    'Layanan Konsultasi' => 'permohonan/layanan-konsultasi',
+                ];
+                
+                $directory = $directoryMap[$jenis_layanan] ?? 'permohonan/lainnya';
+                
+                $file = $request->file('ktp');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 's3');
+                
+                if ($path) {
+                    $validated['ktp'] = $path;
+                }
+            } catch (Exception $fileError) {
+                report($fileError->getMessage());
+                return back()->with('error', 'Gagal upload KTP: ' . $fileError->getMessage())->withInput();
+            }
+        }
 
         
         $validated['user_id'] = Auth::id();
@@ -234,18 +259,8 @@ class MagangController extends Controller
                     $telegramData = $validated;
                     $telegramData['created_at'] = $permohonan->created_at->format('d-m-Y H:i');
                     
-                    // Get the full paths to documents if they exist
-                    $suratPermohonanPath = null;
-                    if (!empty($validated['surat_permohonan'])) {
-                        $suratPermohonanPath = Storage::disk('local')->path($validated['surat_permohonan']);
-                    }
-                    
-                    // Send notification with documents
-                    if ($suratPermohonanPath && file_exists($suratPermohonanPath)) {
-                        $telegramService->sendPermohonanWithDocument($telegramType, $telegramData, $suratPermohonanPath, null);
-                    } else {
-                        $telegramService->sendPermohonanNotification($telegramType, $telegramData);
-                    }
+                    // Send notification (documents are on S3)
+                    $telegramService->sendPermohonanNotification($telegramType, $telegramData);
                 }
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
@@ -294,25 +309,28 @@ class MagangController extends Controller
                 'latitude' => 'nullable|numeric',
                 'longitude' => 'nullable|numeric',
                 'perusahaan' => 'required|string',
-                'kejadian' => 'required|string',
+                'ktp' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ]),
             'Layanan Data' => $rules = array_merge($rules, [
                 'nama_lengkap' => 'nullable|string',
                 'no_whatsapp' => 'nullable|string',
                 'email' => 'nullable|email',
                 'keterangan' => 'nullable|string',
+                'ktp' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ]),
             'Layanan Survey' => $rules = array_merge($rules, [
                 'nama_lengkap' => 'nullable|string',
                 'no_whatsapp' => 'nullable|string',
                 'email' => 'nullable|email',
                 'keterangan' => 'nullable|string',
+                'ktp' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ]),
             'Layanan Konsultasi' => $rules = array_merge($rules, [
                 'nama_lengkap' => 'nullable|string',
                 'no_whatsapp' => 'nullable|string',
                 'email' => 'nullable|email',
                 'keterangan' => 'nullable|string',
+                'ktp' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ]),
             default => null
         };
@@ -408,7 +426,7 @@ class MagangController extends Controller
                 $directoryMap = [
                     'Magang' => 'permohonan/magang',
                     'Layanan Kunjungan Teknis' => 'permohonan/kunjungan-teknis',
-                    'Layanan Klaim Asuransi' => 'permohonan/layanan-asuransi',
+                    'Layanan Klaim Asuransi' => 'permohonan/asuransi',
                     'Layanan Data' => 'permohonan/layanan-data',
                     'Layanan Survey' => 'permohonan/layanan-survey',
                     'Layanan Konsultasi' => 'permohonan/layanan-konsultasi',
@@ -418,15 +436,15 @@ class MagangController extends Controller
                 
                 // Delete old file
                 if ($permohonan->surat_permohonan) {
-                    Storage::disk('local')->delete($permohonan->surat_permohonan);
+                    Storage::disk('s3')->delete($permohonan->surat_permohonan);
                 }
                 
                 // Store new file
                 $file = $request->file('surat_permohonan');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
+                $path = $file->storeAs($directory, $fileName, 's3');
                 
-                if ($path && file_exists(Storage::disk('local')->path($path))) {
+                if ($path) {
                     $validated['surat_permohonan'] = $path;
                 }
             } catch (Exception $fileError) {
@@ -442,19 +460,50 @@ class MagangController extends Controller
                 
                 // Delete old file
                 if ($permohonan->kartu_identitas ?? null) {
-                    Storage::disk('local')->delete($permohonan->kartu_identitas);
+                    Storage::disk('s3')->delete($permohonan->kartu_identitas);
                 }
                 
                 // Store new file
                 $file = $request->file('kartu_identitas');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 'local');
+                $path = $file->storeAs($directory, $fileName, 's3');
                 
-                if ($path && file_exists(Storage::disk('local')->path($path))) {
+                if ($path) {
                     $validated['kartu_identitas'] = $path;
                 }
             } catch (Exception $fileError) {
                 \Log::warning('File upload error: ' . $fileError->getMessage());
+                // Continue without file
+            }
+        }
+
+        // Handle ktp upload untuk Asuransi, Layanan Data, Layanan Survey, Layanan Konsultasi (optional)
+        if ($request->hasFile('ktp') && in_array($jenis_layanan, ['Layanan Klaim Asuransi', 'Layanan Data', 'Layanan Survey', 'Layanan Konsultasi'])) {
+            try {
+                $directoryMap = [
+                    'Layanan Klaim Asuransi' => 'permohonan/asuransi',
+                    'Layanan Data' => 'permohonan/layanan-data',
+                    'Layanan Survey' => 'permohonan/layanan-survey',
+                    'Layanan Konsultasi' => 'permohonan/layanan-konsultasi',
+                ];
+                
+                $directory = $directoryMap[$jenis_layanan] ?? 'permohonan/lainnya';
+                
+                // Delete old file
+                if ($permohonan->ktp ?? null) {
+                    Storage::disk('s3')->delete($permohonan->ktp);
+                }
+                
+                // Store new file
+                $file = $request->file('ktp');
+                $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs($directory, $fileName, 's3');
+                
+                if ($path) {
+                    $validated['ktp'] = $path;
+                }
+            } catch (Exception $fileError) {
+                \Log::warning('KTP upload error: ' . $fileError->getMessage());
                 // Continue without file
             }
         }
@@ -503,25 +552,29 @@ class MagangController extends Controller
                 'latitude' => 'nullable|numeric',
                 'longitude' => 'nullable|numeric',
                 'perusahaan' => 'required|string',
-                'kejadian' => 'required|string',
+                'deskripsi' => 'required|string',
+                'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ]),
             'Layanan Data' => $rules = array_merge($rules, [
                 'nama_lengkap' => 'nullable|string',
                 'no_whatsapp' => 'nullable|string',
                 'email' => 'nullable|email',
                 'keterangan' => 'nullable|string',
+                'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ]),
             'Layanan Survey' => $rules = array_merge($rules, [
                 'nama_lengkap' => 'nullable|string',
                 'no_whatsapp' => 'nullable|string',
                 'email' => 'nullable|email',
                 'keterangan' => 'nullable|string',
+                'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ]),
             'Layanan Konsultasi' => $rules = array_merge($rules, [
                 'nama_lengkap' => 'nullable|string',
                 'no_whatsapp' => 'nullable|string',
                 'email' => 'nullable|email',
                 'keterangan' => 'nullable|string',
+                'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ]),
             default => null
         };
@@ -562,15 +615,21 @@ class MagangController extends Controller
                         return back()->with('error', 'Anda tidak memiliki akses untuk menghapus permohonan ini');
                     }
                     
-                    // Delete files if exist
-                    if ($record->surat_permohonan && Storage::disk('local')->exists($record->surat_permohonan)) {
-                        Storage::disk('local')->delete($record->surat_permohonan);
+                    // Delete associated files from Cloudflare S3
+                    if ($record->surat_permohonan && Storage::disk('s3')->exists($record->surat_permohonan)) {
+                        Storage::disk('s3')->delete($record->surat_permohonan);
                     }
-                    if ($record->kartu_mahasiswa && Storage::disk('local')->exists($record->kartu_mahasiswa)) {
-                        Storage::disk('local')->delete($record->kartu_mahasiswa);
+                    if (isset($record->ktp) && $record->ktp && Storage::disk('s3')->exists($record->ktp)) {
+                        Storage::disk('s3')->delete($record->ktp);
                     }
-                    if ($record->kartu_identitas && Storage::disk('local')->exists($record->kartu_identitas)) {
-                        Storage::disk('local')->delete($record->kartu_identitas);
+                    if (isset($record->kartu_mahasiswa) && $record->kartu_mahasiswa && Storage::disk('s3')->exists($record->kartu_mahasiswa)) {
+                        Storage::disk('s3')->delete($record->kartu_mahasiswa);
+                    }
+                    if (isset($record->kartu_identitas) && $record->kartu_identitas && Storage::disk('s3')->exists($record->kartu_identitas)) {
+                        Storage::disk('s3')->delete($record->kartu_identitas);
+                    }
+                    if (isset($record->surat_ijin_magang) && $record->surat_ijin_magang && Storage::disk('s3')->exists($record->surat_ijin_magang)) {
+                        Storage::disk('s3')->delete($record->surat_ijin_magang);
                     }
                     
                     $record->delete();
@@ -610,7 +669,6 @@ class MagangController extends Controller
                 Magang::class,
                 Asuransi::class,
                 LayananData::class,
-                Pemetaan::class,
                 Survey::class,
                 JasaKonsultasi::class,
             ];
@@ -621,15 +679,28 @@ class MagangController extends Controller
             foreach ($tables as $model) {
                 $found = $model::where('id', $id)->first();
                 if ($found) {
-                    // Cek di surat_permohonan atau kartu_identitas
+                    // Check surat_permohonan
                     if ($found->surat_permohonan && basename($found->surat_permohonan) === $fileName) {
                         $record = $found;
                         $filePath = $found->surat_permohonan;
                         break;
                     }
+                    // Check ktp
+                    if (isset($found->ktp) && $found->ktp && basename($found->ktp) === $fileName) {
+                        $record = $found;
+                        $filePath = $found->ktp;
+                        break;
+                    }
+                    // Check kartu_identitas
                     if (isset($found->kartu_identitas) && $found->kartu_identitas && basename($found->kartu_identitas) === $fileName) {
                         $record = $found;
                         $filePath = $found->kartu_identitas;
+                        break;
+                    }
+                    // Check kartu_mahasiswa
+                    if (isset($found->kartu_mahasiswa) && $found->kartu_mahasiswa && basename($found->kartu_mahasiswa) === $fileName) {
+                        $record = $found;
+                        $filePath = $found->kartu_mahasiswa;
                         break;
                     }
                 }
@@ -654,12 +725,12 @@ class MagangController extends Controller
             }
             
             // Check jika file exist
-            if (!Storage::disk('local')->exists($filePath)) {
+            if (!Storage::disk('s3')->exists($filePath)) {
                 abort(404, 'File tidak ditemukan di storage');
             }
             
-            // Download file
-            return Storage::disk('local')->download($filePath, $fileName);
+            // Generate temporary URL via trait
+            return $this->redirectToTemporaryUrl($filePath, 60);
         } catch (\Illuminate\Auth\Access\AuthorizationException|\Symfony\Component\HttpKernel\Exception\HttpException $error) {
             throw $error;
         } catch (Exception $error) {
@@ -670,7 +741,19 @@ class MagangController extends Controller
 
     public function download(Magang $pelayanan_jasa)
     {
-        // This method can be used for downloading documents if needed in the future
-        return back()->with('error', 'Download tidak tersedia untuk saat ini');
+        // Authorize - user can only download their own files
+        if ($pelayanan_jasa->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
+            return back()->with('error', 'Anda tidak memiliki akses ke file ini');
+        }
+
+        if (!$pelayanan_jasa->surat_permohonan) {
+            return back()->with('error', 'File permohonan tidak tersedia');
+        }
+
+        if (!Storage::disk('s3')->exists($pelayanan_jasa->surat_permohonan)) {
+            return back()->with('error', 'File tidak ditemukan di sistem');
+        }
+
+        return $this->redirectToTemporaryUrl($pelayanan_jasa->surat_permohonan, 60);
     }
 }

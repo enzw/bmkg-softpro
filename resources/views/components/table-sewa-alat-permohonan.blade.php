@@ -45,9 +45,9 @@
                             <div class="flex-1">
                                 <div class="flex items-center gap-3 mb-2">
                                     <div class="w-3 h-3 rounded-full bg-gradient-to-r from-green-500 to-green-600"></div>
-                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->alat->nama }}</h3>
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ e($item->alat->nama) }}</h3>
                                     <span class="text-sm px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
-                                        {{ $item->banyak_unit }} unit
+                                        {{ e($item->banyak_unit) }} unit
                                     </span>
                                 </div>
                                 <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -58,7 +58,7 @@
                             
                             <div class="flex items-center gap-3">
                                 <span class="px-4 py-2 rounded-lg border {{ $currentStatusColor }} font-semibold text-sm">
-                                    {{ $item->status }}
+                                    {{ e($item->status) }}
                                 </span>
                             </div>
                         </div>
@@ -87,7 +87,7 @@
                                 class="flex-1 px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-semibold text-sm transition">
                                 <i class="fas fa-eye mr-2"></i>Detail
                             </button>
-                            <button type="button" onclick="openDeleteModal({{ $item->id }}, 'modal-delete-{{ $loop->index }}')"
+                            <button type="button" onclick="openDeleteModal('{{ $item->id }}', 'modal-delete-{{ $loop->index }}')"
                                 class="flex-1 px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30 font-semibold text-sm transition">
                                 <i class="fas fa-trash mr-2"></i>Hapus
                             </button>
@@ -117,17 +117,17 @@
                                 <div class="space-y-4">
                                     <div>
                                         <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Nama Alat</p>
-                                        <p class="text-gray-900 dark:text-white font-semibold">{{ $item->alat->nama ?? '-' }}</p>
+                                        <p class="text-gray-900 dark:text-white font-semibold">{{ e($item->alat->nama ?? '-') }}</p>
                                     </div>
 
                                     <div class="grid grid-cols-2 gap-4">
                                         <div>
                                             <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Nama Penyewa</p>
-                                            <p class="text-gray-900 dark:text-white font-semibold">{{ $item->nama }}</p>
+                                            <p class="text-gray-900 dark:text-white font-semibold">{{ e($item->nama) }}</p>
                                         </div>
                                         <div>
                                             <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">No WhatsApp</p>
-                                            <p class="text-gray-900 dark:text-white font-semibold">{{ $item->no_whatsapp }}</p>
+                                            <p class="text-gray-900 dark:text-white font-semibold">{{ e($item->no_whatsapp) }}</p>
                                         </div>
                                     </div>
 
@@ -155,34 +155,34 @@
 
                                     <div>
                                         <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Status</p>
-                                        <p class="text-gray-900 dark:text-white font-semibold">{{ $item->status }}</p>
+                                        <p class="text-gray-900 dark:text-white font-semibold">{{ e($item->status) }}</p>
                                     </div>
 
                                     @if($item->keterangan)
                                         <div>
                                             <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Keterangan</p>
-                                            <p class="text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg text-sm">{{ $item->keterangan }}</p>
+                                            <p class="text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg text-sm">{{ e($item->keterangan) }}</p>
                                         </div>
                                     @endif
 
                                     @if($item->expedisi && $item->resi)
                                         <div>
                                             <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Pengiriman</p>
-                                            <p class="text-gray-900 dark:text-white">{{ $item->expedisi }}</p>
-                                            <p class="text-gray-600 dark:text-gray-400 text-sm">No. Resi: {{ $item->resi }}</p>
+                                            <p class="text-gray-900 dark:text-white">{{ e($item->expedisi) }}</p>
+                                            <p class="text-gray-600 dark:text-gray-400 text-sm">No. Resi: {{ e($item->resi) }}</p>
                                         </div>
                                     @endif
 
                                     @if($item->surat_permohonan || $item->ktp)
                                         <div class="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
                                             @if($item->surat_permohonan)
-                                                <a href="{{ route('sewa-alat.download-permohonan', ['sewa_alat' => $item->id]) }}"
+                                                <a href="{{ route('sewa-alat.download-file', ['sewa_alat' => $item->id, 'fileName' => basename($item->surat_permohonan)]) }}"
                                                     class="inline-flex items-center justify-center w-full px-4 py-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30 font-semibold text-sm transition">
                                                     <i class="fas fa-file-pdf mr-2"></i>Download Surat Permohonan
                                                 </a>
                                             @endif
                                             @if($item->ktp)
-                                                <a href="{{ route('sewa-alat.download-file', ['sewa_alat' => $item->id, 'field' => 'ktp']) }}"
+                                                <a href="{{ route('sewa-alat.download-file', ['sewa_alat' => $item->id, 'fileName' => basename($item->ktp)]) }}"
                                                     class="inline-flex items-center justify-center w-full px-4 py-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-semibold text-sm transition">
                                                     <i class="fas fa-id-card mr-2"></i>Download KTP/Identitas
                                                 </a>
@@ -211,7 +211,7 @@
                             
                             <div class="mt-4 text-center px-6">
                                 <h3 class="text-lg font-bold text-gray-900 dark:text-white">Hapus Permohonan?</h3>
-                                <p class="text-gray-600 dark:text-gray-400 mt-2">Yakin ingin menghapus permohonan untuk <strong>{{ $item->alat->nama }}</strong>?</p>
+                                <p class="text-gray-600 dark:text-gray-400 mt-2">Yakin ingin menghapus permohonan untuk <strong>{{ e($item->alat->nama) }}</strong>?</p>
                                 <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">Tindakan ini tidak dapat dibatalkan.</p>
                             </div>
 
@@ -220,7 +220,7 @@
                                     class="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
                                     Batal
                                 </button>
-                                <button type="button" onclick="confirmDelete({{ $item->id }})"
+                                <button type="button" id="btn-delete-{{ $loop->index }}" onclick="deleteRecord('{{ $item->id }}', 'modal-delete-{{ $loop->index }}')"
                                     class="flex-1 px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white font-semibold transition">
                                     Hapus
                                 </button>
@@ -249,7 +249,16 @@ function openDeleteModal(recordId, modalId) {
     window.deleteRecordId = recordId;
 }
 
-function confirmDelete(recordId) {
+function deleteRecord(recordId, modalId) {
+    // Get the button element based on modal ID
+    const buttonId = modalId.replace('modal-delete-', 'btn-delete-');
+    const deleteBtn = document.getElementById(buttonId);
+    
+    // Store original text and disable button
+    const originalText = deleteBtn.textContent;
+    deleteBtn.textContent = 'Menghapus...';
+    deleteBtn.disabled = true;
+    
     let csrfToken = null;
     const metaTag = document.querySelector('meta[name="csrf-token"]');
     if (metaTag) {
@@ -264,11 +273,15 @@ function confirmDelete(recordId) {
     }
     
     if (!csrfToken) {
-        alert('Error: CSRF token tidak ditemukan');
+        alert('CSRF token tidak ditemukan');
+        deleteBtn.textContent = originalText;
+        deleteBtn.disabled = false;
         return;
     }
     
-    fetch(`/layanan/sewa-alat/${recordId}`, {
+    const url = '/layanan/sewa-alat/permohonan/' + recordId + '/hapus';
+    
+    fetch(url, {
         method: 'DELETE',
         headers: {
             'X-CSRF-TOKEN': csrfToken,
@@ -277,17 +290,22 @@ function confirmDelete(recordId) {
         }
     })
     .then(response => {
-        if (response.ok) {
-            window.location.reload();
+        return response.json().then(data => {
+            return { status: response.status, ok: response.ok, data: data };
+        });
+    })
+    .then(result => {
+        if (result.ok) {
+            closeModal(modalId);
+            window.location.href = window.location.href;
         } else {
-            return response.json().then(data => {
-                throw new Error(data.message || 'Gagal menghapus permohonan');
-            });
+            const errorMsg = result.data && result.data.message ? String(result.data.message) : 'Gagal menghapus permohonan';
+            alert(errorMsg);
         }
     })
     .catch(error => {
+        console.error('Delete error:', error);
         alert('Error: ' + error.message);
-        console.error('Error:', error);
     });
 }
 </script>

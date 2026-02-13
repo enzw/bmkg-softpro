@@ -51,7 +51,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         </div>
     @endif
 
-    <form action="{{ $is_edit ? route('admin.sewa-alat.update', ['sewa_alat' => $permohonan]) : route('admin.sewa-alat.store') }}" method="POST" class="space-y-6" enctype="multipart/form-data">
+    <form action="{{ $is_edit ? route('admin.sewa-alat.update', $permohonan->id) : route('admin.sewa-alat.store') }}" method="POST" class="space-y-6" enctype="multipart/form-data">
         @csrf
         @if ($is_edit)
             @method('put')
@@ -216,7 +216,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                     </a>
                 </div>
             @endif
-            <x-input-error :messages="$errors->get('surat_permohonan')" class="mt-2" />
+            <x-input-error :messages="$errors->get('ktp')" class="mt-2" />
         </div>
 
         <!-- Submit Button -->

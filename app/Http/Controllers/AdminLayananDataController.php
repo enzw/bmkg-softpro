@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\LayananData;
 use Illuminate\Support\Facades\Auth;
-use Exception;
+use App\Traits\HandlesFileDownload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 class AdminLayananDataController extends Controller
 {
+    use HandlesFileDownload;
+
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -104,9 +106,9 @@ class AdminLayananDataController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(LayananData $layanan_data)
     {
-        $permohonan = LayananData::where('id', $id)->first();
+        $permohonan = $layanan_data;
 
         $data = [
             'title' => 'Update Permohonan',
@@ -152,22 +154,30 @@ class AdminLayananDataController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(LayananData $layananData)
     {
         try {
-            $layanan_data = LayananData::findOrFail($id);
+            $this->authorize('delete', $layananData);
             
-            // Delete associated file
-            if ($layanan_data->surat_permohonan) {
-                Storage::disk('local')->delete($layanan_data->surat_permohonan);
+            // Delete associated files from Cloudflare S3
+            if ($layananData->surat_permohonan) {
+                Storage::disk('s3')->delete($layananData->surat_permohonan);
+            }
+            if ($layananData->ktp) {
+                Storage::disk('s3')->delete($layananData->ktp);
             }
             
-            $layanan_data->delete();
+            $layananData->delete();
             
             if (request()->wantsJson()) {
                 return response()->json(['message' => 'Permohonan berhasil dihapus']);
             }
             return back()->with('success', 'Permohonan berhasil dihapus');
+        } catch (\Illuminate\Auth\Access\AuthorizationException $error) {
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Anda tidak memiliki akses untuk menghapus permohonan ini'], 403);
+            }
+            return back()->with('error', 'Anda tidak memiliki akses untuk menghapus permohonan ini');
         } catch (Exception $error) {
             \Log::error('Admin Layanan Data Destroy Error: ' . $error->getMessage());
             if (request()->wantsJson()) {
@@ -184,17 +194,20 @@ class AdminLayananDataController extends Controller
     {
         $layananData = LayananData::findOrFail($id);
 
+        // Authorization check - only admin or the owner can download
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $layananData->user_id) {
+            abort(403, 'Anda tidak memiliki akses ke file ini');
+        }
+
         // Security: validate that the file belongs to this record
         if (!$layananData->surat_permohonan || !str_contains($layananData->surat_permohonan, $fileName)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        $filePath = storage_path('app/' . $layananData->surat_permohonan);
-
-        if (!file_exists($filePath)) {
+        if (!Storage::disk('s3')->exists($layananData->surat_permohonan)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        return response()->download($filePath, $fileName);
+        return $this->redirectToTemporaryUrl($layananData->surat_permohonan, 60);
     }
 }

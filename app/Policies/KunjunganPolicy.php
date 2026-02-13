@@ -13,7 +13,7 @@ class KunjunganPolicy
     public function view(User $user, Kunjungan $kunjungan): bool
     {
         // Admin can view all records
-        if ($user->is_admin) {
+        if ($user->role === 'admin') {
             return true;
         }
         
@@ -27,7 +27,7 @@ class KunjunganPolicy
     public function update(User $user, Kunjungan $kunjungan): bool
     {
         // Admin can update all records
-        if ($user->is_admin) {
+        if ($user->role === 'admin') {
             return true;
         }
         
@@ -41,7 +41,7 @@ class KunjunganPolicy
     public function delete(User $user, Kunjungan $kunjungan): bool
     {
         // Admin can delete all records
-        if ($user->is_admin) {
+        if ($user->role === 'admin') {
             return true;
         }
         

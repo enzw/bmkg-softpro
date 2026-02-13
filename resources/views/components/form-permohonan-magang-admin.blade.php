@@ -300,6 +300,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                 </div>
             </div>
             <div>
+                <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Nama Instansi <span class="text-red-500">*</span></label>
+                <input type="text" name="perusahaan" value="{{ $is_edit ? old('perusahaan', $permohonan->perusahaan ?? '') : old('perusahaan') }}" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
+                @error('perusahaan')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
+            </div>
+            <div>
                 <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Lokasi Kejadian <span class="text-red-500">*</span></label>
                 <input type="text" name="lokasi" value="{{ $is_edit ? old('lokasi', $permohonan->lokasi ?? '') : old('lokasi') }}" required
                     class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" />
@@ -307,15 +313,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Latitude <span class="text-red-500">*</span></label>
-                    <input type="number" step="0.00000001" min="-90" max="90" name="latitude" value="{{ $is_edit ? old('latitude', $permohonan->latitude ?? '') : old('latitude') }}" required
+                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Latitude <span class="text-gray-500 font-normal text-xs">(Opsional)</span></label>
+                    <input type="number" step="0.00000001" min="-90" max="90" name="latitude" value="{{ $is_edit ? old('latitude', $permohonan->latitude ?? '') : old('latitude') }}"
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="-90 hingga 90" />
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Range: -90 hingga 90</p>
                     @error('latitude')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Longitude <span class="text-red-500">*</span></label>
-                    <input type="number" step="0.00000001" min="-180" max="180" name="longitude" value="{{ $is_edit ? old('longitude', $permohonan->longitude ?? '') : old('longitude') }}" required
+                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Longitude <span class="text-gray-500 font-normal text-xs">(Opsional)</span></label>
+                    <input type="number" step="0.00000001" min="-180" max="180" name="longitude" value="{{ $is_edit ? old('longitude', $permohonan->longitude ?? '') : old('longitude') }}"
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition" placeholder="-180 hingga 180" />
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Range: -180 hingga 180</p>
                     @error('longitude')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
@@ -605,7 +611,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <!-- Submit Button -->
         <div class="pt-4">
             <button type="submit"
-                class="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 dark:from-green-700 dark:to-green-800 dark:hover:from-green-800 dark:hover:to-green-900 text-white font-semibold transition">
+                class="w-full py-3 px-6 rounded-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 dark:from-green-600 dark:to-green-700 dark:hover:from-green-700 dark:hover:to-green-800 text-white font-semibold shadow-lg hover:shadow-xl transition duration-200 transform hover:scale-105">
                 <i class="fas fa-paper-plane mr-2"></i>{{ $is_edit ? 'Perbarui' : 'Kirim' }} Permohonan
             </button>
         </div>

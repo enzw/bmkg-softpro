@@ -155,13 +155,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                     <x-input-error :messages="$errors->get('longitude')" class="mt-2" />
                 </div>
             </div>
-
-            <div>
-                <x-input-label for="kejadian">Deskripsi Kejadian</x-input-label>
-                <textarea id="kejadian" name="kejadian" rows="3"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 dark:focus:border-green-600 focus:ring-green-500 dark:focus:ring-green-600">{{ old('kejadian') }}</textarea>
-                <x-input-error :messages="$errors->get('kejadian')" class="mt-2" />
-            </div>
         </div>
 
         <!-- Layanan Data, Pemetaan, Survey, Konsultasi Fields -->

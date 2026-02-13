@@ -43,7 +43,13 @@
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-2">
                             <div class="w-3 h-3 rounded-full bg-gradient-to-r {{ $gradientColor }}"></div>
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->nombre_lengkap ?? $item->nama_lengkap ?? $item->perusahaan ?? '-' }}</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                @if($item->jenis_layanan === 'Layanan Klaim Asuransi')
+                                    {{ $item->nama_user ?? '-' }}
+                                @else
+                                    {{ $item->nombre_lengkap ?? $item->nama_lengkap ?? $item->nama_user ?? '-' }}
+                                @endif
+                            </h3>
                             <span class="text-sm px-3 py-1 rounded-full border {{ $currentServiceColor }}">
                                 {{ $item->jenis_layanan }}
                             </span>
@@ -81,7 +87,7 @@
                         class="flex-1 px-4 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30 font-semibold text-sm transition">
                         <i class="fas fa-eye mr-2"></i>Detail
                     </button>
-                    <a href="{{ route('admin.pelayanan-jasa.edit', ['pelayanan_jasa' => $item]) }}"
+                    <a href="{{ route('admin.pelayanan-jasa.edit', $item->id) }}"
                         class="flex-1 px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-semibold text-sm transition">
                         <i class="fas fa-edit mr-2"></i>Edit
                     </a>
@@ -89,6 +95,43 @@
                         class="flex-1 px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30 font-semibold text-sm transition">
                         <i class="fas fa-trash mr-2"></i>Hapus
                     </button>
+                    <!-- Delete Modal -->
+                    <div id="modal-delete-{{ $loop->index }}" class="hidden fixed inset-0 z-50 overflow-auto bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300">
+                        <div class="bg-white dark:bg-gray-800 rounded-3xl max-w-sm w-full shadow-2xl transform transition-all duration-300 scale-95 hover:scale-100">
+                            <!-- Icon -->
+                            <div class="flex justify-center pt-8">
+                                <div class="w-16 h-16 rounded-full bg-red-50 dark:bg-red-900/30 flex items-center justify-center">
+                                    <i class="fas fa-trash text-2xl text-red-600 dark:text-red-400"></i>
+                                </div>
+                            </div>
+                            <!-- Content -->
+                            <div class="px-8 pt-6 pb-8 text-center">
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Hapus Permohonan?</h3>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                                    Permohonan <strong class="text-gray-900 dark:text-white">
+                                        @if($item->jenis_layanan === 'Layanan Klaim Asuransi')
+                                            {{ $item->nama_user ?? '-' }}
+                                        @else
+                                            {{ $item->nama_lengkap ?? $item->nombre_lengkap ?? $item->nama_user ?? $item->perusahaan }}
+                                        @endif
+                                    </strong> akan dihapus secara permanen.
+                                </p>
+                            </div>
+                            <!-- Divider -->
+                            <div class="h-px bg-gray-100 dark:bg-gray-700"></div>
+                            <!-- Actions -->
+                            <div class="flex gap-3 p-6">
+                                <button type="button" onclick="closeModal('modal-delete-{{ $loop->index }}')"
+                                    class="flex-1 px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition-all duration-200 hover:shadow-md">
+                                    Batal
+                                </button>
+                                <button type="button" onclick="deleteRecord('{{ $item->id }}', 'modal-delete-{{ $loop->index }}')"
+                                    class="flex-1 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition-all duration-200 hover:shadow-md">
+                                    Hapus
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Detail Modal -->
@@ -119,11 +162,13 @@
                                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Nama Lengkap:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->nombre_lengkap ?? $item->nama_lengkap ?? $item->perusahaan ?? '-' }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600 dark:text-gray-400">Email:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->email ?? '-' }}</span>
+                                        <span class="font-semibold text-gray-900 dark:text-white">
+                                            @if($item->jenis_layanan === 'Layanan Klaim Asuransi')
+                                                {{ $item->nama_user ?? '-' }}
+                                            @else
+                                                {{ $item->nombre_lengkap ?? $item->nama_lengkap ?? $item->nama_user ?? $item->perusahaan ?? '-' }}
+                                            @endif
+                                        </span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">No WhatsApp:</span>
@@ -212,10 +257,6 @@
                                                 <span class="font-semibold text-gray-900 dark:text-white">{{ $item->latitude ?? '-' }}, {{ $item->longitude ?? '-' }}</span>
                                             </div>
                                         @endif
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-600 dark:text-gray-400">Kejadian:</span>
-                                            <span class="font-semibold text-gray-900 dark:text-white">{{ $item->kejadian ?? '-' }}</span>
-                                        </div>
                                     </div>
                                 </div>
                             @endif
@@ -242,22 +283,16 @@
                                     </h4>
                                     <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
                                         @if($item->surat_permohonan)
-                                            <div>
-                                                <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">Surat Permohonan:</p>
-                                                <a href="{{ route('admin.pelayanan-jasa.download', ['pelayanan_jasa' => $item]) }}"
-                                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold text-sm transition">
-                                                    <i class="fas fa-file-pdf mr-2"></i>Download  
-                                                </a>
-                                            </div>
+                                            <a href="{{ route('admin.pelayanan-jasa.download', ['id' => $item->id]) }}"
+                                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold text-sm transition w-full justify-center">
+                                                <i class="fas fa-file-pdf mr-2"></i>Download Surat Permohonan
+                                            </a>
                                         @endif
                                         @if($item->ktp)
-                                            <div>
-                                                <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">KTP/Identitas:</p>
-                                                <a href="{{ route('admin.pelayanan-jasa.download', ['pelayanan_jasa' => $item, 'document' => 'ktp']) }}"
-                                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold text-sm transition">
-                                                    <i class="fas fa-id-card mr-2"></i>Download  
-                                                </a>
-                                            </div>
+                                            <a href="{{ route('admin.pelayanan-jasa.download', ['id' => $item->id, 'document' => 'ktp']) }}"
+                                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold text-sm transition w-full justify-center">
+                                                <i class="fas fa-id-card mr-2"></i>Download KTP/Identitas
+                                            </a>
                                         @endif
                                     </div>
                                 </div>
@@ -273,18 +308,18 @@
                                         @if($item->surat_ijin_magang)
                                             <div>
                                                 <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">Surat Ijin Magang:</p>
-                                                <a href="{{ Storage::url($item->surat_ijin_magang) }}" target="_blank"
-                                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold text-sm transition">
-                                                    <i class="fas fa-file-pdf mr-2"></i>Lihat Dokumen
+                                                <a href="{{ route('admin.pelayanan-jasa.download-file', ['id' => $item->id, 'fileName' => basename($item->surat_ijin_magang)]) }}"
+                                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold text-sm transition w-full justify-center">
+                                                    <i class="fas fa-file-pdf mr-2"></i>Download
                                                 </a>
                                             </div>
                                         @endif
                                         @if($item->kartu_mahasiswa)
                                             <div>
                                                 <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">Kartu Mahasiswa:</p>
-                                                <a href="{{ Storage::url($item->kartu_mahasiswa) }}" target="_blank"
-                                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-semibold text-sm transition">
-                                                    <i class="fas fa-image mr-2"></i>Lihat Dokumen
+                                                <a href="{{ route('admin.pelayanan-jasa.download-file', ['id' => $item->id, 'fileName' => basename($item->kartu_mahasiswa)]) }}"
+                                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-semibold text-sm transition w-full justify-center">
+                                                    <i class="fas fa-image mr-2"></i>Download
                                                 </a>
                                             </div>
                                         @endif
@@ -317,7 +352,7 @@
                                 class="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
                                 Tutup
                             </button>
-                            <a href="{{ route('admin.pelayanan-jasa.edit', ['pelayanan_jasa' => $item]) }}"
+                            <a href="{{ route('admin.pelayanan-jasa.edit', $item->id) }}"
                                 class="flex-1 px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white font-semibold transition">
                                 <i class="fas fa-edit mr-2"></i>Edit Permohonan
                             </a>
@@ -325,31 +360,7 @@
                     </div>
                 </div>
 
-                <!-- Delete Modal -->
-                <div id="modal-delete-{{ $loop->index }}" class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full shadow-2xl">
-                        <div class="flex items-center justify-center w-16 h-16 mx-auto mt-6 rounded-full bg-red-100 dark:bg-red-900/20">
-                            <i class="fas fa-exclamation-triangle text-3xl text-red-600 dark:text-red-400"></i>
-                        </div>
-                        
-                        <div class="mt-4 text-center px-6">
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Hapus Permohonan?</h3>
-                            <p class="text-gray-600 dark:text-gray-400 mt-2">Yakin ingin menghapus permohonan untuk <strong>{{ $item->jenis_layanan }}</strong>?</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">Tindakan ini tidak dapat dibatalkan.</p>
-                        </div>
 
-                        <div class="flex gap-3 p-6">
-                            <button type="button" onclick="closeModal('modal-delete-{{ $loop->index }}')"
-                                class="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
-                                Batal
-                            </button>
-                            <button type="button" onclick="deleteRecord({{ $item->id }})"
-                                class="flex-1 px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white font-semibold transition">
-                                <i class="fas fa-trash mr-2"></i>Hapus
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
         @endforeach
     @endif
@@ -375,8 +386,28 @@ function closeDetailModal(id) {
     document.getElementById(id).classList.add('hidden');
     document.body.style.overflow = 'auto';
 }
-
-function deleteRecord(recordId) {
+function showToast(type, message) {
+    // Ensure toastr is available
+    if (typeof toastr === 'undefined') {
+        console.warn('Toastr not available, showing alert instead');
+        alert(message);
+        return;
+    }
+    
+    try {
+        if (type === 'success') {
+            toastr.success(message);
+        } else if (type === 'error') {
+            toastr.error(message);
+        }
+    } catch (e) {
+        console.error('Toast error:', e);
+        alert(message);
+    }
+}
+function deleteRecord(recordId, modalId) {
+    closeModal(modalId);
+    
     let csrfToken = null;
     const metaTag = document.querySelector('meta[name="csrf-token"]');
     if (metaTag) {
@@ -391,7 +422,7 @@ function deleteRecord(recordId) {
     }
     
     if (!csrfToken) {
-        alert('Error: CSRF token tidak ditemukan');
+        alert('CSRF token tidak ditemukan');
         return;
     }
     
@@ -404,17 +435,21 @@ function deleteRecord(recordId) {
         }
     })
     .then(response => {
-        if (response.ok) {
-            window.location.reload();
+        return response.json().then(data => {
+            return { status: response.status, ok: response.ok, data: data };
+        });
+    })
+    .then(result => {
+        if (result.ok) {
+            window.location.href = window.location.href;
         } else {
-            return response.json().then(data => {
-                throw new Error(data.message || 'Gagal menghapus permohonan');
-            });
+            const errorMsg = result.data && result.data.message ? String(result.data.message) : 'Gagal menghapus permohonan';
+            alert(errorMsg);
         }
     })
     .catch(error => {
-        alert('Error: ' + error.message);
-        console.error('Error:', error);
+        const errorMsg = error && error.message ? String(error.message) : 'Terjadi kesalahan';
+        alert(errorMsg);
     });
 }
 </script>

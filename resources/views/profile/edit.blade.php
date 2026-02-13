@@ -12,8 +12,8 @@
                         <i class="fas fa-tachometer-alt mr-2"></i>Dashboard Admin
                     </a>
                 @else
-                    <a href="{{ route('pelayanan-jasa.index') }}" class="hover:text-gray-900 dark:hover:text-white transition">
-                        <i class="fas fa-briefcase mr-2"></i>Layanan
+                    <a href="{{ route('dashboard-pelayanan') }}" class="hover:text-gray-900 dark:hover:text-white transition">
+                        <i class="fas fa-briefcase mr-2"></i>Dashboard Pelayanan
                     </a>
                 @endif
                 <span class="mx-3">/</span>
