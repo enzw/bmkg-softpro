@@ -79,10 +79,13 @@ Route::get('/dashboard-pelayanan', [DashboardPelayananController::class, 'index'
 Route::get('/dashboard-pelayanan/load-more', [DashboardPelayananController::class, 'loadMore'])
     ->middleware(['auth', 'verified', 'auth.notadmin'])->name('dashboard-pelayanan.load-more');
 
-Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
+Route::middleware(['auth', 'session.timeout'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::middleware('throttle:6,1')->patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::middleware('throttle:3,1')->delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
 
     /* ---------------------------------------------------------------------
      | PROTECTED ROUTES
@@ -146,7 +149,7 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
         Route::get('pelayanan-jasa/{id}/download-file/{fileName}', [MagangController::class, 'downloadFile'])
             ->where('fileName', '.+')->name('pelayanan-jasa.download-file');
 
-        Route::get('permohonan-kunjungan', function() {
+        Route::get('permohonan-kunjungan', function () {
             return redirect()->route('permohonan-kunjungan.create');
         });
         Route::get('permohonan-kunjungan/create', [PermohonanKunjunganController::class, 'create'])->name('permohonan-kunjungan.create');
@@ -163,12 +166,12 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
     Route::middleware(['auth', 'auth.admin', 'session.timeout'])->prefix('admin')->name('admin.')->group(function () {
         Route::redirect('/', 'dashboard');
         Route::get('dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-        
+
         // Download Area Routes
         Route::get('download-area', [AdminDownloadAreaController::class, 'index'])->name('download-area.index');
         Route::get('download-area/preview', [AdminDownloadAreaController::class, 'preview'])->name('download-area.preview');
         Route::post('download-area/download', [AdminDownloadAreaController::class, 'download'])->name('download-area.download');
-        
+
         Route::resource('sewa-alat', AdminSewaAlatController::class);
         Route::get('sewa-alat/{id}/download-file/{fileName}', [AdminSewaAlatController::class, 'downloadFile'])->name('sewa-alat.download-file');
         Route::get('sewa-alat/{sewa_alat}/download', [AdminSewaAlatController::class, 'download'])->name('sewa-alat.download');
@@ -190,11 +193,11 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
             return Excel::download(new ChatExport, 'data.xlsx');
         });
         Route::get('/api/chart-data', [AdminController::class, 'getChartData']);
-        
+
         // File Management Routes
         Route::delete('file/{filename}', [FileController::class, 'delete'])->name('file.delete');
         Route::post('file/delete-by-path', [FileController::class, 'deleteByPath'])->name('file.delete-by-path');
-        
+
         // Folder Management Routes
         Route::get('files/folder/{serviceType}', [FileController::class, 'listByFolder'])->name('files.list-by-folder');
         Route::get('files/stats/{serviceType}', [FileController::class, 'folderStats'])->name('files.folder-stats');
