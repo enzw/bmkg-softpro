@@ -14,7 +14,7 @@ class LayananData extends Model
     public $incrementing = false;
 
     protected $table = 'layanan_datas';
-    
+
     protected $guarded = ['id'];
 
     protected $fillable = [
@@ -31,5 +31,10 @@ class LayananData extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function rating()
+    {
+        return $this->morphOne(ServiceRating::class, 'rateable');
     }
 }

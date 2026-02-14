@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use App\Traits\HandlesFileDownload;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
+use Exception;
 
 class AdminPermohonanMagangController extends Controller
 {
@@ -33,7 +34,7 @@ class AdminPermohonanMagangController extends Controller
     public function index()
     {
         // Collect dari semua 5 tabel layanan jasa
-        $magangData = Magang::all()->map(function($item) {
+        $magangData = Magang::all()->map(function ($item) {
             $item->jenis_layanan = 'Magang';
             $item->nama_lengkap = $item->nama_lengkap ?? ($item->user->name ?? '-');
             $item->no_whatsapp = $item->no_whatsapp ?? ($item->user->telp ?? '-');
@@ -41,16 +42,16 @@ class AdminPermohonanMagangController extends Controller
             $item->keterangan = $item->prodi ?? null;
             return $item;
         });
-        
-        $asuransiData = Asuransi::all()->map(function($item) {
+
+        $asuransiData = Asuransi::all()->map(function ($item) {
             $item->jenis_layanan = 'Layanan Klaim Asuransi';
             $item->nama_lengkap = $item->perusahaan ?? '-';
             $item->no_whatsapp = $item->no_whatsapp ?? '-';
             $item->email = null;
             return $item;
         });
-        
-        $datumData = LayananData::all()->map(function($item) {
+
+        $datumData = LayananData::all()->map(function ($item) {
             $item->jenis_layanan = 'Layanan Data';
             $item->nama_lengkap = $item->nama_lengkap ?? '-';
             $item->no_whatsapp = $item->no_whatsapp ?? '-';
@@ -58,8 +59,8 @@ class AdminPermohonanMagangController extends Controller
             $item->keterangan = $item->keterangan ?? null;
             return $item;
         });
-        
-        $surveyData = Survey::all()->map(function($item) {
+
+        $surveyData = Survey::all()->map(function ($item) {
             $item->jenis_layanan = 'Layanan Survey';
             $item->nama_lengkap = $item->nama_lengkap ?? '-';
             $item->no_whatsapp = $item->no_whatsapp ?? '-';
@@ -67,8 +68,8 @@ class AdminPermohonanMagangController extends Controller
             $item->keterangan = $item->keterangan ?? null;
             return $item;
         });
-        
-        $konsultasiData = JasaKonsultasi::all()->map(function($item) {
+
+        $konsultasiData = JasaKonsultasi::all()->map(function ($item) {
             $item->jenis_layanan = 'Layanan Konsultasi';
             $item->nama_lengkap = $item->nama_lengkap ?? '-';
             $item->no_whatsapp = $item->no_whatsapp ?? '-';
@@ -76,7 +77,7 @@ class AdminPermohonanMagangController extends Controller
             $item->keterangan = $item->keterangan ?? null;
             return $item;
         });
-        
+
         // Merge semua data
         $permohonan = collect()
             ->merge($magangData)
@@ -85,7 +86,7 @@ class AdminPermohonanMagangController extends Controller
             ->merge($surveyData)
             ->merge($konsultasiData)
             ->sortByDesc('created_at');
-        
+
         $data = [
             'title' => 'Pelayanan Jasa',
             'permohonan' => $permohonan,
@@ -126,11 +127,10 @@ class AdminPermohonanMagangController extends Controller
                     'tanggal_mulai' => 'required|date',
                     'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-                    'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                     'kartu_mahasiswa' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
                 ]);
                 $validated['user_id'] = auth()->id();
-                
+
                 // Handle file uploads
                 if ($request->hasFile('surat_permohonan')) {
                     try {
@@ -142,16 +142,6 @@ class AdminPermohonanMagangController extends Controller
                     }
                 }
 
-                if ($request->hasFile('ktp')) {
-                    try {
-                        $file = $request->file('ktp');
-                        $path = $file->store('permohonan/magang', 's3');
-                        $validated['ktp'] = $path;
-                    } catch (Exception $e) {
-                        \Log::error('KTP upload error: ' . $e->getMessage());
-                    }
-                }
-                
                 if ($request->hasFile('kartu_mahasiswa')) {
                     try {
                         $file = $request->file('kartu_mahasiswa');
@@ -161,9 +151,9 @@ class AdminPermohonanMagangController extends Controller
                         \Log::error('Kartu Mahasiswa upload error: ' . $e->getMessage());
                     }
                 }
-                
+
                 $permohonan = Magang::create($validated);
-                
+
             } elseif ($jenis_layanan === 'Layanan Klaim Asuransi') {
                 $validated = $request->validate([
                     'jenis_layanan' => 'required',
@@ -178,7 +168,7 @@ class AdminPermohonanMagangController extends Controller
                     'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                 ]);
                 $validated['user_id'] = auth()->id();
-                
+
                 // Handle file uploads
                 if ($request->hasFile('surat_permohonan')) {
                     try {
@@ -199,9 +189,9 @@ class AdminPermohonanMagangController extends Controller
                         \Log::error('KTP upload error: ' . $e->getMessage());
                     }
                 }
-                
+
                 $permohonan = Asuransi::create($validated);
-                
+
             } elseif ($jenis_layanan === 'Layanan Data') {
                 $validated = $request->validate([
                     'jenis_layanan' => 'required',
@@ -213,7 +203,7 @@ class AdminPermohonanMagangController extends Controller
                     'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                 ]);
                 $validated['user_id'] = auth()->id();
-                
+
                 // Handle file upload
                 if ($request->hasFile('surat_permohonan')) {
                     try {
@@ -234,9 +224,9 @@ class AdminPermohonanMagangController extends Controller
                         \Log::error('KTP upload error: ' . $e->getMessage());
                     }
                 }
-                
+
                 $permohonan = LayananData::create($validated);
-                
+
             } elseif ($jenis_layanan === 'Layanan Survey') {
                 $validated = $request->validate([
                     'jenis_layanan' => 'required',
@@ -248,7 +238,7 @@ class AdminPermohonanMagangController extends Controller
                     'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                 ]);
                 $validated['user_id'] = auth()->id();
-                
+
                 // Handle file upload
                 if ($request->hasFile('surat_permohonan')) {
                     try {
@@ -269,9 +259,9 @@ class AdminPermohonanMagangController extends Controller
                         \Log::error('KTP upload error: ' . $e->getMessage());
                     }
                 }
-                
+
                 $permohonan = Survey::create($validated);
-                
+
             } elseif ($jenis_layanan === 'Layanan Konsultasi') {
                 $validated = $request->validate([
                     'jenis_layanan' => 'required',
@@ -283,7 +273,7 @@ class AdminPermohonanMagangController extends Controller
                     'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                 ]);
                 $validated['user_id'] = auth()->id();
-                
+
                 // Handle file upload
                 if ($request->hasFile('surat_permohonan')) {
                     try {
@@ -304,9 +294,9 @@ class AdminPermohonanMagangController extends Controller
                         \Log::error('KTP upload error: ' . $e->getMessage());
                     }
                 }
-                
+
                 $permohonan = JasaKonsultasi::create($validated);
-                
+
             } else {
                 return redirect()->route('admin.pelayanan-jasa.create')
                     ->with('error', 'Jenis layanan tidak valid');
@@ -337,7 +327,7 @@ class AdminPermohonanMagangController extends Controller
     public function edit(string $pelayanan_jasa)
     {
         // Search di semua 5 tabel
-        $permohonan = Magang::find($pelayanan_jasa) 
+        $permohonan = Magang::find($pelayanan_jasa)
             ?? Asuransi::find($pelayanan_jasa)
             ?? LayananData::find($pelayanan_jasa)
             ?? Survey::find($pelayanan_jasa)
@@ -361,7 +351,7 @@ class AdminPermohonanMagangController extends Controller
     public function update(Request $request, string $id)
     {
         // Search di semua 5 tabel
-        $permohonan = Magang::find($id) 
+        $permohonan = Magang::find($id)
             ?? Asuransi::find($id)
             ?? LayananData::find($id)
             ?? Survey::find($id)
@@ -387,7 +377,7 @@ class AdminPermohonanMagangController extends Controller
                     'kartu_mahasiswa' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
                     'status' => 'nullable',
                 ]);
-                
+
             } elseif ($permohonan instanceof Asuransi) {
                 $validated = $request->validate([
                     'nama_user' => 'required|string',
@@ -400,7 +390,7 @@ class AdminPermohonanMagangController extends Controller
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                     'status' => 'nullable',
                 ]);
-                
+
             } elseif ($permohonan instanceof LayananData) {
                 $validated = $request->validate([
                     'nama_lengkap' => 'required|string',
@@ -410,7 +400,7 @@ class AdminPermohonanMagangController extends Controller
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                     'status' => 'nullable',
                 ]);
-                
+
             } elseif ($permohonan instanceof Survey) {
                 $validated = $request->validate([
                     'nama_lengkap' => 'nullable|string',
@@ -420,7 +410,7 @@ class AdminPermohonanMagangController extends Controller
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                     'status' => 'nullable',
                 ]);
-                
+
             } elseif ($permohonan instanceof JasaKonsultasi) {
                 $validated = $request->validate([
                     'nama_lengkap' => 'nullable|string',
@@ -438,7 +428,7 @@ class AdminPermohonanMagangController extends Controller
                 if ($permohonan->surat_permohonan && Storage::disk('s3')->exists($permohonan->surat_permohonan)) {
                     Storage::disk('s3')->delete($permohonan->surat_permohonan);
                 }
-                
+
                 $file = $request->file('surat_permohonan');
                 $modelType = class_basename($permohonan);
                 $folder = strtolower(str_replace('Jasa', '', $modelType));
@@ -451,7 +441,7 @@ class AdminPermohonanMagangController extends Controller
                 if ($permohonan->kartu_mahasiswa && Storage::disk('s3')->exists($permohonan->kartu_mahasiswa)) {
                     Storage::disk('s3')->delete($permohonan->kartu_mahasiswa);
                 }
-                
+
                 $file = $request->file('kartu_mahasiswa');
                 $modelType = class_basename($permohonan);
                 $folder = strtolower(str_replace('Jasa', '', $modelType));
@@ -501,7 +491,7 @@ class AdminPermohonanMagangController extends Controller
     {
         try {
             // Search di semua 5 tabel
-            $permohonan = Magang::find($id) 
+            $permohonan = Magang::find($id)
                 ?? Asuransi::find($id)
                 ?? LayananData::find($id)
                 ?? Survey::find($id)
@@ -521,7 +511,7 @@ class AdminPermohonanMagangController extends Controller
             $this->deleteAssociatedFiles($permohonan);
 
             $permohonan->delete();
-            
+
             if (request()->wantsJson()) {
                 return response()->json(['message' => 'Permohonan berhasil dihapus']);
             }
@@ -546,7 +536,7 @@ class AdminPermohonanMagangController extends Controller
     public function downloadFile($id, $fileName)
     {
         // Search di semua 5 tabel
-        $permohonan = Magang::find($id) 
+        $permohonan = Magang::find($id)
             ?? Asuransi::find($id)
             ?? LayananData::find($id)
             ?? Survey::find($id)
@@ -563,7 +553,7 @@ class AdminPermohonanMagangController extends Controller
 
         // Determine which file field to use based on the file name
         $filePath = null;
-        
+
         if ($permohonan->surat_permohonan && str_contains($permohonan->surat_permohonan, $fileName)) {
             $filePath = $permohonan->surat_permohonan;
         } elseif (isset($permohonan->surat_ijin_magang) && $permohonan->surat_ijin_magang && str_contains($permohonan->surat_ijin_magang, $fileName)) {
@@ -591,7 +581,7 @@ class AdminPermohonanMagangController extends Controller
     public function download(Request $request, $id)
     {
         // Search di semua 5 tabel
-        $permohonan = Magang::find($id) 
+        $permohonan = Magang::find($id)
             ?? Asuransi::find($id)
             ?? LayananData::find($id)
             ?? Survey::find($id)
@@ -607,7 +597,7 @@ class AdminPermohonanMagangController extends Controller
         }
 
         $documentType = $request->query('document', 'surat_permohonan');
-        
+
         // Determine which file to download
         $filePath = null;
         if ($documentType === 'ktp') {

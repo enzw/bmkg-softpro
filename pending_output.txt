@@ -1,0 +1,9 @@
+Psy Shell v0.12.19 (PHP 8.4.12 — cli) by Justin Hileman
+New PHP manual is available (latest: 3.0.1). Update with `doc --update-manual`
+Checking pending services for user: 10
+
+1. SewaAlat: None
+2. Magang: None
+3. Asuransi: None
+4. Kunjungan: PENDING (ID: ff948926-751c-4328-9dcf-104b4e881af5)
+

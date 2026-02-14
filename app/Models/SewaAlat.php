@@ -12,7 +12,7 @@ class SewaAlat extends Model
 
     protected $keyType = 'string';
     public $incrementing = false;
-    
+
     protected $guarded = ['id'];
 
     protected $fillable = [
@@ -39,6 +39,11 @@ class SewaAlat extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function rating()
+    {
+        return $this->morphOne(ServiceRating::class, 'rateable');
     }
 
     public function alat()

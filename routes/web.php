@@ -70,6 +70,9 @@ Route::get('/kuisioner', function () {
 })->name('kuisioner');
 
 Route::get('/dashboard', function () {
+    if (Auth::check() && Auth::user()->role !== 'admin') {
+        return redirect()->route('dashboard-pelayanan');
+    }
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -83,6 +86,7 @@ Route::middleware(['auth', 'session.timeout'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::middleware('throttle:6,1')->patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::middleware('throttle:3,1')->delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/rating', [App\Http\Controllers\RatingController::class, 'store'])->name('rating.store');
 });
 
 Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {

@@ -14,7 +14,7 @@ class Magang extends Model
     public $incrementing = false;
 
     protected $table = 'magangs';
-    
+
     protected $guarded = ['id'];
 
     protected $fillable = [
@@ -36,5 +36,10 @@ class Magang extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function rating()
+    {
+        return $this->morphOne(ServiceRating::class, 'rateable');
     }
 }
