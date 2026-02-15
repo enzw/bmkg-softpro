@@ -5,8 +5,6 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Notifications\Messages\MailMessage;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,8 +17,7 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(\Clockwork\Support\Laravel\ClockworkServiceProvider::class);
         }
 
-        if (!config('clockwork.enable', false))
-            return;
+        if (!config('clockwork.enable', false)) return;
     }
 
     /**
@@ -28,13 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
-            return (new MailMessage)
-                ->subject('Verifikasi Alamat Email')
-                ->line('Silakan klik tombol di bawah ini untuk memverifikasi alamat email Anda.')
-                ->action('Verifikasi Email', $url)
-                ->line('Jika Anda tidak membuat akun, abaikan email ini.');
-        });
         // Force HTTPS for all URL generation in production
         if ($this->app->environment('production') && str_starts_with(config('app.url'), 'https')) {
             URL::forceScheme('https');
@@ -45,7 +35,6 @@ class AppServiceProvider extends ServiceProvider
             return 'Rp' . number_format($float, 0, ',', '.');
         });
 
-        if (!config('clockwork.enable', false))
-            return;
+        if (!config('clockwork.enable', false)) return;
     }
 }

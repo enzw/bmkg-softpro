@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DialogflowWebhookController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardPelayananController;
+use App\Http\Controllers\AdminRatingController;
 use App\Http\Controllers\AdminDownloadAreaController;
 use App\Http\Controllers\FileController;
 
@@ -197,6 +198,10 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
             return Excel::download(new ChatExport, 'data.xlsx');
         });
         Route::get('/api/chart-data', [AdminController::class, 'getChartData']);
+
+        // Rating Routes
+        Route::get('ratings', [AdminRatingController::class, 'index'])->name('ratings.index');
+        Route::get('api/ratings-chart', [AdminRatingController::class, 'getRatingChartData'])->name('ratings.chart-data');
 
         // File Management Routes
         Route::delete('file/{filename}', [FileController::class, 'delete'])->name('file.delete');
