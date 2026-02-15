@@ -33,7 +33,7 @@ class AdminRatingController extends Controller
         }
 
         return view('pages.admin.ratings.index', [
-            'title' => 'Hasil Rating',
+            'title' => 'Rating',
             'ratings' => $ratings,
             'averageRating' => round($averageRating, 1),
             'totalRatings' => $totalRatings,

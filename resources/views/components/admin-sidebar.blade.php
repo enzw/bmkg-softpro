@@ -51,6 +51,16 @@
                 <span>Permohonan Kunjungan</span>
             </a>
 
+            <!--Rating -->
+            <a href="{{ route('admin.ratings.index') }}" @class([
+                'group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
+                'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' => !request()->routeIs('admin.ratings.*'),
+                'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-l-2 border-amber-500' => request()->routeIs('admin.ratings.*'),
+            ])>
+                <i class="fa-solid fa-star w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110"></i>
+                <span>Rating</span>
+            </a>
+
             <!-- Download Area -->
             <a href="{{ route('admin.download-area.index') }}" @class([
                 'group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
@@ -59,16 +69,6 @@
             ])>
                 <i class="fa-solid fa-download w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110"></i>
                 <span>Download Area</span>
-            </a>
-
-            <!-- Hasil Rating -->
-            <a href="{{ route('admin.ratings.index') }}" @class([
-                'group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
-                'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white' => !request()->routeIs('admin.ratings.*'),
-                'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-l-2 border-amber-500' => request()->routeIs('admin.ratings.*'),
-            ])>
-                <i class="fa-solid fa-star w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110"></i>
-                <span>Hasil Rating</span>
             </a>
         </nav>
 

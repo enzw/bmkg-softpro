@@ -4,7 +4,7 @@
     <!-- Header -->
     <div class="mb-10 flex items-start justify-between">
         <div>
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Hasil Rating</h1>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Rating</h1>
             <p class="text-gray-500 dark:text-gray-400">Monitor feedback dan tingkat kepuasan pengguna layanan Anda.</p>
         </div>
         <p class="text-sm text-gray-400 dark:text-gray-500">{{ date('d M Y') }}</p>
