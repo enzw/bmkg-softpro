@@ -6,6 +6,7 @@ use App\Models\Alat;
 use App\Models\SewaAlat;
 use Carbon\Carbon;
 use App\Traits\HandlesFileDownload;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -31,7 +32,7 @@ class AdminSewaAlatController extends Controller
 
         $data = [
             'title' => 'Sewa Alat',
-            'permohonan' => SewaAlat::orderBy('created_at', 'desc')->get(),
+            'permohonan' => SewaAlat::with(['user', 'alat'])->orderBy('created_at', 'desc')->get(),
         ];
 
         return view('pages.admin.sewa-alat.index', $data);
@@ -166,11 +167,11 @@ class AdminSewaAlatController extends Controller
 
                     // Simpan file baru
                     $directory = 'permohonan/sewa-alat';
-                    
+
                     $file = $request->file('surat_permohonan');
                     $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
                     $path = $file->storeAs($directory, $fileName, 's3');
-                    
+
                     if ($path) {
                         $validated['surat_permohonan'] = $path;
                         \Log::info('File uploaded successfully: ' . $path);
@@ -200,7 +201,7 @@ class AdminSewaAlatController extends Controller
         try {
             // Authorize the delete action
             $this->authorize('delete', $sewa_alat);
-            
+
             // Delete files from Cloudflare S3
             if ($sewa_alat->surat_permohonan) {
                 Storage::disk('s3')->delete($sewa_alat->surat_permohonan);
@@ -264,7 +265,7 @@ class AdminSewaAlatController extends Controller
         // Security: validate that the file belongs to this record
         // Check both surat_permohonan and ktp fields
         $filePath = null;
-        
+
         if ($sewaAlat->surat_permohonan && str_contains($sewaAlat->surat_permohonan, $fileName)) {
             $filePath = $sewaAlat->surat_permohonan;
         } elseif ($sewaAlat->ktp && str_contains($sewaAlat->ktp, $fileName)) {

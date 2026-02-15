@@ -15,7 +15,7 @@
                 $diff = $date1->diff($date2)->days;
                 $lama_sewa = $diff == 0 ? 1 : $diff;
                 $total = 'Rp' . number_format($item->alat->harga * ($lama_sewa * $item->banyak_unit), 0, ',', '.');
-                
+
                 $statusMap = [
                     'Belum Lunas' => 'Menunggu',
                     'Siap Diambil' => 'Diproses',
@@ -23,7 +23,7 @@
                     'Dikembalikan' => 'Selesai',
                 ];
                 $displayStatus = $statusMap[$item->status] ?? $item->status;
-                
+
                 $statusColor = [
                     'Menunggu' => 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800/50 text-yellow-700 dark:text-yellow-300',
                     'Diproses' => 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300',
@@ -32,23 +32,25 @@
                 ];
                 $currentStatusColor = $statusColor[$displayStatus] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
             @endphp
-            
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition group">
+
+            <div
+                class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition group">
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-2">
                             <div class="w-3 h-3 rounded-full bg-gradient-to-r from-green-500 to-green-600"></div>
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->alat->nama }}</h3>
-                            <span class="text-sm px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
+                            <span
+                                class="text-sm px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
                                 {{ $item->banyak_unit }} unit
                             </span>
                         </div>
                         <p class="text-sm text-gray-600 dark:text-gray-400">
                             <i class="fas fa-user mr-2"></i>
-                            {{ $item->user->name }}
+                            {{ $item->user?->name ?? 'Data User Tidak Ditemukan' }}
                         </p>
                     </div>
-                    
+
                     <div class="flex items-center gap-3">
                         <span class="px-4 py-2 rounded-lg border {{ $currentStatusColor }} font-semibold text-sm">
                             {{ $displayStatus }}
@@ -59,11 +61,13 @@
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <div>
                         <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Mulai</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->sewa_mulai)->format('d/m/Y') }}</p>
+                        <p class="font-semibold text-gray-900 dark:text-white">
+                            {{ \Carbon\Carbon::parse($item->sewa_mulai)->format('d/m/Y') }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Berakhir</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->sewa_berakhir)->format('d/m/Y') }}</p>
+                        <p class="font-semibold text-gray-900 dark:text-white">
+                            {{ \Carbon\Carbon::parse($item->sewa_berakhir)->format('d/m/Y') }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Durasi</p>
@@ -91,7 +95,8 @@
                 </div>
 
                 <!-- Detail Modal -->
-                <div id="modal-detail-{{ $loop->index }}" class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+                <div id="modal-detail-{{ $loop->index }}"
+                    class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
                     <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto">
                         <!-- Header -->
                         <div class="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 p-6">
@@ -100,7 +105,7 @@
                                     <h3 class="text-xl font-bold text-gray-900 dark:text-white">Detail Permohonan</h3>
                                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">ID: #{{ $item->id }}</p>
                                 </div>
-                                <button type="button" onclick="closeDetailModal('modal-detail-{{ $loop->index }}')" 
+                                <button type="button" onclick="closeDetailModal('modal-detail-{{ $loop->index }}')"
                                     class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
                                     <i class="fas fa-times text-2xl"></i>
                                 </button>
@@ -122,11 +127,13 @@
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Jumlah Unit:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->banyak_unit }} unit</span>
+                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->banyak_unit }}
+                                            unit</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Harga per Unit:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">Rp{{ number_format($item->alat->harga, 0, ',', '.') }}</span>
+                                        <span
+                                            class="font-semibold text-gray-900 dark:text-white">Rp{{ number_format($item->alat->harga, 0, ',', '.') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -140,11 +147,13 @@
                                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Tanggal Mulai:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->sewa_mulai)->format('d M Y') }}</span>
+                                        <span
+                                            class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->sewa_mulai)->format('d M Y') }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Tanggal Berakhir:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->sewa_berakhir)->format('d M Y') }}</span>
+                                        <span
+                                            class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->sewa_berakhir)->format('d M Y') }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Durasi Sewa:</span>
@@ -166,7 +175,8 @@
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">No WhatsApp:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->no_whatsapp }}</span>
+                                        <span
+                                            class="font-semibold text-gray-900 dark:text-white">{{ $item->no_whatsapp }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -186,7 +196,8 @@
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Total Biaya:</span>
-                                        <span class="font-semibold text-lg text-green-600 dark:text-green-400">{{ $total }}</span>
+                                        <span
+                                            class="font-semibold text-lg text-green-600 dark:text-green-400">{{ $total }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -224,11 +235,13 @@
                                 <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Nama:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->user->name }}</span>
+                                        <span
+                                            class="font-semibold text-gray-900 dark:text-white">{{ $item->user?->name ?? 'Data User Tidak Ditemukan' }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600 dark:text-gray-400">Email:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->user->email }}</span>
+                                        <span
+                                            class="font-semibold text-gray-900 dark:text-white">{{ $item->user?->email ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -272,7 +285,8 @@
                         </div>
 
                         <!-- Footer -->
-                        <div class="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 p-6 flex gap-3">
+                        <div
+                            class="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 p-6 flex gap-3">
                             <button type="button" onclick="closeDetailModal('modal-detail-{{ $loop->index }}')"
                                 class="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
                                 Tutup
@@ -286,8 +300,10 @@
                 </div>
 
                 <!-- Delete Modal -->
-                <div id="modal-delete-{{ $loop->index }}" class="hidden fixed inset-0 z-50 overflow-auto bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300">
-                    <div class="bg-white dark:bg-gray-800 rounded-3xl max-w-sm w-full shadow-2xl transform transition-all duration-300 scale-95 hover:scale-100">
+                <div id="modal-delete-{{ $loop->index }}"
+                    class="hidden fixed inset-0 z-50 overflow-auto bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300">
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-3xl max-w-sm w-full shadow-2xl transform transition-all duration-300 scale-95 hover:scale-100">
                         <!-- Icon -->
                         <div class="flex justify-center pt-8">
                             <div class="w-16 h-16 rounded-full bg-red-50 dark:bg-red-900/30 flex items-center justify-center">
@@ -299,7 +315,8 @@
                         <div class="px-8 pt-6 pb-8 text-center">
                             <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Hapus Sewa Alat?</h3>
                             <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                                Permohonan sewa <strong class="text-gray-900 dark:text-white">{{ $item->alat->nama }}</strong> akan dihapus secara permanen.
+                                Permohonan sewa <strong class="text-gray-900 dark:text-white">{{ $item->alat->nama }}</strong>
+                                akan dihapus secara permanen.
                             </p>
                         </div>
 
@@ -312,7 +329,8 @@
                                 class="flex-1 px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition-all duration-200 hover:shadow-md">
                                 Batal
                             </button>
-                            <button type="button" id="btn-delete-{{ $loop->index }}" onclick="deleteRecord('{{ $item->id }}', 'modal-delete-{{ $loop->index }}')"
+                            <button type="button" id="btn-delete-{{ $loop->index }}"
+                                onclick="deleteRecord('{{ $item->id }}', 'modal-delete-{{ $loop->index }}')"
                                 class="flex-1 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition-all duration-200 hover:shadow-md">
                                 Hapus
                             </button>
@@ -327,84 +345,84 @@
 </div>
 
 <script>
-function openModal(id) {
-    document.getElementById(id).classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeModal(id) {
-    document.getElementById(id).classList.add('hidden');
-    document.body.style.overflow = 'auto';
-}
-
-function openDetailModal(id) {
-    document.getElementById(id).classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeDetailModal(id) {
-    document.getElementById(id).classList.add('hidden');
-    document.body.style.overflow = 'auto';
-}
-
-function deleteRecord(recordId, modalId) {
-    // Get the button element based on modal ID
-    const buttonId = modalId.replace('modal-delete-', 'btn-delete-');
-    const deleteBtn = document.getElementById(buttonId);
-    
-    // Store original text and disable button
-    const originalText = deleteBtn.textContent;
-    deleteBtn.textContent = 'Menghapus...';
-    deleteBtn.disabled = true;
-    
-    let csrfToken = null;
-    const metaTag = document.querySelector('meta[name="csrf-token"]');
-    if (metaTag) {
-        csrfToken = metaTag.getAttribute('content');
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
     }
-    
-    if (!csrfToken) {
-        const tokenInput = document.querySelector('input[name="_token"]');
-        if (tokenInput) {
-            csrfToken = tokenInput.value;
-        }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+        document.body.style.overflow = 'auto';
     }
-    
-    if (!csrfToken) {
-        alert('CSRF token tidak ditemukan');
-        deleteBtn.textContent = originalText;
-        deleteBtn.disabled = false;
-        return;
+
+    function openDetailModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
     }
-    
-    const url = '/admin/sewa-alat/' + recordId;
-    
-    fetch(url, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': csrfToken,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+
+    function closeDetailModal(id) {
+        document.getElementById(id).classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    function deleteRecord(recordId, modalId) {
+        // Get the button element based on modal ID
+        const buttonId = modalId.replace('modal-delete-', 'btn-delete-');
+        const deleteBtn = document.getElementById(buttonId);
+
+        // Store original text and disable button
+        const originalText = deleteBtn.textContent;
+        deleteBtn.textContent = 'Menghapus...';
+        deleteBtn.disabled = true;
+
+        let csrfToken = null;
+        const metaTag = document.querySelector('meta[name="csrf-token"]');
+        if (metaTag) {
+            csrfToken = metaTag.getAttribute('content');
         }
-    })
-    .then(response => {
-        return response.json().then(data => {
-            return { status: response.status, ok: response.ok, data: data };
-        });
-    })
-    .then(result => {
-        if (result.ok) {
-            closeModal(modalId);
-            window.location.href = window.location.href;
-        } else {
-            const errorMsg = result.data && result.data.message ? String(result.data.message) : 'Gagal menghapus permohonan';
-            alert(errorMsg);
+
+        if (!csrfToken) {
+            const tokenInput = document.querySelector('input[name="_token"]');
+            if (tokenInput) {
+                csrfToken = tokenInput.value;
+            }
         }
-    })
-    .catch(error => {
-        const errorMsg = error && error.message ? String(error.message) : 'Terjadi kesalahan';
-        alert(errorMsg);
-    });
-}
+
+        if (!csrfToken) {
+            alert('CSRF token tidak ditemukan');
+            deleteBtn.textContent = originalText;
+            deleteBtn.disabled = false;
+            return;
+        }
+
+        const url = '/admin/sewa-alat/' + recordId;
+
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(response => {
+                return response.json().then(data => {
+                    return { status: response.status, ok: response.ok, data: data };
+                });
+            })
+            .then(result => {
+                if (result.ok) {
+                    closeModal(modalId);
+                    window.location.href = window.location.href;
+                } else {
+                    const errorMsg = result.data && result.data.message ? String(result.data.message) : 'Gagal menghapus permohonan';
+                    alert(errorMsg);
+                }
+            })
+            .catch(error => {
+                const errorMsg = error && error.message ? String(error.message) : 'Terjadi kesalahan';
+                alert(errorMsg);
+            });
+    }
 </script>
 </div>

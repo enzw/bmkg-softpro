@@ -156,9 +156,8 @@ class TelegramService
     private function formatSewaAlat($data)
     {
         return "🔧 <b>SEWA ALAT</b>\n\n" .
-            "<b>Nama Kontak:</b> " . htmlspecialchars($data['nama'] ?? '-') . "\n" .
+            "<b>Nama:</b> " . htmlspecialchars($data['nama'] ?? '-') . "\n" .
             "<b>No. WhatsApp:</b> " . $this->formatWhatsAppLink($data['no_whatsapp'] ?? '') . "\n\n" .
-            "<b>Nama Member:</b> " . htmlspecialchars($data['user_name'] ?? '-') . "\n" .
             "<b>Email:</b> " . htmlspecialchars($data['email'] ?? '-') . "\n\n" .
             "<b>Nama Alat:</b> " . htmlspecialchars($data['alat_name'] ?? '-') . "\n" .
             "<b>Jumlah Unit:</b> " . ($data['banyak_unit'] ?? '-') . "\n" .
