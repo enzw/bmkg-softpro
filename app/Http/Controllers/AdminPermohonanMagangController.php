@@ -388,6 +388,7 @@ class AdminPermohonanMagangController extends Controller
                     'latitude' => 'nullable|numeric',
                     'longitude' => 'nullable|numeric',
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                     'status' => 'nullable',
                 ]);
 
@@ -398,6 +399,7 @@ class AdminPermohonanMagangController extends Controller
                     'email' => 'required|email',
                     'keterangan' => 'required|string',
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                     'status' => 'nullable',
                 ]);
 
@@ -408,6 +410,7 @@ class AdminPermohonanMagangController extends Controller
                     'email' => 'nullable|email',
                     'keterangan' => 'nullable|string',
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                     'status' => 'nullable',
                 ]);
 
@@ -418,11 +421,11 @@ class AdminPermohonanMagangController extends Controller
                     'email' => 'nullable|email',
                     'keterangan' => 'nullable|string',
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                    'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                     'status' => 'nullable',
                 ]);
             }
 
-            // Handle file uploads
             if ($request->hasFile('surat_permohonan')) {
                 // Delete old file if exists
                 if ($permohonan->surat_permohonan && Storage::disk('s3')->exists($permohonan->surat_permohonan)) {
@@ -434,6 +437,19 @@ class AdminPermohonanMagangController extends Controller
                 $folder = strtolower(str_replace('Jasa', '', $modelType));
                 $path = $file->store('permohonan/' . $folder, 's3');
                 $validated['surat_permohonan'] = $path;
+            }
+
+            if ($request->hasFile('ktp') && !($permohonan instanceof Magang)) {
+                // Delete old file if exists
+                if ($permohonan->ktp && Storage::disk('s3')->exists($permohonan->ktp)) {
+                    Storage::disk('s3')->delete($permohonan->ktp);
+                }
+
+                $file = $request->file('ktp');
+                $modelType = class_basename($permohonan);
+                $folder = strtolower(str_replace('Jasa', '', $modelType));
+                $path = $file->store('permohonan/' . $folder, 's3');
+                $validated['ktp'] = $path;
             }
 
             if ($request->hasFile('kartu_mahasiswa') && $permohonan instanceof Magang) {

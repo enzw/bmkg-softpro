@@ -8,6 +8,7 @@ use App\Traits\HandlesFileDownload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Exception;
 
 class AdminLayananDataController extends Controller
 {
@@ -30,7 +31,7 @@ class AdminLayananDataController extends Controller
     {
         $data = [
             'title' => 'Layanan Data',
-            'permohonan' => LayananData::all(),
+            'layanan_data' => LayananData::all(),
         ];
         return view('pages.admin.layanan-data.index', $data);
     }
@@ -88,7 +89,7 @@ class AdminLayananDataController extends Controller
 
         try {
             LayananData::create($validated);
-            return redirect()->route('admin.layanan-data.index')->with('success', 'Permohonan berhasil dibuat');
+            return redirect()->route('admin.pelayanan-jasa.index')->with('success', 'Permohonan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
             return redirect()->route('admin.layanan-data.create')->with('error', 'Permohonan gagal dibuat');
@@ -106,9 +107,9 @@ class AdminLayananDataController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(LayananData $layanan_data)
+    public function edit(LayananData $layanan_datum)
     {
-        $permohonan = $layanan_data;
+        $permohonan = $layanan_datum;
 
         $data = [
             'title' => 'Update Permohonan',
@@ -121,7 +122,7 @@ class AdminLayananDataController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, LayananData $layanan_data)
+    public function update(Request $request, LayananData $layanan_datum)
     {
         $validated = $request->validate([
             'nama_lengkap' => 'required',
@@ -129,25 +130,38 @@ class AdminLayananDataController extends Controller
             'email' => 'required|email',
             'keterangan' => 'nullable',
             'status' => 'nullable',
+            'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
         if ($request->hasFile('surat_permohonan')) {
-            if ($layanan_data->surat_permohonan) {
-                Storage::delete($layanan_data->surat_permohonan);
+            if ($layanan_datum->surat_permohonan) {
+                Storage::delete($layanan_datum->surat_permohonan);
             }
-            
+
             $file = $request->file('surat_permohonan');
-            $file_name = 'layanan-data_user:' . $layanan_data->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
+            $file_name = 'layanan-data_user:' . $layanan_datum->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
             $path_permohonan = $file->storeAs('permohonan/layanan-data', $file_name);
             $validated['surat_permohonan'] = $path_permohonan;
         }
 
+        if ($request->hasFile('ktp')) {
+            if ($layanan_datum->ktp) {
+                Storage::delete($layanan_datum->ktp);
+            }
+
+            $file = $request->file('ktp');
+            $file_name = 'ktp_layanan-data_user:' . $layanan_datum->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
+            $path_ktp = $file->storeAs('permohonan/layanan-data', $file_name);
+            $validated['ktp'] = $path_ktp;
+        }
+
         try {
-            $layanan_data->update($validated);
-            return redirect()->route('admin.layanan-data.index')->with('success', 'Permohonan berhasil diupdate');
+            $layanan_datum->update($validated);
+            return redirect()->route('admin.pelayanan-jasa.index')->with('success', 'Permohonan berhasil diupdate');
         } catch (Exception $error) {
             report($error->getMessage());
-            return redirect()->route('admin.layanan-data.index')->with('error', 'Permohonan gagal diupdate');
+            return redirect()->route('admin.pelayanan-jasa.index')->with('error', 'Permohonan gagal diupdate');
         }
     }
 
@@ -158,7 +172,7 @@ class AdminLayananDataController extends Controller
     {
         try {
             $this->authorize('delete', $layananData);
-            
+
             // Delete associated files from Cloudflare S3
             if ($layananData->surat_permohonan) {
                 Storage::disk('s3')->delete($layananData->surat_permohonan);
@@ -166,13 +180,13 @@ class AdminLayananDataController extends Controller
             if ($layananData->ktp) {
                 Storage::disk('s3')->delete($layananData->ktp);
             }
-            
+
             $layananData->delete();
-            
+
             if (request()->wantsJson()) {
                 return response()->json(['message' => 'Permohonan berhasil dihapus']);
             }
-            return back()->with('success', 'Permohonan berhasil dihapus');
+            return redirect()->route('admin.pelayanan-jasa.index')->with('success', 'Permohonan berhasil dihapus');
         } catch (\Illuminate\Auth\Access\AuthorizationException $error) {
             if (request()->wantsJson()) {
                 return response()->json(['message' => 'Anda tidak memiliki akses untuk menghapus permohonan ini'], 403);
@@ -199,15 +213,18 @@ class AdminLayananDataController extends Controller
             abort(403, 'Anda tidak memiliki akses ke file ini');
         }
 
-        // Security: validate that the file belongs to this record
-        if (!$layananData->surat_permohonan || !str_contains($layananData->surat_permohonan, $fileName)) {
+        $filePath = null;
+
+        if ($layananData->surat_permohonan && str_contains($layananData->surat_permohonan, $fileName)) {
+            $filePath = $layananData->surat_permohonan;
+        } elseif ($layananData->ktp && str_contains($layananData->ktp, $fileName)) {
+            $filePath = $layananData->ktp;
+        }
+
+        if (!$filePath || !Storage::disk('s3')->exists($filePath)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        if (!Storage::disk('s3')->exists($layananData->surat_permohonan)) {
-            abort(404, 'File tidak ditemukan.');
-        }
-
-        return $this->redirectToTemporaryUrl($layananData->surat_permohonan, 60);
+        return $this->redirectToTemporaryUrl($filePath, 60);
     }
 }

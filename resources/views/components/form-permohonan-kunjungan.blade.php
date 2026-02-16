@@ -90,7 +90,6 @@
             <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Rencana Kunjungan <span class="text-red-500">*</span></label>
             <textarea id="rencana_kunjungan" name="rencana_kunjungan" rows="4" required
                 class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition resize-none">{{ old('rencana_kunjungan') }}</textarea>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Min. 20 karakter</p>
             <x-input-error :messages="$errors->get('rencana_kunjungan')" class="mt-2" />
         </div>
 

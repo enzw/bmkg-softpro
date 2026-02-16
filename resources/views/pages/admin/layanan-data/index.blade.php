@@ -39,17 +39,12 @@
 
                                 <div class="flex items-center gap-3">
                                     @php
-                                        $status = $item->status ?? 'Menunggu';
-                                        $statusColor = [
-                                            'Disetujui' => 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300',
-                                            'Diterima' => 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300',
-                                            'Diproses' => 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300',
-                                            'Menunggu' => 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800/50 text-orange-700 dark:text-orange-300',
-                                        ];
-                                        $currentStatusColor = $statusColor[$status] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
+                                        $status = $item->status;
+                                        $statusColor = $status ? $status->color() : 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
+                                        $statusLabel = $status ? $status->label() : 'Menunggu';
                                     @endphp
-                                    <span class="px-4 py-2 rounded-lg border {{ $currentStatusColor }} font-semibold text-sm">
-                                        {{ $status }}
+                                    <span class="px-4 py-2 rounded-lg border {{ $statusColor }} font-semibold text-sm">
+                                        {{ $statusLabel }}
                                     </span>
                                 </div>
                             </div>

@@ -35,7 +35,7 @@ class PermohonanKunjunganController extends Controller
             'nama_lengkap' => 'required|string|max:255',
             'no_whatsapp' => 'required|string|max:20',
             'jumlah_rombongan' => 'required|integer|min:1|max:1000',
-            'rencana_kunjungan' => 'required|string|min:20|max:2000',
+            'rencana_kunjungan' => 'required|string|max:2000',
             'surat_permohonan' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'ktp' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
@@ -121,7 +121,7 @@ class PermohonanKunjunganController extends Controller
             'nama_lengkap' => 'required|string|max:255',
             'no_whatsapp' => 'required|string|max:20',
             'jumlah_rombongan' => 'required|integer|min:1|max:1000',
-            'rencana_kunjungan' => 'required|string|min:20|max:2000',
+            'rencana_kunjungan' => 'required|string|max:2000',
             'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);

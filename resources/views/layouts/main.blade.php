@@ -11,7 +11,8 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,600|antic-didone:400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800,900|antic-didone:400&display=swap"
+        rel="stylesheet" />
 
     {{-- asset --}}
     @vite(['public/css/app.css', 'public/js/app.js'])
@@ -27,16 +28,12 @@
     @include('components.nav')
     @yield('content')
     <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-    <df-messenger
-        intent="WELCOME"
-        chat-title="Megabot"
-        agent-id="c9f258c1-8808-4b8e-b660-8efdca1c1703"
-        chat-icon="images/icon.png"
-        language-code="en">
+    <df-messenger intent="WELCOME" chat-title="Megabot" agent-id="c9f258c1-8808-4b8e-b660-8efdca1c1703"
+        chat-icon="images/icon.png" language-code="en">
         <!-- session-id="SESSION_ID_HERE" -->
     </df-messenger>
     <script>
-        window.addEventListener("dfMessengerLoaded", function() {
+        window.addEventListener("dfMessengerLoaded", function () {
             const messenger = document.querySelector("df-messenger");
             const sessionId = localStorage.getItem("dialogflowSessionId") || generateSessionId();
             messenger.setAttribute("session-id", sessionId);
@@ -56,7 +53,8 @@
     @endauth
 
     {{-- Font Awesome --}}
-    {{-- <script src="https://kit.fontawesome.com/1191ef92be.js" crossorigin="anonymous"></script> --}}
+    {{--
+    <script src="https://kit.fontawesome.com/1191ef92be.js" crossorigin="anonymous"></script> --}}
 </body>
 
 </html>

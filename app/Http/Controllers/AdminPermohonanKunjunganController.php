@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kunjungan;
+use App\Enums\Status;
 use App\Traits\HandlesFileDownload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -59,24 +60,24 @@ class AdminPermohonanKunjunganController extends Controller
             'nama_lengkap' => 'required|string|max:255',
             'no_whatsapp' => 'required|string|max:20',
             'jumlah_rombongan' => 'required|integer|min:1|max:1000',
-            'rencana_kunjungan' => 'required|string|min:20|max:2000',
+            'rencana_kunjungan' => 'required|string|max:2000',
             'surat_permohonan' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'ktp' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
         // Remove file objects from validated to avoid storing temp paths
         unset($validated['surat_permohonan'], $validated['ktp']);
-        
+
         $validated['user_id'] = Auth::id();
-        $validated['status'] = 'pending';
+        $validated['status'] = Status::MENUNGGU;
 
         if ($request->hasFile('surat_permohonan')) {
             try {
                 $file = $request->file('surat_permohonan');
                 $directory = 'permohonan/kunjungan';
-                
+
                 $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                
+
                 // Store the file to S3
                 $result = $file->storeAs($directory, $filename, 's3');
                 if ($result) {
@@ -92,9 +93,9 @@ class AdminPermohonanKunjunganController extends Controller
             try {
                 $file = $request->file('ktp');
                 $directory = 'permohonan/kunjungan';
-                
+
                 $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                
+
                 // Store the file to S3
                 $result = $file->storeAs($directory, $filename, 's3');
                 if ($result) {
@@ -149,10 +150,10 @@ class AdminPermohonanKunjunganController extends Controller
             'nama_lengkap' => 'required|string|max:255',
             'no_whatsapp' => 'required|string|max:20',
             'jumlah_rombongan' => 'required|integer|min:1|max:1000',
-            'rencana_kunjungan' => 'required|string|min:20|max:2000',
+            'rencana_kunjungan' => 'required|string|max:2000',
             'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'status' => 'required|in:pending,approved,rejected,completed',
+            'status' => ['required', new \Illuminate\Validation\Rules\Enum(Status::class)],
         ]);
 
         // Remove file objects from validated to avoid storing temp paths
@@ -198,7 +199,7 @@ class AdminPermohonanKunjunganController extends Controller
     {
         try {
             $this->authorize('delete', $permohonan_kunjungan);
-            
+
             // Delete files if exist
             if ($permohonan_kunjungan->surat_permohonan) {
                 Storage::disk('s3')->delete($permohonan_kunjungan->surat_permohonan);

@@ -16,7 +16,8 @@
                     'Ditolak' => 'bg-rose-50 dark:bg-rose-900/20 border-rose-200 dark:border-rose-800/50 text-rose-700 dark:text-rose-300',
                     'Selesai' => 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300',
                 ];
-                $currentStatusColor = $statusColor[$item->status] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
+                $statusValue = $item->status instanceof \App\Enums\Status ? $item->status->value : (string)$item->status;
+                $currentStatusColor = $statusColor[$statusValue] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
             @endphp
 
             <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition group">
@@ -42,18 +43,22 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <div>
-                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Tanggal Kejadian</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="min-w-0">
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">Tanggal Kejadian</p>
+                        <p class="font-semibold text-gray-900 dark:text-white truncate">{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</p>
                     </div>
-                    <div>
-                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">No WhatsApp</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">{{ $item->no_whatsapp ?? '-' }}</p>
+                    <div class="min-w-0">
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">No WhatsApp</p>
+                        <p class="font-semibold text-gray-900 dark:text-white truncate">{{ $item->no_whatsapp ?? '-' }}</p>
                     </div>
-                    <div>
-                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Lokasi</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">{{ $item->lokasi ?? '-' }}</p>
+                    <div class="min-w-0">
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">Lokasi</p>
+                        <p class="font-semibold text-gray-900 dark:text-white truncate">{{ $item->lokasi ?? '-' }}</p>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">Tarif</p>
+                        <p class="font-semibold text-blue-600 dark:text-blue-400">Rp 185.000</p>
                     </div>
                 </div>
 
@@ -91,60 +96,69 @@
 
                         <!-- Content -->
                         <div class="p-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Nama Lengkap</p>
-                                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->nama_user ?? '-' }}</p>
+                            <div class="space-y-6">
+                                <!-- Company Section -->
+                                <div class="pb-6 border-b border-gray-200 dark:border-gray-700">
+                                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Nama Instansi</p>
+                                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $item->perusahaan }}</p>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">No WhatsApp</p>
-                                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->no_whatsapp }}</p>
+
+                                <!-- Date and Location Section -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div>
+                                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">Tanggal Kejadian</p>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">Lokasi Kejadian</p>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->lokasi }}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Nama Instansi</p>
-                                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->perusahaan }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Lokasi Kejadian</p>
-                                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->lokasi }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Tanggal Kejadian</p>
-                                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Latitude</p>
-                                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->latitude ?? '-' }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Longitude</p>
-                                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->longitude ?? '-' }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Status</p>
-                                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->status }}</p>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Surat Permohonan</p>
-                                    @if($item->surat_permohonan)
-                                        <a href="{{ route('admin.klaim-asuransi.download-file', ['id' => $item->id, 'fileName' => basename($item->surat_permohonan)]) }}"
-                                            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold text-sm transition w-full justify-center">
-                                            <i class="fas fa-file-pdf mr-2"></i>Download Surat Permohonan
-                                        </a>
-                                    @else
-                                        <p class="text-gray-500">-</p>
-                                    @endif
-                                </div>
-                                <div class="md:col-span-2">
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">KTP</p>
-                                    @if($item->ktp)
-                                        <a href="{{ route('admin.klaim-asuransi.download-file', ['id' => $item->id, 'fileName' => basename($item->ktp)]) }}"
-                                            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold text-sm transition w-full justify-center">
-                                            <i class="fas fa-id-card mr-2"></i>Download KTP
-                                        </a>
-                                    @else
-                                        <p class="text-gray-500">-</p>
-                                    @endif
+
+                                <!-- Other Details Section -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Nama Lengkap</p>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->nama_user ?? '-' }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">No WhatsApp</p>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->no_whatsapp }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Latitude</p>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->latitude ?? '-' }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Longitude</p>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->longitude ?? '-' }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Status</p>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->status }}</p>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Surat Permohonan</p>
+                                        @if($item->surat_permohonan)
+                                            <a href="{{ route('admin.klaim-asuransi.download-file', ['id' => $item->id, 'fileName' => basename($item->surat_permohonan)]) }}"
+                                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold text-sm transition w-full justify-center">
+                                                <i class="fas fa-file-pdf mr-2"></i>Download Surat Permohonan
+                                            </a>
+                                        @else
+                                            <p class="text-gray-500">-</p>
+                                        @endif
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">KTP</p>
+                                        @if($item->ktp)
+                                            <a href="{{ route('admin.klaim-asuransi.download-file', ['id' => $item->id, 'fileName' => basename($item->ktp)]) }}"
+                                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold text-sm transition w-full justify-center">
+                                                <i class="fas fa-id-card mr-2"></i>Download KTP
+                                            </a>
+                                        @else
+                                            <p class="text-gray-500">-</p>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>

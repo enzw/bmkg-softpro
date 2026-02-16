@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\Status;
+
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +28,10 @@ class LayananData extends Model
         'status',
         'surat_permohonan',
         'ktp',
+    ];
+
+    protected $casts = [
+        'status' => Status::class,
     ];
 
     public function user()

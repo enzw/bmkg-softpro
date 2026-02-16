@@ -1,40 +1,48 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="space-y-8">
-        <!-- Header -->
-        <div class="mb-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                        Sewa Alat
-                    </h1>
-                    <p class="text-gray-600 dark:text-gray-400">
-                        Kelola semua permohonan sewa alat di sini.
-                    </p>
+    <div class="space-y-6">
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
+            <div>
+                <h1 class="text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tight mb-2">Sewa Alat</h1>
+                <div class="flex items-center gap-2">
+                    <span
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 dark:bg-emerald-900/20 text-green-600 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-widest shadow-sm">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        Update Realtime
+                    </span>
+                    <span
+                        class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">{{ $permohonan->count() }}
+                        Data Ditemukan</span>
                 </div>
-                <a href="{{ route('admin.sewa-alat.create') }}"
-                    class="inline-flex items-center gap-2 px-6 py-3 text-white bg-green-600 rounded-lg hover:bg-green-700 transition font-semibold">
-                    <i class="fas fa-plus"></i>
-                    Permohonan Baru
-                </a>
             </div>
+            <a href="{{ route('admin.sewa-alat.create') }}"
+                class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-500 hover:bg-green-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white rounded-[1.5rem] transition-all duration-300 shadow-lg shadow-green-200 dark:shadow-none font-semibold text-xs uppercase tracking-widest group">
+                <i class="fas fa-plus group-hover:rotate-90 transition-transform duration-300"></i>
+                Permohonan Baru
+            </a>
         </div>
 
-        <!-- Content -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
-            <!-- Header -->
-            <div class="p-8 border-b border-gray-100 dark:border-gray-700">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
-                        <i class="fas fa-list text-white"></i>
+        <!-- Content Card -->
+        <div
+            class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+            <div
+                class="p-8 border-b border-gray-50 dark:border-gray-700 flex items-center justify-between bg-gray-50/30 dark:bg-gray-900/10">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 rounded-2xl bg-green-100 dark:bg-emerald-900/40 flex items-center justify-center text-green-600 dark:text-emerald-400">
+                        <i class="fas fa-list text-lg"></i>
                     </div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Daftar Permohonan</h2>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-tight">Daftar
+                            Permohonan</h2>
+                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Managemen penyewaan
+                            peralatan teknis</p>
+                    </div>
                 </div>
-                <p class="text-sm text-gray-500 dark:text-gray-400 ml-13">{{ $permohonan->count() }} permohonan sewa alat</p>
             </div>
 
-            <!-- Content -->
             <div class="p-8">
                 @include('components.table-sewa-alat-admin', ['permohonan' => $permohonan])
             </div>

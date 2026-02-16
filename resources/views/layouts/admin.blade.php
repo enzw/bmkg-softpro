@@ -12,7 +12,8 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,600|antic-didone:400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800,900|antic-didone:400&display=swap"
+        rel="stylesheet" />
 
     {{-- asset --}}
     @vite(['public/css/app.css', 'public/js/app.js'])
@@ -48,11 +49,12 @@
     </div>
 
     {{-- Font Awesome --}}
-    {{-- <script src="https://kit.fontawesome.com/1191ef92be.js" crossorigin="anonymous"></script> --}}
+    {{--
+    <script src="https://kit.fontawesome.com/1191ef92be.js" crossorigin="anonymous"></script> --}}
 
     {{-- Toastr JS --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    
+
     <script>
         toastr.options = {
             "closeButton": true,

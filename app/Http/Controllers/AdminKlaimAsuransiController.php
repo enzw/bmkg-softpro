@@ -112,11 +112,11 @@ class AdminKlaimAsuransiController extends Controller
     public function edit($id)
     {
         $klaim_asuransi = Asuransi::with('user')->find($id);
-        
+
         if (!$klaim_asuransi) {
             return redirect()->route('admin.klaim-asuransi.index')->with('error', 'Klaim asuransi tidak ditemukan');
         }
-        
+
         $data = [
             'title' => 'Update Klaim Asuransi',
             'permohonan' => $klaim_asuransi,
@@ -138,8 +138,32 @@ class AdminKlaimAsuransiController extends Controller
             'lokasi' => 'required|string',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'status' => 'required|string',
         ]);
+
+        if ($request->hasFile('surat_permohonan')) {
+            if ($klaim_asuransi->surat_permohonan) {
+                Storage::disk('s3')->delete($klaim_asuransi->surat_permohonan);
+            }
+
+            $file = $request->file('surat_permohonan');
+            $file_name = 'klaim-asuransi_user:' . $klaim_asuransi->user_id . '_date:' . Carbon::now() . '.' . $file->getClientOriginalExtension();
+            $path_permohonan = $file->storeAs('permohonan/asuransi', $file_name, 's3');
+            $validated['surat_permohonan'] = $path_permohonan;
+        }
+
+        if ($request->hasFile('ktp')) {
+            if ($klaim_asuransi->ktp) {
+                Storage::disk('s3')->delete($klaim_asuransi->ktp);
+            }
+
+            $file = $request->file('ktp');
+            $file_name = 'ktp_klaim-asuransi_user:' . $klaim_asuransi->user_id . '_date:' . Carbon::now() . '.' . $file->getClientOriginalExtension();
+            $path_ktp = $file->storeAs('permohonan/asuransi', $file_name, 's3');
+            $validated['ktp'] = $path_ktp;
+        }
 
         try {
             $klaim_asuransi->update($validated);
@@ -157,7 +181,7 @@ class AdminKlaimAsuransiController extends Controller
     {
         try {
             $this->authorize('delete', $asuransi);
-            
+
             // Delete associated files from Cloudflare S3
             if ($asuransi->surat_permohonan) {
                 Storage::disk('s3')->delete($asuransi->surat_permohonan);
@@ -165,9 +189,9 @@ class AdminKlaimAsuransiController extends Controller
             if ($asuransi->ktp) {
                 Storage::disk('s3')->delete($asuransi->ktp);
             }
-            
+
             $asuransi->delete();
-            
+
             if (request()->wantsJson()) {
                 return response()->json(['message' => 'Permohonan berhasil dihapus']);
             }
@@ -195,15 +219,18 @@ class AdminKlaimAsuransiController extends Controller
             abort(403, 'Anda tidak memiliki akses ke file ini');
         }
 
-        // Security: validate that the file belongs to this record
-        if (!$asuransi->surat_permohonan || !str_contains($asuransi->surat_permohonan, $fileName)) {
+        $filePath = null;
+
+        if ($asuransi->surat_permohonan && str_contains($asuransi->surat_permohonan, $fileName)) {
+            $filePath = $asuransi->surat_permohonan;
+        } elseif ($asuransi->ktp && str_contains($asuransi->ktp, $fileName)) {
+            $filePath = $asuransi->ktp;
+        }
+
+        if (!$filePath || !Storage::disk('s3')->exists($filePath)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        if (!Storage::disk('s3')->exists($asuransi->surat_permohonan)) {
-            abort(404, 'File tidak ditemukan.');
-        }
-
-        return $this->redirectToTemporaryUrl($asuransi->surat_permohonan, 60);
+        return $this->redirectToTemporaryUrl($filePath, 60);
     }
 }

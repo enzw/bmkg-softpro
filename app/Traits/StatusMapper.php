@@ -11,6 +11,8 @@ trait StatusMapper
      */
     public static function mapSewaAlatStatus($dbStatus)
     {
+        $statusStr = $dbStatus instanceof \BackedEnum ? $dbStatus->value : $dbStatus;
+
         $mapping = [
             'Belum Lunas' => 'Menunggu',
             'Siap Diambil' => 'Diproses',
@@ -18,7 +20,7 @@ trait StatusMapper
             'Dikembalikan' => 'Selesai',
         ];
 
-        return $mapping[$dbStatus] ?? $dbStatus;
+        return $mapping[$statusStr] ?? $statusStr;
     }
 
     /**

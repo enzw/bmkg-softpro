@@ -8,6 +8,7 @@ use App\Traits\HandlesFileDownload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Exception;
 
 class AdminJasaKonsultasiController extends Controller
 {
@@ -129,17 +130,30 @@ class AdminJasaKonsultasiController extends Controller
             'email' => 'required|email',
             'keterangan' => 'nullable',
             'status' => 'nullable',
+            'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
         if ($request->hasFile('surat_permohonan')) {
             if ($jasa_konsultasi->surat_permohonan) {
                 Storage::delete($jasa_konsultasi->surat_permohonan);
             }
-            
+
             $file = $request->file('surat_permohonan');
             $file_name = 'jasa-konsultasi_user:' . $jasa_konsultasi->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
             $path_permohonan = $file->storeAs('permohonan/jasa-konsultasi', $file_name);
             $validated['surat_permohonan'] = $path_permohonan;
+        }
+
+        if ($request->hasFile('ktp')) {
+            if ($jasa_konsultasi->ktp) {
+                Storage::delete($jasa_konsultasi->ktp);
+            }
+
+            $file = $request->file('ktp');
+            $file_name = 'ktp_jasa-konsultasi_user:' . $jasa_konsultasi->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
+            $path_ktp = $file->storeAs('permohonan/jasa-konsultasi', $file_name);
+            $validated['ktp'] = $path_ktp;
         }
 
         try {
@@ -158,7 +172,7 @@ class AdminJasaKonsultasiController extends Controller
     {
         try {
             $this->authorize('delete', $jasaKonsultasi);
-            
+
             // Delete associated files from Cloudflare S3
             if ($jasaKonsultasi->surat_permohonan) {
                 Storage::disk('s3')->delete($jasaKonsultasi->surat_permohonan);
@@ -166,9 +180,9 @@ class AdminJasaKonsultasiController extends Controller
             if ($jasaKonsultasi->ktp) {
                 Storage::disk('s3')->delete($jasaKonsultasi->ktp);
             }
-            
+
             $jasaKonsultasi->delete();
-            
+
             if (request()->wantsJson()) {
                 return response()->json(['message' => 'Permohonan berhasil dihapus']);
             }
@@ -199,15 +213,18 @@ class AdminJasaKonsultasiController extends Controller
             abort(403, 'Anda tidak memiliki akses ke file ini');
         }
 
-        // Security: validate that the file belongs to this record
-        if (!$jasaKonsultasi->surat_permohonan || !str_contains($jasaKonsultasi->surat_permohonan, $fileName)) {
+        $filePath = null;
+
+        if ($jasaKonsultasi->surat_permohonan && str_contains($jasaKonsultasi->surat_permohonan, $fileName)) {
+            $filePath = $jasaKonsultasi->surat_permohonan;
+        } elseif ($jasaKonsultasi->ktp && str_contains($jasaKonsultasi->ktp, $fileName)) {
+            $filePath = $jasaKonsultasi->ktp;
+        }
+
+        if (!$filePath || !Storage::disk('s3')->exists($filePath)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        if (!Storage::disk('s3')->exists($jasaKonsultasi->surat_permohonan)) {
-            abort(404, 'File tidak ditemukan.');
-        }
-
-        return $this->redirectToTemporaryUrl($jasaKonsultasi->surat_permohonan, 60);
+        return $this->redirectToTemporaryUrl($filePath, 60);
     }
 }

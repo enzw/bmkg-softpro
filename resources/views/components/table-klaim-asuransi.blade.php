@@ -17,7 +17,7 @@
                             <th class="p-3 text-left">Aplikasi</th>
                             <th class="p-3 text-left">Instansi</th>
                             <th class="p-3 text-left">Detail</th>
-                            <th class="p-3 text-left">Tanggal</th>
+                            <th class="p-3 text-left">Tarif</th>
                             <th class="p-3 text-left">Status</th>
                             <th class="p-3 text-center">Aksi</th>
                         </tr>
@@ -39,8 +39,8 @@
                                         Lihat Detail
                                     </button>
                                 </td>
-                                <td class="p-3 align-top">
-                                    {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}
+                                <td class="p-3 align-top max-w-[150px]">
+                                    <span class="font-semibold text-gray-900 dark:text-white">Rp 185.000</span>
                                 </td>
                                 <td class="p-3 font-bold align-top dark:text-white">
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full 
@@ -72,8 +72,27 @@
                                         </button>
                                     </div>
 
-                                    <div class="modal-content space-y-4">
+                                    <div class="modal-content space-y-6">
+                                        <!-- Company Section -->
+                                        <div class="pb-4 border-b border-slate-200 dark:border-slate-700">
+                                            <dt class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Nama Instansi</dt>
+                                            <dd class="text-lg font-bold text-slate-900 dark:text-slate-100">{{ $item->perusahaan ?? '-' }}</dd>
+                                        </div>
+
+                                        <!-- Date and Location Section -->
                                         <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <dt class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Tanggal Kejadian</dt>
+                                                <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') : '-' }}</dd>
+                                            </div>
+                                            <div>
+                                                <dt class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Lokasi Kejadian</dt>
+                                                <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->lokasi ?? '-' }}</dd>
+                                            </div>
+                                        </div>
+
+                                        <!-- Other Details Section -->
+                                        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                                             <div>
                                                 <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">Nama Lengkap</dt>
                                                 <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->nama_user ?? '-' }}</dd>
@@ -82,21 +101,6 @@
                                             <div>
                                                 <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">No WhatsApp</dt>
                                                 <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->no_whatsapp ?? '-' }}</dd>
-                                            </div>
-
-                                            <div>
-                                                <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">Nama Instansi</dt>
-                                                <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->perusahaan ?? '-' }}</dd>
-                                            </div>
-
-                                            <div>
-                                                <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">Lokasi Kejadian</dt>
-                                                <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->lokasi ?? '-' }}</dd>
-                                            </div>
-
-                                            <div>
-                                                <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">Tanggal Kejadian</dt>
-                                                <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') : '-' }}</dd>
                                             </div>
 
                                             <div>
@@ -119,7 +123,7 @@
                                                 <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</dd>
                                             </div>
 
-                                            <div>
+                                            <div class="col-span-2">
                                                 <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">Surat Permohonan</dt>
                                                 @if($item->surat_permohonan)
                                                     <dd>
@@ -133,7 +137,7 @@
                                                 @endif
                                             </div>
 
-                                            <div>
+                                            <div class="col-span-2">
                                                 <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">KTP</dt>
                                                 @if($item->ktp)
                                                     <dd>

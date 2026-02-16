@@ -9,6 +9,7 @@ use App\Models\Asuransi;
 use App\Models\LayananData;
 use App\Models\Survey;
 use App\Models\JasaKonsultasi;
+use App\Models\ServiceRating;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -41,6 +42,7 @@ class AdminDownloadAreaController extends Controller
                 'layanan-data' => 'Layanan Data Geofisika',
                 'survey' => 'Layanan Survey',
                 'jasa-konsultasi' => 'Jasa Konsultasi',
+                'rating' => 'Rating & Ulasan Layanan',
             ]
         ];
         return view('pages.admin.download-area.index', $data);
@@ -52,7 +54,7 @@ class AdminDownloadAreaController extends Controller
     public function preview(Request $request)
     {
         $request->validate([
-            'service' => 'required|in:sewa-alat,kunjungan,magang,asuransi,layanan-data,survey,jasa-konsultasi',
+            'service' => 'required|in:sewa-alat,kunjungan,magang,asuransi,layanan-data,survey,jasa-konsultasi,rating',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
@@ -89,7 +91,7 @@ class AdminDownloadAreaController extends Controller
     public function download(Request $request)
     {
         $request->validate([
-            'service' => 'required|in:sewa-alat,kunjungan,magang,asuransi,layanan-data,survey,jasa-konsultasi',
+            'service' => 'required|in:sewa-alat,kunjungan,magang,asuransi,layanan-data,survey,jasa-konsultasi,rating',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
@@ -132,6 +134,7 @@ class AdminDownloadAreaController extends Controller
             'layanan-data' => LayananData::query(),
             'survey' => Survey::query(),
             'jasa-konsultasi' => JasaKonsultasi::query(),
+            'rating' => ServiceRating::query()->with('user'),
             default => collect(),
         };
     }
@@ -149,6 +152,7 @@ class AdminDownloadAreaController extends Controller
             'layanan-data' => 'Layanan Data Geofisika',
             'survey' => 'Layanan Survey',
             'jasa-konsultasi' => 'Jasa Konsultasi',
+            'rating' => 'Rating & Ulasan Layanan',
             default => 'Unknown',
         };
     }
@@ -166,6 +170,7 @@ class AdminDownloadAreaController extends Controller
             'layanan-data' => new \App\Exports\LayananDataExport($data),
             'survey' => new \App\Exports\SurveyExport($data),
             'jasa-konsultasi' => new \App\Exports\JasaKonsultasiExport($data),
+            'rating' => new \App\Exports\RatingExport($data),
         };
     }
 

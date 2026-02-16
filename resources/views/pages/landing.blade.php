@@ -17,7 +17,7 @@
                     <i class="fa-solid fa-angle-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                 </a>
 
-                <h2 class="max-w-5xl text-4xl sm:text-5xl lg:text-7xl font-black leading-tight mb-6">Pelayanan informasi <span class="text-green-300">Geofisika</span> secara luas,
+                <h2 class="max-w-5xl text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight mb-6">Pelayanan informasi <span class="text-green-300">Geofisika</span> secara luas,
                     cepat, tepat, akurat dan mudah dipahami</h2>
                 <p class="text-lg sm:text-xl text-gray-100 max-w-3xl mx-auto opacity-90">Akses informasi geofisika langsung dari BMKG</p>
             </div>

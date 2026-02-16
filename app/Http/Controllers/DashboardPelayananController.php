@@ -204,7 +204,17 @@ class DashboardPelayananController extends Controller
      */
     private function translateStatus($status)
     {
-        return match (strtolower($status)) {
+        // Handle enum objects - extract the value
+        if (is_object($status)) {
+            // For backed enums, access the ->value property directly
+            $status = $status->value ?? (string)$status;
+        }
+        
+        // Ensure $status is a string
+        $status = (string)$status;
+        $statusLower = strtolower($status);
+        
+        return match ($statusLower) {
             'pending' => 'Menunggu',
             'approved', 'diterima', 'disetujui' => 'Disetujui',
             'rejected', 'ditolak' => 'Ditolak',
@@ -214,6 +224,9 @@ class DashboardPelayananController extends Controller
             'alat dibawa' => 'Alat Dibawa',
             'dikembalikan' => 'Dikembalikan',
             'dikirim' => 'Dikirim',
+            'belum lunas' => 'Belum Lunas',
+            'siap diambil' => 'Siap Diambil',
+            'dibawa' => 'Dibawa',
             default => ucfirst($status)
         };
     }

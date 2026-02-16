@@ -38,7 +38,8 @@
                             'rejected' => 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300',
                             'completed' => 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300'
                         ];
-                        $currentStatusColor = $statusColor[$item->status] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
+                        $statusValue = $item->status instanceof \App\Enums\Status ? $item->status->value : (string)$item->status;
+                        $currentStatusColor = $statusColor[$statusValue] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
                     @endphp
                     
                     <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-6 border border-gray-100 dark:border-gray-700 hover:shadow-md hover:border-gray-200 dark:hover:border-gray-600 transition group">
@@ -150,9 +151,17 @@
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Rencana Kunjungan</p>
-                                        <p class="text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg text-sm">{{ $item->rencana_kunjungan }}</p>
+                                    <div class="relative pl-6 border-l-2 border-blue-500/30">
+                                        <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                            Detail Layanan
+                                        </h4>
+                                        <div class="bg-gray-50 dark:bg-gray-900/40 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-700 text-left">
+                                            <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2 text-left">
+                                                Keterangan / Keperluan
+                                            </p>
+                                            <p class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed text-left w-full">{{ $item->rencana_kunjungan }}</p>
+                                        </div>
                                     </div>
 
                                     <div>

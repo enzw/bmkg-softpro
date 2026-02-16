@@ -10,109 +10,125 @@
     @else
         @foreach ($permohonan as $item)
             @php
-                $statusColor = [
-                    'pending' => 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800/50 text-orange-700 dark:text-orange-300',
-                    'approved' => 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300',
-                    'rejected' => 'bg-rose-50 dark:bg-rose-900/20 border-rose-200 dark:border-rose-800/50 text-rose-700 dark:text-rose-300',
-                    'completed' => 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300',
+                $isEnum = $item->status instanceof \App\Enums\Status;
+                $currentStatusColor = $isEnum ? $item->status->color() : 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
+                $statusLabel = $isEnum ? $item->status->label() : ($item->status->value ?? $item->status ?? 'Menunggu');
+                
+                $visitIcon = [
+                    'goes to BMKG' => 'fa-building',
+                    'goes to school' => 'fa-school',
                 ];
-                $currentStatusColor = $statusColor[$item->status] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
-
-                $statusLabel = match ($item->status) {
-                    'pending' => 'Menunggu',
-                    'approved' => 'Disetujui',
-                    'rejected' => 'Ditolak',
-                    'completed' => 'Selesai',
-                    default => ucfirst($item->status)
-                };
+                $currentVisitIcon = $visitIcon[$item->jenis_kunjungan] ?? 'fa-map-pin';
+                
+                $visitColor = [
+                    'goes to BMKG' => 'bg-cyan-100 dark:bg-cyan-900/20 border-cyan-200 dark:border-cyan-800/50 text-cyan-700 dark:text-cyan-300',
+                    'goes to school' => 'bg-violet-100 dark:bg-violet-900/20 border-violet-200 dark:border-violet-800/50 text-violet-700 dark:text-violet-300',
+                ];
+                $currentVisitColor = $visitColor[$item->jenis_kunjungan] ?? 'bg-gray-100 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
             @endphp
 
             <div
-                class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition group">
-                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div class="w-3 h-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600"></div>
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->nama_lengkap }}</h3>
-                            <span
-                                class="text-sm px-3 py-1 rounded-full border bg-cyan-50 dark:bg-cyan-900/20 border-cyan-200 dark:border-cyan-800/50 text-cyan-700 dark:text-cyan-300">
-                                {{ $item->jenis_kunjungan }}
-                            </span>
+                class="bg-white dark:bg-gray-800 rounded-[2rem] p-8 border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:shadow-gray-200/40 dark:hover:shadow-none transition-all duration-300 group mb-4">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
+                    <div class="flex items-center gap-5">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-gray-100 dark:shadow-none">
+                            <i class="fas {{ $currentVisitIcon }} text-xl"></i>
                         </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                            <i class="fas fa-building mr-2"></i>
-                            {{ $item->nama_instansi }}
-                        </p>
+                        <div>
+                            <div class="flex items-center gap-3 mb-1">
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                    {{ $item->nama_lengkap }}
+                                </h3>
+                                <span
+                                    class="px-3 py-1 rounded-full border {{ $currentVisitColor }} text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+                                    <i class="fas {{ $currentVisitIcon }}"></i>{{ $item->jenis_kunjungan }}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-400">
+                                <i class="fas fa-building text-[10px]"></i>
+                                <span
+                                    class="text-[10px] font-semibold uppercase tracking-widest">{{ $item->nama_instansi }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="flex items-center gap-3">
-                        <span class="px-4 py-2 rounded-lg border {{ $currentStatusColor }} font-semibold text-sm">
+                        <span
+                            class="px-5 py-2 rounded-full border {{ $currentStatusColor }} text-[10px] font-bold uppercase tracking-widest shadow-sm">
                             {{ $statusLabel }}
                         </span>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div
+                    class="grid grid-cols-2 lg:grid-cols-3 gap-6 mb-8 p-6 bg-gray-50/50 dark:bg-gray-900/20 rounded-3xl border border-gray-50 dark:border-gray-700/50">
                     <div>
-                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Tanggal</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">
-                            {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}</p>
+                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Tanggal Request</p>
+                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                            {{ \Carbon\Carbon::parse($item->created_at)->format('d F Y') }}
+                        </p>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">No WhatsApp</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">{{ $item->no_whatsapp ?? '-' }}</p>
+                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">No WhatsApp</p>
+                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                            {{ $item->no_whatsapp ?? '-' }}
+                        </p>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Jam</p>
-                        <p class="font-semibold text-gray-900 dark:text-white">
-                            {{ \Carbon\Carbon::parse($item->created_at)->format('H:i') }}</p>
+                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Waktu</p>
+                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                            {{ \Carbon\Carbon::parse($item->created_at)->format('H:i') }} WIB
+                        </p>
                     </div>
                 </div>
 
-                <div class="flex gap-3">
+                <div class="flex flex-wrap gap-3">
                     <button type="button" onclick="openDetailModal('modal-detail-{{ $loop->index }}')"
-                        class="flex-1 px-4 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30 font-semibold text-sm transition">
-                        <i class="fas fa-eye mr-2"></i>Detail
+                        class="px-6 py-3 rounded-2xl bg-gray-50 dark:bg-gray-900/40 text-gray-600 dark:text-gray-400 hover:bg-green-50 dark:hover:bg-emerald-900/20 hover:text-green-600 dark:hover:text-emerald-400 font-bold text-[10px] uppercase tracking-widest transition-all duration-300 border border-transparent hover:border-green-100 dark:hover:border-emerald-800/30">
+                        <i class="fas fa-eye mr-2 text-xs"></i>Detail
                     </button>
                     <a href="{{ route('admin.permohonan-kunjungan.edit', $item->id) }}"
-                        class="flex-1 px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-semibold text-sm transition">
-                        <i class="fas fa-edit mr-2"></i>Edit
+                        class="px-6 py-3 rounded-2xl bg-gray-50 dark:bg-gray-900/40 text-gray-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 font-bold text-[10px] uppercase tracking-widest transition-all duration-300 border border-transparent hover:border-blue-100 dark:hover:border-blue-800/30">
+                        <i class="fas fa-edit mr-2 text-xs"></i>Edit
                     </a>
                     <button type="button" onclick="openModal('modal-delete-{{ $loop->index }}')"
-                        class="flex-1 px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30 font-semibold text-sm transition">
-                        <i class="fas fa-trash mr-2"></i>Hapus
+                        class="px-6 py-3 rounded-2xl bg-gray-50 dark:bg-gray-900/40 text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 font-bold text-[10px] uppercase tracking-widest transition-all duration-300 border border-transparent hover:border-red-100 dark:hover:border-red-800/30">
+                        <i class="fas fa-trash mr-2 text-xs"></i>Hapus
                     </button>
                     <!-- Delete Modal -->
                     <div id="modal-delete-{{ $loop->index }}"
-                        class="hidden fixed inset-0 z-50 overflow-auto bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity duration-300">
+                        class="hidden fixed inset-0 z-50 overflow-auto bg-gray-900/40 backdrop-blur-sm flex items-center justify-center p-4">
                         <div
-                            class="bg-white dark:bg-gray-800 rounded-3xl max-w-sm w-full shadow-2xl transform transition-all duration-300 scale-95 hover:scale-100">
+                            class="bg-white dark:bg-gray-800 rounded-[2.5rem] max-w-sm w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 border border-gray-100 dark:border-gray-700">
                             <!-- Icon -->
                             <div class="flex justify-center pt-8">
                                 <div
-                                    class="w-16 h-16 rounded-full bg-red-50 dark:bg-red-900/30 flex items-center justify-center">
-                                    <i class="fas fa-trash text-2xl text-red-600 dark:text-red-400"></i>
+                                    class="w-16 h-16 rounded-2xl bg-red-100 dark:bg-red-900/40 flex items-center justify-center text-red-600">
+                                    <i class="fas fa-trash-alt text-2xl"></i>
                                 </div>
                             </div>
+
                             <!-- Content -->
                             <div class="px-8 pt-6 pb-8 text-center">
-                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Hapus Permohonan?</h3>
-                                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                                    Permohonan <strong class="text-gray-900 dark:text-white">{{ $item->nama_lengkap }}</strong>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tight mb-2">Hapus
+                                    Data?</h3>
+                                <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest leading-relaxed">
+                                    Permohonan dari <span class="text-gray-900 dark:text-white">{{ $item->nama_lengkap }}</span>
                                     akan dihapus secara permanen.
                                 </p>
                             </div>
-                            <!-- Divider -->
-                            <div class="h-px bg-gray-100 dark:bg-gray-700"></div>
+
                             <!-- Actions -->
-                            <div class="flex gap-3 p-6">
+                            <div
+                                class="flex gap-3 p-6 bg-gray-50/50 dark:bg-gray-900/20 border-t border-gray-50 dark:border-gray-700">
                                 <button type="button" onclick="closeModal('modal-delete-{{ $loop->index }}')"
-                                    class="flex-1 px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition-all duration-200 hover:shadow-md">
+                                    class="flex-1 px-6 py-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 font-bold text-[10px] uppercase tracking-widest transition-all">
                                     Batal
                                 </button>
                                 <button type="button" id="btn-delete-{{ $loop->index }}"
                                     onclick="deleteRecord('{{ $item->id }}', 'modal-delete-{{ $loop->index }}')"
-                                    class="flex-1 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition-all duration-200 hover:shadow-md">
+                                    class="flex-1 px-6 py-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-red-200 dark:shadow-none">
                                     Hapus
                                 </button>
                             </div>
@@ -122,113 +138,158 @@
 
                 <!-- Detail Modal -->
                 <div id="modal-detail-{{ $loop->index }}"
-                    class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto">
+                    class="hidden fixed inset-0 z-50 overflow-auto bg-gray-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-[2.5rem] max-w-2xl w-full shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden animate-in fade-in zoom-in duration-300">
                         <!-- Header -->
-                        <div class="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 p-6">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">Detail Permohonan Kunjungan</h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">ID: #{{ $item->id }}</p>
+                        <div
+                            class="p-8 border-b border-gray-50 dark:border-gray-700 flex items-center justify-between bg-gray-50/30 dark:bg-gray-900/10">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-12 h-12 rounded-2xl bg-cyan-100 dark:bg-cyan-900/40 flex items-center justify-center text-cyan-600">
+                                    <i class="fas fa-bus text-lg"></i>
                                 </div>
-                                <button type="button" onclick="closeDetailModal('modal-detail-{{ $loop->index }}')"
-                                    class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-                                    <i class="fas fa-times text-2xl"></i>
-                                </button>
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-tight">Detail
+                                        Kunjungan</h3>
+                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">ID:
+                                        #{{ substr($item->id, 0, 8) }}</p>
+                                </div>
                             </div>
+                            <button type="button" onclick="closeDetailModal('modal-detail-{{ $loop->index }}')"
+                                class="w-10 h-10 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors shadow-sm border border-gray-100 dark:border-gray-700">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
 
                         <!-- Content -->
-                        <div class="p-6 space-y-6">
-                            <!-- Jenis Kunjungan -->
-                            <div>
-                                <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                                    <i class="fas fa-building text-cyan-600 dark:text-cyan-400"></i>
+                        <div class="p-8 space-y-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                            <!-- Basic Information -->
+                            <div class="relative pl-6 border-l-2 border-cyan-500/30">
+                                <h4
+                                    class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
                                     Informasi Kunjungan
                                 </h4>
-                                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600 dark:text-gray-400">Jenis Kunjungan:</span>
-                                        <span
-                                            class="font-semibold text-gray-900 dark:text-white">{{ $item->jenis_kunjungan }}</span>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Jenis
+                                            Kunjungan</p>
+                                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                            {{ $item->jenis_kunjungan }}
+                                        </p>
                                     </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600 dark:text-gray-400">Instansi:</span>
-                                        <span
-                                            class="font-semibold text-gray-900 dark:text-white">{{ $item->nama_instansi }}</span>
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Nama
+                                            Instansi</p>
+                                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                            {{ $item->nama_instansi }}
+                                        </p>
                                     </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600 dark:text-gray-400">Jumlah Rombongan:</span>
-                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $item->jumlah_rombongan }}
-                                            orang</span>
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Jumlah
+                                            Rombongan</p>
+                                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                            {{ $item->jumlah_rombongan }} Orang
+                                        </p>
+                                    </div>
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Status
+                                        </p>
+                                        <span
+                                            class="inline-block mt-1 px-3 py-1 rounded-full border {{ $currentStatusColor }} text-[10px] font-bold uppercase tracking-widest">
+                                            {{ $statusLabel }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Contact Information -->
-                            <div>
-                                <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                                    <i class="fas fa-user text-blue-600 dark:text-blue-400"></i>
-                                    Informasi Kontak
+                            <div class="relative pl-6 border-l-2 border-blue-500/30">
+                                <h4
+                                    class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                    Informasi Kontak (PJ)
                                 </h4>
-                                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600 dark:text-gray-400">Nama Lengkap:</span>
-                                        <span
-                                            class="font-semibold text-gray-900 dark:text-white">{{ $item->nama_lengkap }}</span>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Nama
+                                            Lengkap</p>
+                                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                            {{ $item->nama_lengkap }}
+                                        </p>
                                     </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600 dark:text-gray-400">No WhatsApp:</span>
-                                        <span
-                                            class="font-semibold text-gray-900 dark:text-white">{{ $item->no_whatsapp }}</span>
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">No
+                                            WhatsApp</p>
+                                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                            {{ $item->no_whatsapp }}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Visit Plan -->
-                            <div>
-                                <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                                    <i class="fas fa-calendar text-amber-600 dark:text-amber-400"></i>
-                                    Rencana Kunjungan
+                            <div class="relative pl-6 border-l-2 border-blue-500/30">
+                                <h4
+                                    class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                    Detail Layanan
                                 </h4>
-                                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                                    <p class="text-gray-900 dark:text-white text-sm whitespace-pre-wrap">
-                                        {{ $item->rencana_kunjungan }}</p>
+                                <div
+                                    class="bg-gray-50 dark:bg-gray-900/40 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-700 text-left">
+                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2 text-left">
+                                        Keterangan / Keperluan
+                                    </p>
+                                    <p class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed text-left w-full">{{ $item->rencana_kunjungan }}</p>
                                 </div>
                             </div>
 
-                            <!-- Status -->
-                            <div>
-                                <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                                    <i class="fas fa-info-circle text-purple-600 dark:text-purple-400"></i>
-                                    Status
-                                </h4>
-                                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                                    <span
-                                        class="inline-block px-3 py-1 rounded-full text-sm font-semibold border {{ $currentStatusColor }}">
-                                        {{ $statusLabel }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Document -->
+                            <!-- Documents -->
                             @if($item->surat_permohonan || $item->ktp)
-                                <div>
-                                    <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                                        <i class="fas fa-file text-red-600 dark:text-red-400"></i>
-                                        Dokumen
+                                <div class="relative pl-6 border-l-2 border-red-500/30">
+                                    <h4
+                                        class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                        Berkas Pendukung
                                     </h4>
-                                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         @if($item->surat_permohonan)
                                             <a href="{{ route('admin.permohonan-kunjungan.download-file', ['id' => $item->id, 'fileName' => basename($item->surat_permohonan)]) }}"
-                                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold text-sm transition w-full justify-center">
-                                                <i class="fas fa-file-pdf mr-2"></i>Download Surat Permohonan
+                                                class="flex items-center gap-3 p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-green-50 dark:hover:bg-emerald-900/20 transition-all duration-300 group/link">
+                                                <div
+                                                    class="w-10 h-10 rounded-xl bg-green-100 dark:bg-emerald-900/40 flex items-center justify-center text-green-600">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </div>
+                                                <div class="text-left">
+                                                    <p
+                                                        class="text-[10px] font-bold text-gray-900 dark:text-white uppercase tracking-tight mb-0.5">
+                                                        Surat Permohonan</p>
+                                                    <p class="text-[8px] text-gray-400 font-semibold uppercase tracking-widest">Download
+                                                        PDF</p>
+                                                </div>
                                             </a>
                                         @endif
                                         @if($item->ktp)
                                             <a href="{{ route('admin.permohonan-kunjungan.download-file', ['id' => $item->id, 'fileName' => basename($item->ktp)]) }}"
-                                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold text-sm transition w-full justify-center">
-                                                <i class="fas fa-id-card mr-2"></i>Download KTP/Identitas
+                                                class="flex items-center gap-3 p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 group/link">
+                                                <div
+                                                    class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-blue-600">
+                                                    <i class="fas fa-id-card"></i>
+                                                </div>
+                                                <div class="text-left">
+                                                    <p
+                                                        class="text-[10px] font-bold text-gray-900 dark:text-white uppercase tracking-tight mb-0.5">
+                                                        KTP / Identitas</p>
+                                                    <p class="text-[8px] text-gray-400 font-semibold uppercase tracking-widest">Download
+                                                        File</p>
+                                                </div>
                                             </a>
                                         @endif
                                     </div>
@@ -258,14 +319,14 @@
 
                         <!-- Footer -->
                         <div
-                            class="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 p-6 flex gap-3">
+                            class="p-8 bg-gray-50/50 dark:bg-gray-900/20 border-t border-gray-50 dark:border-gray-700 flex flex-wrap gap-3">
                             <button type="button" onclick="closeDetailModal('modal-detail-{{ $loop->index }}')"
-                                class="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
+                                class="flex-1 px-8 py-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 rounded-2xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm">
                                 Tutup
                             </button>
                             <a href="{{ route('admin.permohonan-kunjungan.edit', $item->id) }}"
-                                class="flex-1 px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white font-semibold transition">
-                                <i class="fas fa-edit mr-2"></i>Edit Permohonan
+                                class="flex-1 px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-green-200 dark:shadow-none text-center">
+                                Edit Data
                             </a>
                         </div>
                     </div>
@@ -298,7 +359,7 @@
         // Get the button element based on modal ID
         const buttonId = modalId.replace('modal-delete-', 'btn-delete-');
         const deleteBtn = document.getElementById(buttonId);
-        
+
         let originalText = 'Hapus';
         if (deleteBtn) {
             originalText = deleteBtn.textContent;

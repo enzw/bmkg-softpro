@@ -107,6 +107,9 @@ class SewaAlatController extends Controller
             })
             ->first();
 
+        // Set default status for new rental request
+        $validated['status'] = \App\Enums\SewaStatus::BELUM_LUNAS;
+
         try {
             $sewaAlat = SewaAlat::create($validated);
 

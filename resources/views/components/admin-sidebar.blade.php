@@ -1,12 +1,12 @@
 <aside class="sticky top-20 h-max">
     <!-- Sidebar Container -->
     <div
-        class="bg-white dark:bg-gray-800/50 rounded-2xl shadow-sm dark:shadow-lg border border-gray-100 dark:border-gray-700/50 overflow-hidden backdrop-blur-sm">
+        class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
 
         <!-- Header -->
         <div
-            class="px-6 py-5 border-b border-gray-100 dark:border-gray-700/50 bg-gradient-to-r from-green-50 to-transparent dark:from-green-900/10 dark:to-transparent">
-            <h2 class="text-sm font-semibold tracking-wide text-gray-700 dark:text-gray-200 uppercase">Menu Admin</h2>
+            class="px-6 py-5 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-green-50 to-transparent dark:from-green-900/10 dark:to-transparent">
+            <h2 class="text-xs font-bold tracking-widest text-gray-600 dark:text-gray-300 uppercase">Menu Admin</h2>
         </div>
 
         <!-- Menu Items -->
@@ -72,21 +72,25 @@
             </a>
         </nav>
 
-        <!-- Footer Stats -->
+        <!-- Footer Actions -->
         <div
-            class="px-4 py-4 border-t border-gray-100 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-900/30 space-y-3">
-            <div class="flex items-center justify-between">
-                <span class="text-xs text-gray-500 dark:text-gray-400">Status</span>
-                <span
-                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-medium">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    Online
-                </span>
-            </div>
-            <div class="text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-200 dark:border-gray-700/30">
-                <p class="font-medium text-gray-700 dark:text-gray-300">{{ Auth::user()->name }}</p>
-                <p class="text-gray-500 dark:text-gray-500 mt-0.5">{{ Auth::user()->role ?? 'Administrator' }}</p>
-            </div>
+            class="px-6 py-5 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/20 space-y-3">
+            <!-- Profile Button -->
+            <a href="{{ route('profile.edit') }}" 
+                class="w-full flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 text-blue-600 dark:text-blue-400 font-semibold text-sm transition-all duration-200 hover:bg-blue-100 dark:hover:bg-blue-900/30 group">
+                <i class="fa-solid fa-user w-4 h-4 transition-transform group-hover:scale-110"></i>
+                <span>Profil</span>
+            </a>
+
+            <!-- Logout Button -->
+            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                @csrf
+                <button type="submit"
+                    class="w-full flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 text-red-600 dark:text-red-400 font-semibold text-sm transition-all duration-200 hover:bg-red-100 dark:hover:bg-red-900/30 group">
+                    <i class="fa-solid fa-sign-out-alt w-4 h-4 transition-transform group-hover:scale-110"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
         </div>
     </div>
 </aside>

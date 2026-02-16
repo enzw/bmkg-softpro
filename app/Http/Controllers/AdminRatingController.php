@@ -32,12 +32,19 @@ class AdminRatingController extends Controller
             }
         }
 
+        // Calculate NET PROMOTER Score (NPS)
+        // Promoters: rating 4-5, Detractors: rating 1-2
+        $promoters = ($distribution[5] ?? 0) + ($distribution[4] ?? 0);
+        $detractors = ($distribution[1] ?? 0) + ($distribution[2] ?? 0);
+        $netPromoterScore = $totalRatings > 0 ? round((($promoters - $detractors) / $totalRatings) * 100) : 0;
+
         return view('pages.admin.ratings.index', [
             'title' => 'Rating',
             'ratings' => $ratings,
             'averageRating' => round($averageRating, 1),
             'totalRatings' => $totalRatings,
             'distribution' => $distribution,
+            'netPromoterScore' => $netPromoterScore,
         ]);
     }
 

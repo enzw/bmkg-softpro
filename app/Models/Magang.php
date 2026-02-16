@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\Status;
+
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +33,12 @@ class Magang extends Model
         'surat_permohonan',
         'surat_ijin_magang',
         'kartu_mahasiswa',
+    ];
+
+    protected $casts = [
+        'tanggal_mulai' => 'date',
+        'tanggal_selesai' => 'date',
+        'status' => Status::class,
     ];
 
     public function user()

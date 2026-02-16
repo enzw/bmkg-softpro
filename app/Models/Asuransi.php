@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\Status;
+
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +31,11 @@ class Asuransi extends Model
         'status',
         'surat_permohonan',
         'ktp',
+    ];
+
+    protected $casts = [
+        'tanggal' => 'date',
+        'status' => Status::class,
     ];
 
     public function user()

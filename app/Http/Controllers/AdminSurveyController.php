@@ -8,6 +8,7 @@ use App\Traits\HandlesFileDownload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Exception;
 
 class AdminSurveyController extends Controller
 {
@@ -129,17 +130,30 @@ class AdminSurveyController extends Controller
             'email' => 'required|email',
             'keterangan' => 'nullable',
             'status' => 'nullable',
+            'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
         if ($request->hasFile('surat_permohonan')) {
             if ($survey->surat_permohonan) {
                 Storage::delete($survey->surat_permohonan);
             }
-            
+
             $file = $request->file('surat_permohonan');
             $file_name = 'survey_user:' . $survey->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
             $path_permohonan = $file->storeAs('permohonan/survey', $file_name);
             $validated['surat_permohonan'] = $path_permohonan;
+        }
+
+        if ($request->hasFile('ktp')) {
+            if ($survey->ktp) {
+                Storage::delete($survey->ktp);
+            }
+
+            $file = $request->file('ktp');
+            $file_name = 'ktp_survey_user:' . $survey->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
+            $path_ktp = $file->storeAs('permohonan/survey', $file_name);
+            $validated['ktp'] = $path_ktp;
         }
 
         try {
@@ -158,7 +172,7 @@ class AdminSurveyController extends Controller
     {
         try {
             $this->authorize('delete', $survey);
-            
+
             // Delete associated files from Cloudflare S3
             if ($survey->surat_permohonan) {
                 Storage::disk('s3')->delete($survey->surat_permohonan);
@@ -166,9 +180,9 @@ class AdminSurveyController extends Controller
             if ($survey->ktp) {
                 Storage::disk('s3')->delete($survey->ktp);
             }
-            
+
             $survey->delete();
-            
+
             if (request()->wantsJson()) {
                 return response()->json(['message' => 'Permohonan berhasil dihapus']);
             }
@@ -199,15 +213,18 @@ class AdminSurveyController extends Controller
             abort(403, 'Anda tidak memiliki akses ke file ini');
         }
 
-        // Security: validate that the file belongs to this record
-        if (!$survey->surat_permohonan || !str_contains($survey->surat_permohonan, $fileName)) {
+        $filePath = null;
+
+        if ($survey->surat_permohonan && str_contains($survey->surat_permohonan, $fileName)) {
+            $filePath = $survey->surat_permohonan;
+        } elseif ($survey->ktp && str_contains($survey->ktp, $fileName)) {
+            $filePath = $survey->ktp;
+        }
+
+        if (!$filePath || !Storage::disk('s3')->exists($filePath)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        if (!Storage::disk('s3')->exists($survey->surat_permohonan)) {
-            abort(404, 'File tidak ditemukan.');
-        }
-
-        return $this->redirectToTemporaryUrl($survey->surat_permohonan, 60);
+        return $this->redirectToTemporaryUrl($filePath, 60);
     }
 }

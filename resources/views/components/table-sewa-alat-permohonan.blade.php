@@ -37,7 +37,9 @@
                             'Selesai' => 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300',
                             'Belum Lunas' => 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800/50 text-orange-700 dark:text-orange-300'
                         ];
-                        $currentStatusColor = $statusColor[$item->status] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
+                        // Convert enum to string value for array access
+                        $statusValue = $item->status instanceof \App\Enums\SewaStatus ? $item->status->value : (string)$item->status;
+                        $currentStatusColor = $statusColor[$statusValue] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
                     @endphp
                     
                     <div class="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-6 border border-gray-100 dark:border-gray-700 hover:shadow-md hover:border-gray-200 dark:hover:border-gray-600 transition group">
@@ -159,9 +161,17 @@
                                     </div>
 
                                     @if($item->keterangan)
-                                        <div>
-                                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Keterangan</p>
-                                            <p class="text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg text-sm">{{ e($item->keterangan) }}</p>
+                                        <div class="relative pl-6 border-l-2 border-blue-500/30">
+                                            <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                                Detail Layanan
+                                            </h4>
+                                            <div class="bg-gray-50 dark:bg-gray-900/40 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-700 text-left">
+                                                <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2 text-left">
+                                                    Keterangan / Keperluan
+                                                </p>
+                                                <p class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed selection:bg-transparent text-left w-full">{{ $item->keterangan }}</p>
+                                            </div>
                                         </div>
                                     @endif
 

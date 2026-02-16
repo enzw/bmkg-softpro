@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Alat;
 use App\Models\SewaAlat;
+use App\Enums\SewaStatus;
 use Carbon\Carbon;
 use App\Traits\HandlesFileDownload;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Exception;
 
 class AdminSewaAlatController extends Controller
 {
@@ -103,6 +104,7 @@ class AdminSewaAlatController extends Controller
         }
 
         $validated['user_id'] = Auth::id();
+        $validated['status'] = SewaStatus::BELUM_LUNAS;
 
         try {
             SewaAlat::create($validated);
@@ -153,6 +155,7 @@ class AdminSewaAlatController extends Controller
             'sewa_mulai' => 'required|date',
             'sewa_berakhir' => 'required|date|after_or_equal:sewa_mulai',
             'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
+            'ktp' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
             'keterangan' => 'nullable',
         ]);
 
@@ -181,6 +184,30 @@ class AdminSewaAlatController extends Controller
                 } catch (Exception $fileError) {
                     \Log::error('File upload error: ' . $fileError->getMessage());
                     return redirect()->route('admin.sewa-alat.edit', $sewa_alat->id)->with('error', 'Gagal upload file: ' . $fileError->getMessage());
+                }
+            }
+
+            if ($request->hasFile('ktp')) {
+                try {
+                    // Hapus file lama kalau ada
+                    if ($sewa_alat->ktp && Storage::disk('s3')->exists($sewa_alat->ktp)) {
+                        Storage::disk('s3')->delete($sewa_alat->ktp);
+                    }
+
+                    // Simpan file baru
+                    $directory = 'permohonan/sewa-alat';
+
+                    $file = $request->file('ktp');
+                    $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                    $path = $file->storeAs($directory, $fileName, 's3');
+
+                    if ($path) {
+                        $validated['ktp'] = $path;
+                        \Log::info('KTP uploaded successfully: ' . $path);
+                    }
+                } catch (Exception $fileError) {
+                    \Log::error('KTP upload error: ' . $fileError->getMessage());
+                    return redirect()->route('admin.sewa-alat.edit', $sewa_alat->id)->with('error', 'Gagal upload KTP: ' . $fileError->getMessage());
                 }
             }
 
