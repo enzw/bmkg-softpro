@@ -12,9 +12,9 @@
         <ul class="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center">
 
             <li>
-                <a href="/tentang-kami"
-                    class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('tentang-kami*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
-                    Tentang
+                <a href="/profil"
+                    class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('profil*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
+                    Profil
                 </a>
             </li>
 
@@ -101,7 +101,7 @@
     <!-- Mobile Menu -->
     <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-gray-900 w-full px-4 pb-6">
         <ul class="flex flex-col gap-3 mt-4">
-            <li><a href="/tentang-kami" class="px-5 py-3 rounded-full dark:text-white">Tentang</a></li>
+            <li><a href="/profil" class="px-5 py-3 rounded-full dark:text-white">Profil</a></li>
             <li><a href="/#layanan"
                     class="px-5 py-3 rounded-full dark:text-white">Layanan</a></li>
             

@@ -38,6 +38,14 @@ class AdminRatingController extends Controller
         $detractors = ($distribution[1] ?? 0) + ($distribution[2] ?? 0);
         $netPromoterScore = $totalRatings > 0 ? round((($promoters - $detractors) / $totalRatings) * 100) : 0;
 
+        // Calculate monthly target progress
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+        $daysInMonth = $endOfMonth->day;
+        $currentDay = Carbon::now()->day;
+        $expectedRatings = round($daysInMonth / $currentDay) * $totalRatings;
+        $monthlyTargetProgress = min(round(($totalRatings / max($expectedRatings, 1)) * 100), 100);
+
         return view('pages.admin.ratings.index', [
             'title' => 'Rating',
             'ratings' => $ratings,
@@ -45,6 +53,7 @@ class AdminRatingController extends Controller
             'totalRatings' => $totalRatings,
             'distribution' => $distribution,
             'netPromoterScore' => $netPromoterScore,
+            'monthlyTargetProgress' => $monthlyTargetProgress,
         ]);
     }
 

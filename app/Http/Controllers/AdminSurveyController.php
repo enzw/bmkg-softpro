@@ -89,10 +89,10 @@ class AdminSurveyController extends Controller
 
         try {
             Survey::create($validated);
-            return redirect()->route('admin.survey.index')->with('success', 'Permohonan berhasil dibuat');
+            return redirect()->route('admin.pelayanan-jasa.index')->with('success', 'Permohonan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
-            return redirect()->route('admin.survey.create')->with('error', 'Permohonan gagal dibuat');
+            return redirect()->route('admin.pelayanan-jasa.index')->with('error', 'Permohonan gagal dibuat');
         }
     }
 
@@ -158,10 +158,10 @@ class AdminSurveyController extends Controller
 
         try {
             $survey->update($validated);
-            return redirect()->route('admin.survey.index')->with('success', 'Permohonan berhasil diupdate');
+            return redirect()->route('admin.pelayanan-jasa.index')->with('success', 'Permohonan berhasil diupdate');
         } catch (Exception $error) {
             report($error->getMessage());
-            return redirect()->route('admin.survey.index')->with('error', 'Permohonan gagal diupdate');
+            return redirect()->route('admin.pelayanan-jasa.index')->with('error', 'Permohonan gagal diupdate');
         }
     }
 

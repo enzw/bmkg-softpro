@@ -153,8 +153,8 @@
 
         <!-- Sidebar Column (Right) -->
         <div class="lg:w-[380px] space-y-8">
-            <div class="bg-white dark:bg-gray-800 h-full p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col">
-                <div class="flex items-center justify-between mb-8">
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col">
+                <div class="flex items-center justify-between mb-6">
                     <div>
                         <h2 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-tight">Permohonan Baru</h2>
                         <span class="text-[10px] text-gray-400 font-semibold tracking-widest uppercase">10 Terbaru</span>
@@ -164,7 +164,7 @@
                     </button>
                 </div>
 
-                <div class="flex-1 space-y-6 overflow-y-auto max-h-[850px] pr-2 custom-scrollbar">
+                <div class="space-y-4 overflow-y-auto max-h-[600px] pr-2 custom-scrollbar">
                     @php
                         $allRequests = collect();
                         foreach (['sewa_alat' => 'Sewa Alat', 'magang' => 'Magang', 'kunjungan' => 'Kunjungan', 'jasa_konsultasi' => 'Konsultasi', 'asuransi' => 'Asuransi', 'survey' => 'Survey', 'layanan_data' => 'Layanan Data'] as $key => $name) {
@@ -213,19 +213,25 @@
                     @endphp
 
                     @forelse($recentRequests as $request)
+                        @php
+                            $serviceIconConfig = [
+                                'sewa_alat' => ['icon' => 'fa-tools', 'bg' => 'bg-green-100 dark:bg-emerald-900/40', 'text' => 'text-green-600 dark:text-emerald-400'],
+                                'magang' => ['icon' => 'fa-graduation-cap', 'bg' => 'bg-blue-100 dark:bg-blue-900/40', 'text' => 'text-blue-600 dark:text-blue-400'],
+                                'kunjungan' => ['icon' => 'fa-building-user', 'bg' => 'bg-amber-100 dark:bg-amber-900/40', 'text' => 'text-amber-600 dark:text-amber-400'],
+                                'jasa_konsultasi' => ['icon' => 'fa-comments', 'bg' => 'bg-purple-100 dark:bg-purple-900/40', 'text' => 'text-purple-600 dark:text-purple-400'],
+                                'asuransi' => ['icon' => 'fa-file-invoice-dollar', 'bg' => 'bg-orange-100 dark:bg-orange-900/40', 'text' => 'text-orange-600 dark:text-orange-400'],
+                                'survey' => ['icon' => 'fa-compass', 'bg' => 'bg-red-100 dark:bg-red-900/40', 'text' => 'text-red-600 dark:text-red-400'],
+                                'layanan_data' => ['icon' => 'fa-database', 'bg' => 'bg-cyan-100 dark:bg-cyan-900/40', 'text' => 'text-cyan-600 dark:text-cyan-400'],
+                            ];
+                            $serviceConfig = $serviceIconConfig[$request['type']] ?? $serviceIconConfig['sewa_alat'];
+                        @endphp
                         <div onclick="openDetailModal('modal-detail-recent-{{ $loop->index }}')" class="group relative flex gap-4 p-4 rounded-3xl hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-all duration-300 border border-transparent hover:border-gray-100 dark:hover:border-gray-700 cursor-pointer">
                             <!-- Time Indicator Line -->
                             <div class="absolute left-[-1rem] top-8 bottom-[-1.5rem] w-px bg-gray-100 dark:bg-gray-700 group-last:hidden"></div>
 
-                            <!-- User Initials Avatar -->
-                             <div @class([
-                                'flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner font-bold text-lg transition-colors',
-                                'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400' => $request['status'] === 'menunggu',
-                                'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' => $request['status'] === 'diproses',
-                                'bg-green-50 text-green-600 dark:bg-emerald-900/30 dark:text-emerald-400' => $request['status'] === 'selesai',
-                                'bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400' => $request['status'] === 'ditolak',
-                            ])>
-                                {{ substr($request['user'], 0, 1) }}
+                            <!-- Service Type Icon Avatar -->
+                             <div class="flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner {{ $serviceConfig['bg'] }} {{ $serviceConfig['text'] }} group-hover:scale-110 transition-transform">
+                                <i class="fa-solid {{ $serviceConfig['icon'] }} text-lg"></i>
                             </div>
 
                             <div class="flex-1 min-w-0">

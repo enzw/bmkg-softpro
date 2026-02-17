@@ -89,10 +89,10 @@ class AdminJasaKonsultasiController extends Controller
 
         try {
             JasaKonsultasi::create($validated);
-            return redirect()->route('admin.jasa-konsultasi.index')->with('success', 'Permohonan berhasil dibuat');
+            return redirect()->route('admin.pelayanan-jasa.index')->with('success', 'Permohonan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
-            return redirect()->route('admin.jasa-konsultasi.create')->with('error', 'Permohonan gagal dibuat');
+            return redirect()->route('admin.pelayanan-jasa.index')->with('error', 'Permohonan gagal dibuat');
         }
     }
 
@@ -158,10 +158,10 @@ class AdminJasaKonsultasiController extends Controller
 
         try {
             $jasa_konsultasi->update($validated);
-            return redirect()->route('admin.jasa-konsultasi.index')->with('success', 'Permohonan berhasil diupdate');
+            return redirect()->route('admin.pelayanan-jasa.index')->with('success', 'Permohonan berhasil diupdate');
         } catch (Exception $error) {
             report($error->getMessage());
-            return redirect()->route('admin.jasa-konsultasi.index')->with('error', 'Permohonan gagal diupdate');
+            return redirect()->route('admin.pelayanan-jasa.index')->with('error', 'Permohonan gagal diupdate');
         }
     }
 

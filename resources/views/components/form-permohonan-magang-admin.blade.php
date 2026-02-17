@@ -223,7 +223,7 @@
                         <div>
                             <label for="surat_permohonan"
                                 class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                                Surat Permohonan (PDF)
+                                Surat Permohonan (Image/PDF)
                             </label>
                             <div class="relative">
                                 <input id="surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
@@ -355,7 +355,7 @@
                         <div>
                             <label for="surat_permohonan_asuransi"
                                 class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                                Surat Permohonan (PDF)
+                                Surat Permohonan (Image/PDF)
                             </label>
                             <div class="relative">
                                 <input id="surat_permohonan_asuransi" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
@@ -468,7 +468,7 @@
                             <div>
                                 <label for="surat_permohonan_common"
                                     class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                                    Surat Permohonan (PDF)
+                                    Surat Permohonan (Image/PDF)
                                 </label>
                                 <div class="relative">
                                     <input id="surat_permohonan_common" type="file" name="surat_permohonan"

@@ -58,10 +58,9 @@
                         <span class="text-xs text-gray-400">Ulasan</span>
                     </div>
                     <div class="w-full h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                        <div class="h-full bg-blue-500 rounded-full" style="width: 75%"></div>
-                        <!-- Mock target comparison -->
+                        <div class="h-full bg-blue-500 rounded-full" style="width: {{ $monthlyTargetProgress }}%"></div>
                     </div>
-                    <p class="mt-3 text-[10px] text-gray-400 font-semibold uppercase tracking-tighter">75% dari target bulan
+                    <p class="mt-3 text-[10px] text-gray-400 font-semibold uppercase tracking-tighter">{{ $monthlyTargetProgress }}% dari target bulan
                         ini
                     </p>
                 </div>
@@ -147,9 +146,11 @@
                 class="bg-white dark:bg-gray-800 h-full p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col">
                 <div class="flex items-center justify-between mb-8">
                     <h2 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-tight">Review Terkini</h2>
-                    <a href="#"
-                        class="text-[10px] font-bold text-green-600 dark:text-emerald-400 uppercase hover:underline">Lihat
-                        Semua</a>
+                    <a href="{{ route('admin.download-area.index') }}"
+                        class="inline-flex items-center gap-2 text-[10px] font-bold bg-green-50 dark:bg-emerald-900/20 text-green-600 dark:text-emerald-400 px-3 py-1.5 rounded-lg border border-green-100 dark:border-emerald-800 transition-all hover:scale-105 active:scale-95 uppercase">
+                        <i class="fas fa-download text-xs"></i>
+                        Download
+                    </a>
                 </div>
 
                 <div class="flex-1 space-y-6 overflow-y-auto max-h-[800px] pr-2 custom-scrollbar">

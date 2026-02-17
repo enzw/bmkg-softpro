@@ -26,6 +26,15 @@
                     'Layanan Survey' => 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800/50 text-purple-700 dark:text-purple-300',
                     'Layanan Konsultasi' => 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800/50 text-indigo-700 dark:text-indigo-300',
                 ];
+                
+                $serviceIcons = [
+                    'Magang' => 'fa-graduation-cap',
+                    'Layanan Klaim Asuransi' => 'fa-file-invoice-dollar',
+                    'Layanan Data' => 'fa-database',
+                    'Layanan Peta Sebaran' => 'fa-map',
+                    'Layanan Survey' => 'fa-compass',
+                    'Layanan Konsultasi' => 'fa-comments',
+                ];
 
                 $isEnum = $item->status instanceof \App\Enums\Status;
                 $currentStatusColor = $isEnum ? $item->status->color() : 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
@@ -33,6 +42,7 @@
 
                 $currentServiceColor = $serviceBgColors[$item->jenis_layanan] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
                 $gradientColor = $serviceColors[$item->jenis_layanan] ?? 'from-gray-500 to-gray-600';
+                $serviceIcon = $serviceIcons[$item->jenis_layanan] ?? 'fa-briefcase';
             @endphp
 
             <div
@@ -41,7 +51,7 @@
                     <div class="flex items-center gap-5">
                         <div
                             class="w-14 h-14 rounded-2xl bg-gradient-to-br {{ $gradientColor }} flex items-center justify-center text-white shadow-lg shadow-gray-100 dark:shadow-none">
-                            <i class="fas fa-users-viewfinder text-xl"></i>
+                            <i class="fas {{ $serviceIcon }} text-xl"></i>
                         </div>
                         <div>
                             <div class="flex items-center gap-3 mb-1">
@@ -203,15 +213,6 @@
                                     </div>
                                     <div
                                         class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
-                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Email
-                                        </p>
-                                        <p
-                                            class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight lowercase">
-                                            {{ $item->email ?? '-' }}
-                                        </p>
-                                    </div>
-                                    <div
-                                        class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
                                         <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">No
                                             WhatsApp</p>
                                         <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
@@ -315,33 +316,33 @@
                                     </h4>
                                     <div class="space-y-4">
                                         <div
-                                            class="bg-gray-50 dark:bg-gray-900/40 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-700">
+                                            class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
                                             <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
                                                 Perusahaan Asuransi</p>
                                             <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
                                                 {{ $item->perusahaan ?? '-' }}
                                             </p>
-                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                <div
-                                                    class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
-                                                    <p
-                                                        class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
-                                                        Tanggal Kejadian</p>
-                                                    <p
-                                                        class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
-                                                        {{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d F Y') : '-' }}
-                                                    </p>
-                                                </div>
-                                                <div
-                                                    class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
-                                                    <p
-                                                        class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
-                                                        Lokasi Kejadian</p>
-                                                    <p
-                                                        class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
-                                                        {{ $item->lokasi ?? '-' }}
-                                                    </p>
-                                                </div>
+                                        </div>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div
+                                                class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                                <p
+                                                    class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
+                                                    Tanggal Kejadian</p>
+                                                <p
+                                                    class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                                    {{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d F Y') : '-' }}
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                                <p
+                                                    class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
+                                                    Lokasi Kejadian</p>
+                                                <p
+                                                    class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                                    {{ $item->lokasi ?? '-' }}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>

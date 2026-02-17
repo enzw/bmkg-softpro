@@ -58,9 +58,12 @@ Route::get('/', [LayananController::class, 'index']);
 //     return view('pages.landing');
 // });
 
-Route::get('/tentang-kami', function () {
-    return view('pages.tentang-kami');
-})->name('tentang-kami');
+Route::get('/profil', function () {
+    return view('pages.profil');
+})->name('profil');
+
+// Redirect old tentang-kami route to profil
+Route::redirect('/tentang-kami', '/profil', 301);
 
 Route::get('/kontak', function () {
     return view('pages.kontak');

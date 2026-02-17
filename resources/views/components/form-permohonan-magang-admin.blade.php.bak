@@ -354,7 +354,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             </div>
 
             <div>
-                <x-input-label for="data_surat_permohonan">Surat Permohonan (PDF) - Opsional</x-input-label>
+                <x-input-label for="data_surat_permohonan">Surat Permohonan (Image/PDF) - Opsional</x-input-label>
                 <input id="data_surat_permohonan" type="file" name="surat_permohonan" accept=".pdf,.jpg,.jpeg,.png"
                     class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300" />
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Maksimal ukuran file: 2MB</p>
@@ -396,7 +396,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             </div>
 
             <div>
-                <x-input-label for="survey_surat_permohonan">Surat Permohonan (PDF) - Opsional</x-input-label>
+                <x-input-label for="survey_surat_permohonan">Surat Permohonan (Image/PDF) - Opsional</x-input-label>
         <!-- ASURANSI Fields -->
         <div id="asuransi-fields" style="display: {{ $is_edit && $jenis_layanan == 'Layanan Klaim Asuransi' ? 'block' : 'none' }}" class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">

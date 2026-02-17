@@ -55,6 +55,6 @@
 <h3 class="text-gray-900 dark:text-gray-100">History All Chat</h3>
 <dd>
     <a href="{{URL::to('/admin/download-excel')}}">
-        <button class="hover:bg-green-700 hover:text-white {{ request()->is('tentang-kami*') ? 'bg-green-200 text-green-900 hover:text-white' : '' }} dark:text-white rounded-full visited:text-green-900 dark:visited:text-green-600 dark:visited:hover:text-white px-5 py-3 transition duration-200"><i class="fa fa-download"></i> Download File</button>
+        <button class="hover:bg-green-700 hover:text-white {{ request()->is('profil*') ? 'bg-green-200 text-green-900 hover:text-white' : '' }} dark:text-white rounded-full visited:text-green-900 dark:visited:text-green-600 dark:visited:hover:text-white px-5 py-3 transition duration-200"><i class="fa fa-download"></i> Download File</button>
     </a>
 </dd>

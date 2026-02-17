@@ -47,7 +47,7 @@
                 <h4 class="text-white font-semibold text-lg mb-4">Sitemap</h4>
                 <nav class="flex flex-col space-y-3 text-gray-400">
                     <a href="/" class="block hover:text-white transition">Beranda</a>
-                    <a href="/tentang-kami" class="block hover:text-white transition">Tentang Kami</a>
+                    <a href="/profil" class="block hover:text-white transition">Profil</a>
                     <a href="/#layanan" class="block hover:text-white transition">Layanan</a>
                 </nav>
             </div>
