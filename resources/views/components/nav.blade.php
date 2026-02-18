@@ -25,6 +25,15 @@
                 </a>
             </li>
 
+            @if (!Auth::check() || Auth::user()->role !== 'admin')
+                <li>
+                    <a href="{{ route('rating.create') }}"
+                        class="dark:text-white rounded-full px-5 py-3 transition duration-200 {{ request()->is('rating*') ? 'text-green-700 font-semibold pointer-events-none' : 'hover:bg-green-700 hover:text-white' }}">
+                        Saran
+                    </a>
+                </li>
+            @endif
+
             @if (Auth::check())
                 <li>
                     <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : '/dashboard-pelayanan' }}"
@@ -102,11 +111,15 @@
     <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-gray-900 w-full px-4 pb-6">
         <ul class="flex flex-col gap-3 mt-4">
             <li><a href="/profil" class="px-5 py-3 rounded-full dark:text-white">Profil</a></li>
-            <li><a href="/#layanan"
-                    class="px-5 py-3 rounded-full dark:text-white">Layanan</a></li>
-            
+            <li><a href="/#layanan" class="px-5 py-3 rounded-full dark:text-white">Layanan</a></li>
+
+            @if (!Auth::check() || Auth::user()->role !== 'admin')
+                <li><a href="{{ route('rating.create') }}"
+                        class="px-5 py-3 rounded-full dark:text-white">Saran</a></li>
+            @endif
             @if (Auth::check())
-                <li><a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : '/dashboard-pelayanan' }}" class="px-5 py-3 rounded-full dark:text-white">Dashboard</a></li>
+                <li><a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : '/dashboard-pelayanan' }}"
+                        class="px-5 py-3 rounded-full dark:text-white">Dashboard</a></li>
             @endif
 
             {{-- <li><a href="/berita" class="px-5 py-3 rounded-full dark:text-white">Berita</a></li>
@@ -146,12 +159,12 @@
 </nav>
 
 <script>
-    document.getElementById("burgerBtn").addEventListener("click", function() {
+    document.getElementById("burgerBtn").addEventListener("click", function () {
         document.getElementById("mobileMenu").classList.toggle("hidden");
     });
 
     @if (Auth::user())
-        document.getElementById("mobileDropdownBtn").addEventListener("click", function() {
+        document.getElementById("mobileDropdownBtn").addEventListener("click", function () {
             document.getElementById("mobileDropdownMenu").classList.toggle("hidden");
         });
     @endif

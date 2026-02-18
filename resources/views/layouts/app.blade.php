@@ -16,7 +16,7 @@
     <!-- Style -->
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -126,15 +126,15 @@
         @include('layouts.navigation')
 
         @if (isset($header))
-        <header class="py-6 bg-white shadow dark:bg-gray-800">
-            <div class="flex items-center px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="mr-auto">
-                    {{ $header }}
-                </div>
+            <header class="py-6 bg-white shadow dark:bg-gray-800">
+                <div class="flex items-center px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div class="mr-auto">
+                        {{ $header }}
+                    </div>
 
-                <span class="font-bold dark:text-white">{{ now()->toFormattedDateString() }}</span>
-            </div>
-        </header>
+                    <span class="font-bold dark:text-white">{{ now()->toFormattedDateString() }}</span>
+                </div>
+            </header>
         @endif
 
         <!-- Page Content -->
@@ -142,14 +142,10 @@
             {{ $slot }}
 
             @if (Auth::user()->role != 'admin' || !request()->is('admin/*'))
-            <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-            <df-messenger 
-                intent="WELCOME"
-                chat-title="Megabot"
-                agent-id="c9f258c1-8808-4b8e-b660-8efdca1c1703"
-                chat-icon="images/icon.png"
-                language-code="en">
-            </df-messenger>
+                <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+                <df-messenger intent="WELCOME" chat-title="Megabot" agent-id="c9f258c1-8808-4b8e-b660-8efdca1c1703"
+                    chat-icon="images/icon.png" language-code="en">
+                </df-messenger>
             @endif
         </main>
     </div>

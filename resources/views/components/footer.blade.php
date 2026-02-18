@@ -49,6 +49,9 @@
                     <a href="/" class="block hover:text-white transition">Beranda</a>
                     <a href="/profil" class="block hover:text-white transition">Profil</a>
                     <a href="/#layanan" class="block hover:text-white transition">Layanan</a>
+                    @if(Auth::check() && Auth::user()->role !== 'admin')
+                        <a href="{{ route('rating.create') }}" class="block hover:text-white transition">Rating</a>
+                    @endif
                 </nav>
             </div>
 

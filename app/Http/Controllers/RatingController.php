@@ -6,9 +6,48 @@ use App\Models\ServiceRating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class RatingController extends Controller
 {
+    /**
+     * Show the general rating page
+     */
+    public function create()
+    {
+        return view('pages.rating.create');
+    }
+
+    /**
+     * Store a general rating (from the dedicated rating page)
+     */
+    public function storeGeneral(Request $request)
+    {
+        $validated = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'nullable|string|max:1000',
+            'service_type' => 'required|string|in:Umum,Magang,Kunjungan,Konsultasi,Asuransi,Survey,Layanan Data,Sewa Alat',
+        ]);
+
+        try {
+            // Create a generic UUID for this rating
+            $genericId = Str::uuid();
+
+            ServiceRating::create([
+                'user_id' => auth()->id(),
+                'rateable_id' => $genericId,
+                'rateable_type' => 'Pelayanan\\' . str_replace(' ', '', $validated['service_type']),
+                'rating' => $validated['rating'],
+                'review' => $validated['review'],
+            ]);
+
+            return redirect()->back()->with('success', 'Terima kasih! Rating Anda telah disimpan.');
+        } catch (\Exception $e) {
+            Log::error('Rating Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan rating.');
+        }
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
