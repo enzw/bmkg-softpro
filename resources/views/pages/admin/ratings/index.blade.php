@@ -47,7 +47,8 @@
                     class="bg-white dark:bg-gray-800 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300">
                     <div class="flex items-center justify-between mb-4">
                         <span
-                            class="px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-widest rounded-lg">Total Ulasan</span>
+                            class="px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-widest rounded-lg">Total
+                            Ulasan</span>
                         <div
                             class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-700 flex items-center justify-center text-blue-500">
                             <i class="fa-solid fa-users text-xs"></i>
@@ -60,7 +61,8 @@
                     <div class="w-full h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                         <div class="h-full bg-blue-500 rounded-full" style="width: {{ $monthlyTargetProgress }}%"></div>
                     </div>
-                    <p class="mt-3 text-[10px] text-gray-400 font-semibold uppercase tracking-tighter">{{ $monthlyTargetProgress }}% dari target bulan
+                    <p class="mt-3 text-[10px] text-gray-400 font-semibold uppercase tracking-tighter">
+                        {{ $monthlyTargetProgress }}% dari target bulan
                         ini
                     </p>
                 </div>
@@ -84,7 +86,8 @@
                     <div class="w-full h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                         <div class="h-full bg-purple-500 rounded-full" style="width: {{ $netPromoterScore }}%"></div>
                     </div>
-                    <p class="mt-3 text-[10px] text-gray-400 font-semibold uppercase tracking-tighter">{{ $netPromoterScore >= 80 ? 'Feedback sangat positif' : ($netPromoterScore >= 50 ? 'Feedback positif' : 'Perlu peningkatan') }}
+                    <p class="mt-3 text-[10px] text-gray-400 font-semibold uppercase tracking-tighter">
+                        {{ $netPromoterScore >= 80 ? 'Feedback sangat positif' : ($netPromoterScore >= 50 ? 'Feedback positif' : 'Perlu peningkatan') }}
                     </p>
                 </div>
             </div>
@@ -155,8 +158,26 @@
 
                 <div class="flex-1 space-y-6 overflow-y-auto max-h-[800px] pr-2 custom-scrollbar">
                     @forelse($ratings as $rating)
-                        <div
-                            class="group relative flex gap-4 p-4 rounded-3xl hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-all duration-300">
+                        @php 
+                            $modalId = "modal-rating-" . $rating->id;
+                            $rawType = str_replace(['App\\Models\\', 'Permohonan'], '', $rating->rateable_type);
+                            $typeKey = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $rawType));
+                            if ($typeKey == 'klaim_asuransi') $typeKey = 'asuransi';
+                            if ($typeKey == 'jasa_konsultasi') $typeKey = 'jasa_konsultasi';
+
+                            $serviceIconConfig = [
+                                'sewa_alat' => ['icon' => 'fa-tools', 'bg' => 'bg-green-100 dark:bg-emerald-900/40', 'text' => 'text-green-600 dark:text-emerald-400'],
+                                'magang' => ['icon' => 'fa-graduation-cap', 'bg' => 'bg-blue-100 dark:bg-blue-900/40', 'text' => 'text-blue-600 dark:text-blue-400'],
+                                'kunjungan' => ['icon' => 'fa-building-user', 'bg' => 'bg-amber-100 dark:bg-amber-900/40', 'text' => 'text-amber-600 dark:text-amber-400'],
+                                'jasa_konsultasi' => ['icon' => 'fa-comments', 'bg' => 'bg-purple-100 dark:bg-purple-900/40', 'text' => 'text-purple-600 dark:text-purple-400'],
+                                'asuransi' => ['icon' => 'fa-file-invoice-dollar', 'bg' => 'bg-orange-100 dark:bg-orange-900/40', 'text' => 'text-orange-600 dark:text-orange-400'],
+                                'survey' => ['icon' => 'fa-compass', 'bg' => 'bg-red-100 dark:bg-red-900/40', 'text' => 'text-red-600 dark:text-red-400'],
+                                'layanan_data' => ['icon' => 'fa-database', 'bg' => 'bg-cyan-100 dark:bg-cyan-900/40', 'text' => 'text-cyan-600 dark:text-cyan-400'],
+                            ];
+                            $config = $serviceIconConfig[$typeKey] ?? ['icon' => 'fa-star', 'bg' => 'bg-slate-100 dark:bg-slate-700', 'text' => 'text-slate-500'];
+                        @endphp
+                        <div onclick="openDetailModal('{{ $modalId }}')"
+                            class="group relative flex gap-4 p-4 rounded-3xl hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-all duration-300 border border-transparent hover:border-gray-100 dark:hover:border-gray-700 cursor-pointer">
                             <!-- Time Indicator Line -->
                             <div
                                 class="absolute left-[-1rem] top-8 bottom-[-1.5rem] w-px bg-gray-100 dark:bg-gray-700 group-last:hidden">
@@ -164,12 +185,12 @@
 
                             <!-- Avatar/Icon -->
                             <div
-                                class="flex-shrink-0 w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 font-bold shadow-inner">
-                                {{ substr($rating->user->name ?? 'U', 0, 1) }}
+                                class="flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner {{ $config['bg'] }} {{ $config['text'] }} group-hover:scale-110 transition-transform">
+                                <i class="fa-solid {{ $config['icon'] }} text-lg"></i>
                             </div>
 
                             <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between mb-1">
+                                <div class="flex items-center justify-between mb-0.5">
                                     <h4 class="text-sm font-bold text-gray-900 dark:text-white truncate pr-2">
                                         {{ $rating->user->name ?? 'Anonymous' }}
                                     </h4>
@@ -181,7 +202,7 @@
                                 </div>
                                 <p
                                     class="text-[10px] font-semibold text-green-600 dark:text-emerald-400 uppercase tracking-widest mb-2">
-                                    {{ str_replace(['App\\Models\\', 'Permohonan'], '', $rating->rateable_type) }}
+                                    {{ $rawType }}
                                 </p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400 italic line-clamp-3 leading-relaxed">
                                     "{{ $rating->review ?: 'Tanpa ulasan tertulis.' }}"
@@ -191,10 +212,128 @@
                                 </p>
                             </div>
                         </div>
+
+                        <!-- Rating Detail Modal -->
+                        <div id="{{ $modalId }}"
+                            class="hidden fixed inset-0 z-[70] overflow-auto bg-gray-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+                            <div
+                                class="bg-white dark:bg-gray-800 rounded-[2.5rem] max-w-2xl w-full shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden animate-in fade-in zoom-in duration-300">
+                                <!-- Header -->
+                                <div
+                                    class="p-8 border-b border-gray-50 dark:border-gray-700 flex items-center justify-between bg-gray-50/30 dark:bg-gray-900/10">
+                                    <div class="flex items-center gap-4">
+                                        <div
+                                            class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                                            <i class="fas fa-star text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h3
+                                                class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                                Detail Penilaian</h3>
+                                            <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">
+                                                Saran & Kritik Pelanggan</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" onclick="closeDetailModal('{{ $modalId }}')"
+                                        class="w-10 h-10 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors shadow-sm border border-gray-100 dark:border-gray-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Content -->
+                                <div class="p-8 space-y-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                                    <!-- User Info -->
+                                    <div class="relative pl-6 border-l-2 border-green-500/30 text-left">
+                                        <h4
+                                            class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                            Informasi Pemberi Saran
+                                        </h4>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                            <div
+                                                class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                                <p
+                                                    class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
+                                                    Nama</p>
+                                                <p
+                                                    class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                                    {{ $rating->user->name ?? 'Anonymous' }}
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                                <p
+                                                    class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
+                                                    Waktu Kirim</p>
+                                                <p class="text-xs font-bold text-gray-900 dark:text-white tracking-tight">
+                                                    {{ $rating->created_at->format('d M Y, H:i') }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Service & Rating Info -->
+                                    <div class="relative pl-6 border-l-2 border-blue-500/30 text-left">
+                                        <h4
+                                            class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                            Detail Penilaian
+                                        </h4>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                            <div
+                                                class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                                <p
+                                                    class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
+                                                    Jenis Layanan</p>
+                                                <p
+                                                    class="text-xs font-bold text-green-600 dark:text-emerald-400 uppercase tracking-tight">
+                                                    {{ str_replace(['App\\Models\\', 'Permohonan'], '', $rating->rateable_type) }}
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                                <p
+                                                    class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
+                                                    Skor Rating</p>
+                                                <div class="flex text-amber-400 text-xs gap-1 mt-1">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        <i class="fa-{{ $i <= $rating->rating ? 'solid' : 'regular' }} fa-star"></i>
+                                                    @endfor
+                                                    <span
+                                                        class="ml-2 text-gray-900 dark:text-white font-bold">({{ $rating->rating }}/5)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Review Text -->
+                                    <div class="relative pl-6 border-l-2 border-purple-500/30 text-left">
+                                        <h4
+                                            class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                                            Ulasan / Saran
+                                        </h4>
+                                        <div
+                                            class="bg-gray-50 dark:bg-gray-900/40 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-700">
+                                            <p class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">"{{ $rating->review ?: 'Tidak ada ulasan tertulis.' }}"</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Footer -->
+                                <div class="p-8 bg-gray-50/50 dark:bg-gray-900/20 border-t border-gray-50 dark:border-gray-700">
+                                    <button type="button" onclick="closeDetailModal('{{ $modalId }}')"
+                                        class="w-full px-8 py-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 rounded-2xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm">
+                                        Tutup Detail
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     @empty
                         <div class="py-20 text-center">
                             <i class="fa-solid fa-face-smile text-4xl text-gray-100 mb-4 opacity-20"></i>
-                            <p class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Belum ada review baru</p>
+                            <p class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Belum ada review baru
+                            </p>
                         </div>
                     @endforelse
                 </div>
@@ -223,6 +362,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        function openDetailModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeDetailModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
         let myChart;
         const ctx = document.getElementById('ratingChart').getContext('2d');
         const loader = document.getElementById('loader');

@@ -41,10 +41,10 @@ class RatingController extends Controller
                 'review' => $validated['review'],
             ]);
 
-            return redirect()->back()->with('success', 'Terima kasih! Rating Anda telah disimpan.');
+            return redirect()->back()->with('success', 'Terima kasih! Penilaian Anda telah disimpan.');
         } catch (\Exception $e) {
             Log::error('Rating Error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan rating.');
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan penilaian.');
         }
     }
 

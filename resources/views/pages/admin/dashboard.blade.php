@@ -11,7 +11,7 @@
                     <p class="text-sm text-gray-500 dark:text-gray-400">Monitor aktivitas layanan dan statistik hari ini.</p>
                 </div>
                 <div class="text-right hidden sm:block">
-                    <p class="text-xs font-bold text-green-600 dark:text-emerald-400 uppercase tracking-widest">Update Realtime</p>
+                    <p class="text-xs font-bold text-green-600 dark:text-emerald-400 uppercase tracking-widest">Update Terakhir</p>
                     <p class="text-sm text-gray-400">{{ date('H:i') }}, {{ date('d M Y') }}</p>
                 </div>
             </div>
@@ -287,7 +287,7 @@
                         </div>
                         <div class="text-left">
                             <p class="text-sm font-black text-gray-900 dark:text-white uppercase leading-none mb-1">Sewa Alat</p>
-                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Peminatan peralatan teknis</p>
+                            <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Peminatan peralatan teknis</p>
                         </div>
                     </a>
 
@@ -297,7 +297,7 @@
                         </div>
                         <div class="text-left">
                             <p class="text-sm font-black text-gray-900 dark:text-white uppercase leading-none mb-1">Pelayanan Jasa</p>
-                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Magang & PKL Mahasiswa</p>
+                            <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Magang, Data, dan Konsultasi</p>
                         </div>
                     </a>
 
@@ -307,7 +307,7 @@
                         </div>
                         <div class="text-left">
                             <p class="text-sm font-black text-gray-900 dark:text-white uppercase leading-none mb-1">Kunjungan</p>
-                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Studi Tiru & Kunjungan Teknis</p>
+                            <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Studi Tiru & Kunjungan Teknis</p>
                         </div>
                     </a>
                 </div>

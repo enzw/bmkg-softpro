@@ -11,7 +11,7 @@
                     <span
                         class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 dark:bg-emerald-900/20 text-green-600 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-widest shadow-sm">
                         <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                        Update Realtime
+                        Update Terakhir
                     </span>
                     <span
                         class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">{{ $permohonan->count() }}
