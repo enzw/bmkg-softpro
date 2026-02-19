@@ -73,6 +73,18 @@ Route::get('/kuisioner', function () {
     return view('pages.kuisioner');
 })->name('kuisioner');
 
+Route::get('/alur-pelayanan', function () {
+    return view('pages.alur-pelayanan');
+})->name('alur-pelayanan');
+
+Route::get('/standar-pelayanan-jasa', function () {
+    return view('pages.standar-pelayanan-jasa');
+})->name('standar-pelayanan-jasa');
+
+Route::get('/pembayaran-pnbp', function () {
+    return view('pages.pembayaran-pnbp');
+})->name('pembayaran-pnbp');
+
 Route::get('/dashboard', function () {
     if (Auth::check() && Auth::user()->role !== 'admin') {
         return redirect()->route('dashboard-pelayanan');

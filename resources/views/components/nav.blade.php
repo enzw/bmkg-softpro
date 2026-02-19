@@ -1,4 +1,4 @@
-<nav class="h-[60px] md:h-[70px] px-4 py-3 fixed w-full top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-10">
+<nav class="h-[60px] md:h-[70px] px-4 py-3 fixed w-full top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-40">
     <div class="container relative flex items-center h-full mx-auto">
 
         <!-- Logo kiri -->
@@ -18,11 +18,67 @@
                 </a>
             </li>
 
-            <li>
-                <a href="/#layanan"
-                    class="dark:text-white rounded-full px-5 py-3 transition duration-200 hover:bg-green-700 hover:text-white">
+            <li class="relative group/layanan">
+                <button
+                    class="dark:text-white rounded-full px-5 py-3 transition duration-200 hover:bg-green-700 hover:text-white inline-flex items-center gap-1 focus:outline-none"
+                    aria-haspopup="true">
                     Layanan
-                </a>
+                    <svg class="w-3 h-3 transition-transform duration-200 group-hover/layanan:rotate-180" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                {{-- Dropdown --}}
+                <div
+                    class="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-60 opacity-0 invisible group-hover/layanan:opacity-100 group-hover/layanan:visible transition-all duration-200 z-50">
+                    <div
+                        class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl dark:shadow-slate-900/70 border border-gray-100 dark:border-slate-700 overflow-hidden py-1.5">
+                        <a href="/#layanan"
+                            class="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-400 transition duration-150">
+                            <span
+                                class="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/50 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-th-large text-green-600 dark:text-green-400 text-xs"></i>
+                            </span>
+                            <div>
+                                <div class="font-semibold">Daftar Layanan</div>
+                                <div class="text-xs text-gray-400 dark:text-gray-500">Semua jenis layanan BMKG</div>
+                            </div>
+                        </a>
+                        <a href="{{ route('alur-pelayanan') }}"
+                            class="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-400 transition duration-150 {{ request()->is('alur-pelayanan*') ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 font-semibold' : '' }}">
+                            <span
+                                class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-list-ol text-blue-600 dark:text-blue-400 text-xs"></i>
+                            </span>
+                            <div>
+                                <div class="font-semibold">Alur Pelayanan Data</div>
+                                <div class="text-xs text-gray-400 dark:text-gray-500">8 tahap proses pelayanan</div>
+                            </div>
+                        </a>
+                        <a href="{{ route('standar-pelayanan-jasa') }}"
+                            class="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-400 transition duration-150 {{ request()->is('standar-pelayanan-jasa*') ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 font-semibold' : '' }}">
+                            <span
+                                class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-certificate text-amber-600 dark:text-amber-400 text-xs"></i>
+                            </span>
+                            <div>
+                                <div class="font-semibold">Standar Pelayanan Jasa</div>
+                                <div class="text-xs text-gray-400 dark:text-gray-500">Persyaratan & waktu layanan</div>
+                            </div>
+                        </a>
+                        <a href="{{ route('pembayaran-pnbp') }}"
+                            class="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-400 transition duration-150 {{ request()->is('pembayaran-pnbp*') ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 font-semibold' : '' }}">
+                            <span
+                                class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-credit-card text-indigo-600 dark:text-indigo-400 text-xs"></i>
+                            </span>
+                            <div>
+                                <div class="font-semibold">Cara Pembayaran PNBP</div>
+                                <div class="text-xs text-gray-400 dark:text-gray-500">ATM, m-banking, e-commerce</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </li>
 
             @if (!Auth::check() || Auth::user()->role !== 'admin')
@@ -111,11 +167,35 @@
     <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-gray-900 w-full px-4 pb-6">
         <ul class="flex flex-col gap-3 mt-4">
             <li><a href="/profil" class="px-5 py-3 rounded-full dark:text-white">Profil</a></li>
-            <li><a href="/#layanan" class="px-5 py-3 rounded-full dark:text-white">Layanan</a></li>
+            <li>
+                <button id="mobileLayananBtn"
+                    class="w-full text-left px-5 py-3 rounded-full dark:text-white flex justify-between items-center font-medium">
+                    Layanan
+                    <i class="fa-solid fa-chevron-down text-sm transition-transform duration-200"
+                        id="mobileLayananChevron"></i>
+                </button>
+                <div id="mobileLayananMenu" class="hidden flex flex-col mt-1 gap-1 pl-4">
+                    <a href="/#layanan"
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 text-sm">
+                        <i class="fas fa-th-large text-green-500 w-4 text-center"></i> Daftar Layanan
+                    </a>
+                    <a href="{{ route('alur-pelayanan') }}"
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 text-sm {{ request()->is('alur-pelayanan*') ? 'text-green-700 font-semibold' : '' }}">
+                        <i class="fas fa-list-ol text-blue-500 w-4 text-center"></i> Alur Pelayanan Data
+                    </a>
+                    <a href="{{ route('standar-pelayanan-jasa') }}"
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 text-sm {{ request()->is('standar-pelayanan-jasa*') ? 'text-green-700 font-semibold' : '' }}">
+                        <i class="fas fa-certificate text-amber-500 w-4 text-center"></i> Standar Pelayanan Jasa
+                    </a>
+                    <a href="{{ route('pembayaran-pnbp') }}"
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 text-sm {{ request()->is('pembayaran-pnbp*') ? 'text-green-700 font-semibold' : '' }}">
+                        <i class="fas fa-credit-card text-indigo-500 w-4 text-center"></i> Cara Pembayaran PNBP
+                    </a>
+                </div>
+            </li>
 
             @if (!Auth::check() || Auth::user()->role !== 'admin')
-                <li><a href="{{ route('rating.create') }}"
-                        class="px-5 py-3 rounded-full dark:text-white">Saran</a></li>
+                <li><a href="{{ route('rating.create') }}" class="px-5 py-3 rounded-full dark:text-white">Saran</a></li>
             @endif
             @if (Auth::check())
                 <li><a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : '/dashboard-pelayanan' }}"
@@ -161,6 +241,13 @@
 <script>
     document.getElementById("burgerBtn").addEventListener("click", function () {
         document.getElementById("mobileMenu").classList.toggle("hidden");
+    });
+
+    document.getElementById("mobileLayananBtn").addEventListener("click", function () {
+        const menu = document.getElementById("mobileLayananMenu");
+        const chevron = document.getElementById("mobileLayananChevron");
+        menu.classList.toggle("hidden");
+        chevron.style.transform = menu.classList.contains("hidden") ? "rotate(0deg)" : "rotate(180deg)";
     });
 
     @if (Auth::user())

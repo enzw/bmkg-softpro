@@ -75,13 +75,6 @@ class RatingController extends Controller
             return response()->json(['message' => 'Service not found or access denied.'], 404);
         }
 
-        // Ensure service is completed (check for status column)
-        // Adjust status check based on model if necessary, but generally 'completed', 'selesai', etc.
-        // For simplicity, we assume the frontend only sends completed items, 
-        // but we should verify if possible.
-        // However, status values vary (e.g. 'completed', 'Diterima', 'Selesai'). 
-        // We'll trust the query logic that provided this item to be ratable.
-
         // Check if already rated
         if ($service->rating()->exists()) {
             return response()->json(['message' => 'You have already rated this service.'], 400);
