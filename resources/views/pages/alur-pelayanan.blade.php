@@ -200,7 +200,7 @@
                                                     <div class="flex items-start justify-between gap-4 mb-3">
                                                         <div>
                                                             <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-2
-                                                                                    {{ $step['role'] === 'Pemohon'
+                                                                                                        {{ $step['role'] === 'Pemohon'
                             ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
                             : 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' }}">
                                                                 <i

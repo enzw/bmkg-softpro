@@ -4,7 +4,7 @@
     <div class="landing-page dark:bg-slate-900 dark:text-white">
         {{-- ===== HERO SECTION ===== --}}
         <header
-            class="relative pt-[70px] h-[75vh] lg:h-[85vh] overflow-hidden bg-[linear-gradient(135deg,rgba(20,83,45,0.85),rgba(6,78,59,0.9)),url('/public/images/slides/0.jpeg')] bg-cover bg-no-repeat bg-fixed bg-center">
+            class="relative pt-[70px] h-[85vh] lg:h-[95vh] overflow-hidden bg-[linear-gradient(135deg,rgba(20,83,45,0.85),rgba(6,78,59,0.9)),url('/public/images/slides/0.jpeg')] bg-cover bg-no-repeat bg-fixed bg-center">
             <!-- Animated background elements -->
             <div class="absolute inset-0 overflow-hidden pointer-events-none">
                 <div class="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl -mr-48 -mt-48"></div>
@@ -31,10 +31,10 @@
                         class="px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold uppercase tracking-widest rounded-xl hover:scale-105 transition-all shadow-xl shadow-green-500/25">
                         Lihat Layanan
                     </a>
-                    <a href="{{ route('login') }}"
+                    <!-- <a href="{{ route('login') }}"
                         class="px-8 py-4 bg-white/10 border border-white/20 text-white font-bold uppercase tracking-widest rounded-xl hover:bg-white/20 transition-all backdrop-blur-md">
                         Mulai Sekarang
-                    </a>
+                    </a> -->
                 </div>
             </div>
         </header>
