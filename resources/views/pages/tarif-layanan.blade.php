@@ -631,69 +631,69 @@
                                     <thead
                                         class="bg-slate-50/80 dark:bg-slate-900/50 backdrop-blur-sm text-slate-500 uppercase text-[11px] font-bold tracking-widest border-b border-slate-100 dark:border-slate-800">
                                         <tr>
-                                            <th class="px-8 py-5">Jenis Layanan</th>
-                                            <th class="px-8 py-5">Satuan</th>
-                                            <th class="px-8 py-5 text-right">Tarif</th>
+                                            <th class="px-8 py-5 font-semibold">Jenis Layanan</th>
+                                            <th class="px-8 py-5 font-semibold">Satuan</th>
+                                            <th class="px-8 py-5 text-right font-semibold">Tarif</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                                         {{-- A. Meteorologi --}}
-                                        <tr class="bg-slate-50/50 dark:bg-slate-900/30">
+                                        <tr class="bg-indigo-50/40 dark:bg-indigo-900/20 border-l-4 border-indigo-600">
                                             <td colspan="3"
-                                                class="px-8 py-3 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                                                class="px-8 py-4 text-sm font-bold tracking-wide text-indigo-700 dark:text-indigo-300 uppercase">
                                                 A. Jasa Konsultasi Meteorologi
                                             </td>
                                         </tr>
                                         <tr
                                             class="hover:bg-indigo-50/30 dark:hover:bg-indigo-900/10 transition-colors duration-200">
-                                            <td class="px-8 py-4 text-slate-700 dark:text-slate-300 font-medium">
-                                                Informasi Meteorologi Khusus untuk Pendukung Kegiatan Proyek, Survei, dan
-                                                Penelitian Komersial
+                                            <td class="px-8 py-5 pl-12 text-slate-700 dark:text-slate-300 font-semibold leading-relaxed">
+                                                Informasi Meteorologi Khusus untuk Pendukung Kegiatan Proyek, Survei, dan Penelitian Komersial
                                             </td>
                                             <td
-                                                class="px-8 py-4 italic text-[11px] text-slate-400 font-medium uppercase tracking-tighter">
+                                                class="px-8 py-5 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
                                                 per lokasi</td>
                                             <td
-                                                class="px-8 py-4 text-right font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
+                                                class="px-8 py-5 text-right font-extrabold text-indigo-700 dark:text-indigo-400 whitespace-nowrap">
                                                 Rp 3.750.000,00</td>
                                         </tr>
 
                                         {{-- B. Klimatologi --}}
-                                        <tr class="bg-slate-50/50 dark:bg-slate-900/30">
+                                        <tr class="bg-amber-50/40 dark:bg-amber-900/20 border-l-4 border-amber-600">
                                             <td colspan="3"
-                                                class="px-8 py-3 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-                                                B. Jasa Konsultasi Klimatologi</td>
+                                                class="px-8 py-4 text-sm font-bold tracking-wide text-amber-700 dark:text-amber-300 uppercase">
+                                                B. Jasa Konsultasi Klimatologi
+                                            </td>
                                         </tr>
                                         <tr
-                                            class="hover:bg-indigo-50/30 dark:hover:bg-indigo-900/10 transition-colors duration-200">
-                                            <td class="px-8 py-4 text-slate-700 dark:text-slate-300 font-medium">
+                                            class="hover:bg-amber-50/30 dark:hover:bg-amber-900/10 transition-colors duration-200">
+                                            <td class="px-8 py-5 pl-12 text-slate-700 dark:text-slate-300 font-semibold leading-relaxed">
                                                 Analisis Iklim
                                             </td>
                                             <td
-                                                class="px-8 py-4 italic text-[11px] text-slate-400 font-medium uppercase tracking-tighter">
+                                                class="px-8 py-5 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
                                                 per lokasi</td>
                                             <td
-                                                class="px-8 py-4 text-right font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
+                                                class="px-8 py-5 text-right font-extrabold text-amber-700 dark:text-amber-400 whitespace-nowrap">
                                                 Rp 9.500.000,00</td>
                                         </tr>
 
                                         {{-- C. Geofisika --}}
-                                        <tr class="bg-slate-50/50 dark:bg-slate-900/30">
+                                        <tr class="bg-emerald-50/40 dark:bg-emerald-900/20 border-l-4 border-emerald-600">
                                             <td colspan="3"
-                                                class="px-8 py-3 text-[10px] font-black tracking-widest text-slate-400 uppercase">
-                                                C. Jasa Konsultasi Geofisika</td>
+                                                class="px-8 py-4 text-sm font-bold tracking-wide text-emerald-700 dark:text-emerald-300 uppercase">
+                                                C. Jasa Konsultasi Geofisika
+                                            </td>
                                         </tr>
                                         <tr
-                                            class="hover:bg-indigo-50/30 dark:hover:bg-indigo-900/10 transition-colors duration-200">
-                                            <td class="px-8 py-4 text-slate-700 dark:text-slate-300 font-medium">
-                                                Informasi Pendahuluan di Bidang Geofisika sebagai Pendukung Kegiatan Proyek,
-                                                Survei, dan Penelitian Komersial
+                                            class="hover:bg-emerald-50/30 dark:hover:bg-emerald-900/10 transition-colors duration-200">
+                                            <td class="px-8 py-5 pl-12 text-slate-700 dark:text-slate-300 font-semibold leading-relaxed">
+                                                Informasi Pendahuluan di Bidang Geofisika sebagai Pendukung Kegiatan Proyek, Survei, dan Penelitian Komersial
                                             </td>
                                             <td
-                                                class="px-8 py-4 italic text-[11px] text-slate-400 font-medium uppercase tracking-tighter">
+                                                class="px-8 py-5 text-center text-sm text-slate-500 dark:text-slate-400 font-medium">
                                                 per lokasi</td>
                                             <td
-                                                class="px-8 py-4 text-right font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
+                                                class="px-8 py-5 text-right font-extrabold text-emerald-700 dark:text-emerald-400 whitespace-nowrap">
                                                 Rp 12.300.000,00</td>
                                         </tr>
                                     </tbody>
