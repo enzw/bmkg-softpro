@@ -6,7 +6,7 @@
     <div class="dark:bg-slate-900 dark:text-white">
 
         {{-- ===== HERO SECTION ===== --}}
-        <header class="relative pt-[70px] overflow-hidden bg-gradient-to-br from-green-900 via-emerald-800 to-teal-900">
+        <header class="relative pt-[70px] overflow-hidden bg-gradient-to-br from-green-900 via-green-800 to-emerald-900">
             {{-- Background decoration --}}
             <div class="absolute inset-0 overflow-hidden pointer-events-none">
                 <div class="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -mr-40 -mt-40"></div>
@@ -16,41 +16,31 @@
                 </div>
             </div>
 
-            <div class="container px-4 mx-auto py-20 relative z-10 text-center">
+            <div class="container px-4 mx-auto py-16 relative z-10 text-center">
                 <span
-                    class="inline-block px-5 py-2 bg-white/15 backdrop-blur-sm border border-white/25 text-white/90 rounded-full text-sm font-semibold mb-6 tracking-wide">
-                    <i class="fas fa-list-ol mr-2"></i>Panduan Layanan
+                    class="inline-block px-5 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 rounded-full text-xs font-semibold mb-6 tracking-wide uppercase">
+                    <i class="fas fa-list-ol mr-2 text-emerald-400"></i>Panduan Layanan
                 </span>
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                    Alur Pelayanan <span class="text-green-300">Data dan Informasi</span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
+                    Alur Pelayanan <span class="text-emerald-400">Data & Informasi</span>
                 </h1>
-                <p class="text-lg text-white/70 max-w-2xl mx-auto leading-relaxed">
-                    Pelajari 8 tahap proses pelayanan data dan informasi geofisika BMKG dari awal pengajuan hingga
-                    penyerahan data
+                <p class="text-base text-white/60 max-w-xl mx-auto leading-relaxed font-medium">
+                    Pelajari proses pelayanan data dan informasi geofisika BMKG dari pengajuan hingga penyerahan.
                 </p>
 
                 {{-- Step count badges --}}
                 <div class="flex flex-wrap items-center justify-center gap-3 mt-10">
                     @foreach(['Permohonan', 'Verifikasi', 'Cek Data', 'Tarif', 'Pembayaran', 'Kuisioner', 'Penyerahan', 'Arsip'] as $i => $label)
                         <span
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white text-xs font-semibold hover:bg-white/20 transition duration-200">
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white text-[10px] font-bold hover:bg-white/20 transition duration-200 uppercase tracking-wider">
                             <span
-                                class="w-5 h-5 bg-green-400 text-green-900 rounded-full flex items-center justify-center text-[10px] font-bold">{{ $i + 1 }}</span>
+                                class="w-5 h-5 bg-emerald-400 text-green-950 rounded-lg flex items-center justify-center text-[9px] font-black">{{ $i + 1 }}</span>
                             {{ $label }}
                         </span>
                     @endforeach
                 </div>
             </div>
 
-            {{-- Wave bottom --}}
-            <div class="relative h-16">
-                <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" class="absolute bottom-0 w-full"
-                    preserveAspectRatio="none">
-                    <path
-                        d="M0 64L60 58.7C120 53.3 240 42.7 360 42.7C480 42.7 600 53.3 720 53.3C840 53.3 960 42.7 1080 37.3C1200 32 1320 32 1380 32L1440 32V64H1380C1320 64 1200 64 1080 64C960 64 840 64 720 64C600 64 480 64 360 64C240 64 120 64 60 64H0Z"
-                        fill="rgb(249 250 251)" class="dark:fill-slate-900" />
-                </svg>
-            </div>
         </header>
 
         {{-- ===== STEPS SECTION ===== --}}
@@ -209,9 +199,8 @@
                                                 <div class="p-6">
                                                     <div class="flex items-start justify-between gap-4 mb-3">
                                                         <div>
-                                                            <span
-                                                                class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-2
-                                                                {{ $step['role'] === 'Pemohon'
+                                                            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-2
+                                                                                    {{ $step['role'] === 'Pemohon'
                             ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
                             : 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' }}">
                                                                 <i
@@ -226,7 +215,8 @@
                                                     </div>
 
                                                     <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">
-                                                        {{ $step['desc'] }}</p>
+                                                        {{ $step['desc'] }}
+                                                    </p>
 
                                                     <ul class="space-y-2">
                                                         @foreach($step['items'] as $item)

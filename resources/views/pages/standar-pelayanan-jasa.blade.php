@@ -6,23 +6,22 @@
 <div class="dark:bg-slate-900 dark:text-white">
 
     {{-- ===== HERO SECTION ===== --}}
-    <header class="relative pt-[70px] overflow-hidden bg-gradient-to-br from-blue-900 via-blue-800 to-teal-900">
+    <header class="relative pt-[70px] overflow-hidden bg-gradient-to-br from-green-900 via-green-800 to-emerald-900">
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
             <div class="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -mr-40 -mt-40"></div>
             <div class="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full blur-3xl -ml-40 -mb-20"></div>
-            <div class="absolute top-1/3 right-1/4 w-64 h-64 bg-cyan-400/5 rounded-full blur-2xl"></div>
         </div>
 
-        <div class="container px-4 mx-auto py-20 relative z-10 text-center">
-            <span class="inline-block px-5 py-2 bg-white/15 backdrop-blur-sm border border-white/25 text-white/90 rounded-full text-sm font-semibold mb-6 tracking-wide">
-                <i class="fas fa-certificate mr-2"></i>Standar Layanan
+        <div class="container px-4 mx-auto py-16 relative z-10 text-center">
+            <span class="inline-block px-5 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 rounded-full text-xs font-semibold mb-6 tracking-wide uppercase">
+                <i class="fas fa-certificate mr-2 text-emerald-400"></i>Standar Layanan
             </span>
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
-                Standar Pelayanan <span class="text-cyan-300">Jasa</span>
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
+                Standar Pelayanan <span class="text-emerald-400">Jasa</span>
             </h1>
-            <p class="text-base font-semibold text-white/60 uppercase tracking-widest mb-6">Stasiun Geofisika Kelas I Sleman</p>
-            <p class="text-lg text-white/70 max-w-2xl mx-auto leading-relaxed">
-                Informasi resmi mengenai dasar hukum, waktu operasional, dan persyaratan pelayanan jasa BMKG
+            <p class="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] mb-6">Stasiun Geofisika Kelas I Sleman</p>
+            <p class="text-base text-white/60 max-w-xl mx-auto leading-relaxed font-medium">
+                Informasi resmi mengenai dasar hukum, waktu operasional, dan persyaratan pelayanan jasa BMKG.
             </p>
 
             {{-- Quick info badges --}}
@@ -32,22 +31,15 @@
                     ['icon' => 'fa-clock', 'label' => 'Waktu Pelayanan'],
                     ['icon' => 'fa-building', 'label' => 'Persyaratan Komersial'],
                     ['icon' => 'fa-hand-holding-heart', 'label' => 'Non-Komersial'],
-                    ['icon' => 'fa-envelope', 'label' => 'Permohonan Online'],
                 ] as $badge)
-                    <span class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white text-xs font-semibold hover:bg-white/20 transition duration-200">
-                        <i class="fas {{ $badge['icon'] }} text-cyan-300"></i>
+                    <span class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white text-[10px] font-bold uppercase tracking-wider hover:bg-white/20 transition duration-200">
+                        <i class="fas {{ $badge['icon'] }} text-emerald-400"></i>
                         {{ $badge['label'] }}
                     </span>
                 @endforeach
             </div>
         </div>
 
-        {{-- Wave bottom --}}
-        <div class="relative h-16">
-            <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" class="absolute bottom-0 w-full" preserveAspectRatio="none">
-                <path d="M0 64L60 58.7C120 53.3 240 42.7 360 42.7C480 42.7 600 53.3 720 53.3C840 53.3 960 42.7 1080 37.3C1200 32 1320 32 1380 32L1440 32V64H1380C1320 64 1200 64 1080 64C960 64 840 64 720 64C600 64 480 64 360 64C240 64 120 64 60 64H0Z" fill="rgb(249 250 251)" class="dark:fill-slate-900"/>
-            </svg>
-        </div>
     </header>
 
     {{-- ===== MAIN CONTENT ===== --}}
@@ -57,7 +49,7 @@
             <div class="grid grid-cols-1 gap-8">
 
                 {{-- ===== DASAR HUKUM ===== --}}
-                <div class="info-card opacity-0 translate-y-6 transition-all duration-700 bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 overflow-hidden hover:shadow-xl hover:-translate-y-1 hover:border-blue-200 dark:hover:border-blue-700 group">
+                <div class="info-card opacity-0 translate-y-6 transition-all duration-700 bg-white dark:bg-slate-800 rounded-3xl shadow-sm dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 overflow-hidden hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-700 group">
                     <div class="h-1 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
                     <div class="p-8">
                         <div class="flex items-center gap-4 mb-6">
@@ -103,8 +95,8 @@
                 </div>
 
                 {{-- ===== WAKTU PELAYANAN ===== --}}
-                <div class="info-card opacity-0 translate-y-6 transition-all duration-700 bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 overflow-hidden hover:shadow-xl hover:-translate-y-1 hover:border-green-200 dark:hover:border-green-700 group" data-delay="100">
-                    <div class="h-1 bg-gradient-to-r from-green-500 to-emerald-500"></div>
+                <div class="info-card opacity-0 translate-y-6 transition-all duration-700 bg-white dark:bg-slate-800 rounded-3xl shadow-sm dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 overflow-hidden hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-700 group" data-delay="100">
+                    <div class="h-1 bg-gradient-to-r from-cyan-500 to-teal-500"></div>
                     <div class="p-8">
                         <div class="flex items-center gap-4 mb-6">
                             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -151,7 +143,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                         {{-- Persyaratan Komersial --}}
-                        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 overflow-hidden hover:shadow-xl hover:-translate-y-1 hover:border-orange-200 dark:hover:border-orange-700 transition-all duration-300 group">
+                        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 overflow-hidden hover:shadow-lg hover:border-orange-200 dark:hover:border-orange-700 transition-all duration-300 group">
                             <div class="h-1 bg-gradient-to-r from-orange-400 to-amber-500"></div>
                             <div class="p-6">
                                 <div class="flex items-center gap-3 mb-5">
@@ -181,7 +173,7 @@
                         </div>
 
                         {{-- Persyaratan Non-Komersial --}}
-                        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 overflow-hidden hover:shadow-xl hover:-translate-y-1 hover:border-teal-200 dark:hover:border-teal-700 transition-all duration-300 group">
+                        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 overflow-hidden hover:shadow-lg hover:border-teal-200 dark:hover:border-teal-700 transition-all duration-300 group">
                             <div class="h-1 bg-gradient-to-r from-teal-400 to-cyan-500"></div>
                             <div class="p-6">
                                 <div class="flex items-center gap-3 mb-5">
@@ -214,7 +206,7 @@
                 </div>
 
                 {{-- ===== PERMOHONAN ONLINE ===== --}}
-                <div class="info-card opacity-0 translate-y-6 transition-all duration-700 bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 overflow-hidden hover:shadow-xl hover:-translate-y-1 hover:border-violet-200 dark:hover:border-violet-700 group" data-delay="300">
+                <div class="info-card opacity-0 translate-y-6 transition-all duration-700 bg-white dark:bg-slate-800 rounded-3xl shadow-sm dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 overflow-hidden hover:shadow-lg hover:border-violet-200 dark:hover:border-violet-700 group" data-delay="300">
                     <div class="h-1 bg-gradient-to-r from-violet-500 to-purple-600"></div>
                     <div class="p-8">
                         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
@@ -238,7 +230,7 @@
                 </div>
 
                 {{-- ===== KELUHAN DAN SARAN ===== --}}
-                <div class="info-card opacity-0 translate-y-6 transition-all duration-700 bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 overflow-hidden hover:shadow-xl hover:-translate-y-1 hover:border-rose-200 dark:hover:border-rose-700 group" data-delay="400">
+                <div class="info-card opacity-0 translate-y-6 transition-all duration-700 bg-white dark:bg-slate-800 rounded-3xl shadow-sm dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 overflow-hidden hover:shadow-lg hover:border-rose-200 dark:hover:border-rose-700 group" data-delay="400">
                     <div class="h-1 bg-gradient-to-r from-rose-400 to-pink-500"></div>
                     <div class="p-8">
                         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">

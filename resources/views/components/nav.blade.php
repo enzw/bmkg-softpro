@@ -47,8 +47,8 @@
                         <a href="{{ route('alur-pelayanan') }}"
                             class="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-400 transition duration-150 {{ request()->is('alur-pelayanan*') ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 font-semibold' : '' }}">
                             <span
-                                class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-list-ol text-blue-600 dark:text-blue-400 text-xs"></i>
+                                class="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/50 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-list-ol text-green-600 dark:text-green-400 text-xs"></i>
                             </span>
                             <div>
                                 <div class="font-semibold">Alur Pelayanan Data</div>
@@ -69,8 +69,8 @@
                         <a href="{{ route('standar-pelayanan-jasa') }}"
                             class="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-400 transition duration-150 {{ request()->is('standar-pelayanan-jasa*') ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 font-semibold' : '' }}">
                             <span
-                                class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-certificate text-amber-600 dark:text-amber-400 text-xs"></i>
+                                class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-certificate text-emerald-600 dark:text-emerald-400 text-xs"></i>
                             </span>
                             <div>
                                 <div class="font-semibold">Standar Pelayanan Jasa</div>
@@ -80,8 +80,8 @@
                         <a href="{{ route('pembayaran-pnbp') }}"
                             class="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-400 transition duration-150 {{ request()->is('pembayaran-pnbp*') ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 font-semibold' : '' }}">
                             <span
-                                class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-credit-card text-indigo-600 dark:text-indigo-400 text-xs"></i>
+                                class="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/50 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-credit-card text-green-600 dark:text-green-400 text-xs"></i>
                             </span>
                             <div>
                                 <div class="font-semibold">Cara Pembayaran PNBP</div>
@@ -91,8 +91,8 @@
                         <a href="{{ route('regulasi-ptsp') }}"
                             class="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-400 transition duration-150 {{ request()->is('regulasi-ptsp*') ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 font-semibold' : '' }}">
                             <span
-                                class="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-gavel text-rose-600 dark:text-rose-400 text-xs"></i>
+                                class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-gavel text-emerald-600 dark:text-emerald-400 text-xs"></i>
                             </span>
                             <div>
                                 <div class="font-semibold">Regulasi PTSP</div>
@@ -203,7 +203,7 @@
                     </a>
                     <a href="{{ route('alur-pelayanan') }}"
                         class="flex items-center gap-2 px-5 py-2.5 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 text-sm {{ request()->is('alur-pelayanan*') ? 'text-green-700 font-semibold' : '' }}">
-                        <i class="fas fa-list-ol text-blue-500 w-4 text-center"></i> Alur Pelayanan Data
+                        <i class="fas fa-list-ol text-green-500 w-4 text-center"></i> Alur Pelayanan Data
                     </a>
                     <a href="{{ route('tarif-layanan') }}"
                         class="flex items-center gap-2 px-5 py-2.5 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 text-sm {{ request()->is('tarif-layanan*') ? 'text-green-700 font-semibold' : '' }}">
@@ -211,15 +211,15 @@
                     </a>
                     <a href="{{ route('standar-pelayanan-jasa') }}"
                         class="flex items-center gap-2 px-5 py-2.5 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 text-sm {{ request()->is('standar-pelayanan-jasa*') ? 'text-green-700 font-semibold' : '' }}">
-                        <i class="fas fa-certificate text-amber-500 w-4 text-center"></i> Standar Pelayanan Jasa
+                        <i class="fas fa-certificate text-emerald-500 w-4 text-center"></i> Standar Pelayanan Jasa
                     </a>
                     <a href="{{ route('pembayaran-pnbp') }}"
                         class="flex items-center gap-2 px-5 py-2.5 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 text-sm {{ request()->is('pembayaran-pnbp*') ? 'text-green-700 font-semibold' : '' }}">
-                        <i class="fas fa-credit-card text-indigo-500 w-4 text-center"></i> Cara Pembayaran PNBP
+                        <i class="fas fa-credit-card text-green-500 w-4 text-center"></i> Cara Pembayaran PNBP
                     </a>
                     <a href="{{ route('regulasi-ptsp') }}"
                         class="flex items-center gap-2 px-5 py-2.5 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 text-sm {{ request()->is('regulasi-ptsp*') ? 'text-green-700 font-semibold' : '' }}">
-                        <i class="fas fa-gavel text-rose-500 w-4 text-center"></i> Regulasi PTSP
+                        <i class="fas fa-gavel text-emerald-500 w-4 text-center"></i> Regulasi PTSP
                     </a>
                 </div>
             </li>

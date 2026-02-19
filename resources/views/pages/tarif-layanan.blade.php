@@ -5,39 +5,28 @@
 @section('content')
     <div class="dark:bg-slate-900 dark:text-white">
 
-        {{-- ===== HERO ===== --}}
-        <header class="relative pt-[70px] overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900">
+        {{-- ===== HERO SECTION ===== --}}
+        <header class="relative pt-[70px] overflow-hidden bg-gradient-to-br from-green-900 via-green-800 to-emerald-900">
             <div class="absolute inset-0 overflow-hidden pointer-events-none">
                 <div class="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -mr-40 -mt-40"></div>
                 <div class="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full blur-3xl -ml-40 -mb-20"></div>
-                <div class="absolute top-1/2 left-1/3 w-60 h-60 bg-indigo-400/5 rounded-full blur-2xl"></div>
             </div>
 
-            <div class="container px-4 mx-auto py-20 relative z-10 text-center">
+            <div class="container px-4 mx-auto py-16 relative z-10 text-center">
                 <span
-                    class="inline-block px-5 py-2 bg-white/15 backdrop-blur-sm border border-white/25 text-white/90 rounded-full text-sm font-semibold mb-6 tracking-wide">
-                    <i class="fas fa-tags mr-2"></i>Daftar Biaya Resmi PNBP
+                    class="inline-block px-5 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 rounded-full text-xs font-semibold mb-6 tracking-wide uppercase">
+                    <i class="fas fa-tags mr-2 text-emerald-400"></i>Informasi Biaya
                 </span>
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
-                    Jenis Layanan <span class="text-indigo-300">& Tarif</span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">
+                    Tarif <span class="text-emerald-400">Layanan</span>
                 </h1>
-                <p class="text-base font-semibold text-white/60 uppercase tracking-widest mb-6">Sesuai PP No. 47 Tahun 2018
-                </p>
-                <p class="text-lg text-white/70 max-w-2xl mx-auto leading-relaxed">
-                    Daftar lengkap tarif Penerimaan Negara Bukan Pajak (PNBP) yang berlaku pada lingkungan BMKG untuk
-                    berbagai jenis layanan MKG.
+                <p class="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] mb-6">Stasiun Geofisika Kelas I
+                    Sleman</p>
+                <p class="text-base text-white/60 max-w-xl mx-auto leading-relaxed font-medium">
+                    Daftar resmi tarif Penerimaan Negara Bukan Pajak (PNBP) untuk seluruh layanan informasi geofisika.
                 </p>
             </div>
 
-            {{-- Wave --}}
-            <div class="relative h-16">
-                <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" class="absolute bottom-0 w-full"
-                    preserveAspectRatio="none">
-                    <path
-                        d="M0 64L60 58.7C120 53.3 240 42.7 360 42.7C480 42.7 600 53.3 720 53.3C840 53.3 960 42.7 1080 37.3C1200 32 1320 32 1380 32L1440 32V64H1380C1320 64 1200 64 1080 64C960 64 840 64 720 64C600 64 480 64 360 64C240 64 120 64 60 64H0Z"
-                        fill="rgb(249 250 251)" class="dark:fill-slate-900" />
-                </svg>
-            </div>
         </header>
 
         <section class="py-20 bg-gray-50 dark:bg-slate-900">
@@ -48,8 +37,8 @@
                     class="mb-12 info-card opacity-0 translate-y-6 transition-all duration-700 bg-white dark:bg-slate-800 rounded-2xl p-8 border border-gray-100 dark:border-slate-700 shadow-xl">
                     <div class="flex flex-col md:flex-row gap-8 items-center">
                         <div
-                            class="w-16 h-16 rounded-2xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-balance-scale text-2xl text-indigo-600 dark:text-indigo-400"></i>
+                            class="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-balance-scale text-2xl text-blue-600 dark:text-blue-400"></i>
                         </div>
                         <div>
                             <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Penerapan Tarif Nol Rupiah</h2>
@@ -93,7 +82,7 @@
                         @foreach($tabs as $tab)
                             <button onclick="switchTab('{{ $tab['id'] }}')" id="tab-btn-{{ $tab['id'] }}"
                                 class="tab-btn flex-1 min-w-[130px] flex items-center justify-center gap-2 px-6 py-4 text-sm font-semibold transition duration-200 border-b-2 
-                                                                                                                                                                                {{ $loop->first ? 'active border-blue-600 text-blue-700 dark:text-blue-400 bg-blue-50/60 dark:bg-blue-900/20' : 'border-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700' }}">
+                                                                                                                                                                                                        {{ $loop->first ? 'active border-blue-600 text-blue-700 dark:text-blue-400 bg-blue-50/60 dark:bg-blue-900/20' : 'border-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700' }}">
                                 <i class="fas {{ $tab['icon'] }}"></i> {{ $tab['label'] }}
                             </button>
                         @endforeach
