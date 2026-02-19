@@ -78,7 +78,7 @@
                                 ],
                                 [
                                     'num' => '02',
-                                    'icon' => 'fa-atm',
+                                    'icon' => 'fa-credit-card',
                                     'title' => 'Melalui ATM',
                                     'sub' => 'BRI · Mandiri · BCA · BNI',
                                     'desc' => 'Gunakan mesin ATM bank pilihan Anda, masukkan kode billing 15 digit',
@@ -128,7 +128,8 @@
                                     <i class="fas {{ $m['icon'] }} text-white text-lg"></i>
                                 </div>
                                 <h3 class="font-bold text-gray-900 dark:text-white text-base mb-1 leading-snug">
-                                    {{ $m['title'] }}</h3>
+                                    {{ $m['title'] }}
+                                </h3>
                                 <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3">{{ $m['sub'] }}</p>
                                 <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{{ $m['desc'] }}</p>
                                 @if($m['tab'])
@@ -164,14 +165,15 @@
                 </div>
 
                 {{-- ===== TABS ===== --}}
-                <div class="info-card opacity-0 translate-y-6 transition-all duration-700 bg-white dark:bg-slate-800 rounded-2xl shadow-xl dark:shadow-slate-900/60 border border-gray-100 dark:border-slate-700 overflow-hidden"
+                <div id="section-panduan-detail"
+                    class="info-card opacity-0 translate-y-6 transition-all duration-700 bg-white dark:bg-slate-800 rounded-2xl shadow-xl dark:shadow-slate-900/60 border border-gray-100 dark:border-slate-700 overflow-hidden"
                     data-delay="200">
 
                     {{-- Tab buttons --}}
                     <div class="flex border-b border-gray-100 dark:border-slate-700 overflow-x-auto">
                         <button onclick="switchTab('atm')" id="tab-btn-atm"
                             class="tab-btn flex-1 min-w-[130px] flex items-center justify-center gap-2 px-6 py-4 text-sm font-semibold transition duration-200 border-b-2 border-blue-600 text-blue-700 dark:text-blue-400 bg-blue-50/60 dark:bg-blue-900/20">
-                            <i class="fas fa-atm"></i> ATM
+                            <i class="fas fa-credit-card"></i> ATM
                         </button>
                         <button onclick="switchTab('mbanking')" id="tab-btn-mbanking"
                             class="tab-btn flex-1 min-w-[130px] flex items-center justify-center gap-2 px-6 py-4 text-sm font-semibold transition duration-200 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700">
@@ -325,7 +327,8 @@
                             <i class="fas fa-lightbulb text-violet-500 mt-0.5 flex-shrink-0"></i>
                             <p class="text-sm text-violet-800 dark:text-violet-300">Pastikan aplikasi mobile banking Anda
                                 <strong>sudah diaktifkan</strong> dan memiliki limit transaksi yang cukup sebelum melakukan
-                                pembayaran.</p>
+                                pembayaran.
+                            </p>
                         </div>
                     </div>
 
@@ -402,7 +405,8 @@
                             <i class="fas fa-store text-orange-500 mt-0.5 flex-shrink-0"></i>
                             <p class="text-sm text-orange-800 dark:text-orange-300">Untuk pembayaran di
                                 <strong>Indomart/Alfamart</strong>, simpan bukti setor/bayar sebagai dokumen penting untuk
-                                proses selanjutnya.</p>
+                                proses selanjutnya.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -467,8 +471,18 @@
             };
             colorMap[tab].forEach(cls => activeBtn.classList.add(cls));
 
-            // Smooth scroll to tabs section
-            document.querySelector('.tab-btn').closest('.info-card, [data-delay]')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            // Smooth scroll to tabs section with offset for fixed header
+            const element = document.getElementById('section-panduan-detail');
+            const offset = 90; // Adjust based on your nav height
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = element.getBoundingClientRect().top;
+            const elementPosition = elementRect - bodyRect;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
         }
 
         // ===== Scroll entrance animations =====

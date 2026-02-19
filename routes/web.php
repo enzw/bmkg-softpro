@@ -21,6 +21,7 @@ use App\Http\Controllers\SewaAlatController;
 use App\Http\Middleware\Admin;
 use App\Models\SewaAlat;
 use Illuminate\Support\Facades\Route;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\DialogflowWebhookController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardPelayananController;
@@ -84,6 +85,14 @@ Route::get('/standar-pelayanan-jasa', function () {
 Route::get('/pembayaran-pnbp', function () {
     return view('pages.pembayaran-pnbp');
 })->name('pembayaran-pnbp');
+
+Route::get('/regulasi-ptsp', function () {
+    return view('pages.regulasi-ptsp');
+})->name('regulasi-ptsp');
+
+Route::get('/tarif-layanan', function () {
+    return view('pages.tarif-layanan');
+})->name('tarif-layanan');
 
 Route::get('/dashboard', function () {
     if (Auth::check() && Auth::user()->role !== 'admin') {
