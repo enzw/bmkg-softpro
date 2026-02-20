@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DialogflowWebhookController;
+// use App\Http\Controllers\DialogflowWebhookController;
 use App\Http\Controllers\FileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,4 +32,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/files/folder/{serviceType}', [FileController::class, 'deleteFolderContents']);
 });
 
-Route::post('/webhook', [DialogflowWebhookController::class, 'handleWebhook']);
+// Route::post('/webhook', [DialogflowWebhookController::class, 'handleWebhook']);

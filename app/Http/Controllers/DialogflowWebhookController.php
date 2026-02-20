@@ -1,5 +1,9 @@
 <?php
 
+// CHATBOT/DIALOGFLOW DISABLED
+// This file has been disabled as per requirements
+
+/*
 namespace App\Http\Controllers;
 
 use App\Models\Chatlog;
@@ -74,3 +78,4 @@ class DialogflowWebhookController extends Controller
         return view('pages.admin.history-megabot.index', $data);
     }
 }
+*/

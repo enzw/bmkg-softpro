@@ -1,6 +1,6 @@
 <?php
 
-use App\Exports\ChatExport;
+// use App\Exports\ChatExport;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminKlaimAsuransiController;
 use App\Http\Controllers\AdminPermohonanMagangController;
@@ -22,7 +22,7 @@ use App\Http\Middleware\Admin;
 use App\Models\SewaAlat;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Controllers\DialogflowWebhookController;
+// use App\Http\Controllers\DialogflowWebhookController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DashboardPelayananController;
 use App\Http\Controllers\AdminRatingController;
@@ -205,7 +205,7 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
         Route::resource('sewa-alat', AdminSewaAlatController::class);
         Route::get('sewa-alat/{id}/download-file/{fileName}', [AdminSewaAlatController::class, 'downloadFile'])->name('sewa-alat.download-file');
         Route::get('sewa-alat/{sewa_alat}/download', [AdminSewaAlatController::class, 'download'])->name('sewa-alat.download');
-        Route::resource('history-megabot', DialogflowWebhookController::class);
+        // Route::resource('history-megabot', DialogflowWebhookController::class);
         Route::resource('pelayanan-jasa', AdminPermohonanMagangController::class);
         Route::get('pelayanan-jasa/{id}/download', [AdminPermohonanMagangController::class, 'download'])->name('pelayanan-jasa.download');
         Route::get('pelayanan-jasa/{id}/download-file/{fileName}', [AdminPermohonanMagangController::class, 'downloadFile'])->name('pelayanan-jasa.download-file');
@@ -219,9 +219,9 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
         Route::get('jasa-konsultasi/{id}/download-file/{fileName}', [AdminJasaKonsultasiController::class, 'downloadFile'])->name('jasa-konsultasi.download-file');
         Route::resource('klaim-asuransi', AdminKlaimAsuransiController::class);
         Route::get('klaim-asuransi/{id}/download-file/{fileName}', [AdminKlaimAsuransiController::class, 'downloadFile'])->name('klaim-asuransi.download-file');
-        Route::get('/download-excel', function () {
-            return Excel::download(new ChatExport, 'data.xlsx');
-        });
+        // Route::get('/download-excel', function () {
+        //     return Excel::download(new ChatExport, 'data.xlsx');
+        // });
         Route::get('/api/chart-data', [AdminController::class, 'getChartData']);
 
         // Rating Routes
@@ -240,6 +240,6 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
 });
 
 
-Route::post('/webhook', [DialogflowWebhookController::class, 'handleWebhook']);
+// Route::post('/webhook', [DialogflowWebhookController::class, 'handleWebhook']);
 
 require __DIR__ . '/auth.php';

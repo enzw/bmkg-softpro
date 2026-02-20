@@ -2,7 +2,8 @@
 
 namespace App\Exports;
 
-use App\Models\Chatlog;
+// Chatbot/Dialogflow disabled
+// use App\Models\Chatlog;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
@@ -13,7 +14,9 @@ class ChatExport implements FromCollection, WithHeadings
      */
     public function collection()
     {
-        return Chatlog::select('id', 'question', 'session_id', 'intent', 'created_at')->get();
+        // Chatbot/Dialogflow disabled
+        // return Chatlog::select('id', 'question', 'session_id', 'intent', 'created_at')->get();
+        return collect([]);
     }
 
     public function headings(): array

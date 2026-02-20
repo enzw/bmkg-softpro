@@ -141,12 +141,13 @@
         <main class="relative">
             {{ $slot }}
 
-            @if (Auth::user()->role != 'admin' || !request()->is('admin/*'))
+            {{-- Chatbot/Dialogflow disabled --}}
+            {{-- @if (Auth::user()->role != 'admin' || !request()->is('admin/*'))
                 <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
                 <df-messenger intent="WELCOME" chat-title="Megabot" agent-id="c9f258c1-8808-4b8e-b660-8efdca1c1703"
                     chat-icon="images/icon.png" language-code="en">
                 </df-messenger>
-            @endif
+            @endif --}}
         </main>
     </div>
 

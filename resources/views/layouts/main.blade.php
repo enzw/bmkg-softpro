@@ -27,7 +27,8 @@
 <body>
     @include('components.nav')
     @yield('content')
-    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    {{-- Chatbot/Dialogflow disabled --}}
+    {{-- <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
     <df-messenger intent="WELCOME" chat-title="Megabot" agent-id="c9f258c1-8808-4b8e-b660-8efdca1c1703"
         chat-icon="images/icon.png" language-code="en">
         <!-- session-id="SESSION_ID_HERE" -->
@@ -44,7 +45,7 @@
             localStorage.setItem("dialogflowSessionId", id);
             return id;
         }
-    </script>
+    </script> --}}
     @include('components.footer')
 
     {{-- Session Timeout Warning --}}
