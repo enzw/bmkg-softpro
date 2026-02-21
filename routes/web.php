@@ -136,7 +136,6 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
                 Route::get('/permohonan/{sewa_alat}/download', 'download')->name('download-permohonan')->where('sewa_alat', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'); // download permohonan
                 Route::get('/permohonan/{sewa_alat}/download-file/{fileName}', 'downloadFile')->name('download-file')->where('sewa_alat', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')->where('fileName', '.+'); // download any file (ktp, surat, etc)
             });
-        Route::delete('/sewa-alat/{sewa_alat}', [SewaAlatController::class, 'destroy'])->name('sewa-alat.destroy');
 
         Route::name('jasa-konsultasi.')
             ->prefix('jasa-konsultasi')

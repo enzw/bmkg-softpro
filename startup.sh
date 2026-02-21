@@ -31,8 +31,8 @@ php artisan migrate --force 2>&1 || echo "⚠️  Migration skipped (DB unavaila
 
 # Optimize
 echo "⚙️  Optimizing..."
-php artisan config:cache 2>&1 || true
-php artisan route:cache 2>&1 || true
+php artisan config:cache 2>&1 || echo "⚠️  Config cache failed"
+php artisan route:cache 2>&1 || echo "⚠️  Route cache failed (continuing anyway)"
 
 # Permissions
 chmod -R 775 storage bootstrap/cache 2>/dev/null || true

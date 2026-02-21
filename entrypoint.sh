@@ -53,7 +53,10 @@ php artisan key:generate --show >/dev/null 2>&1 || {
 # Optimize Laravel (non-fatal)
 echo "⚙️  Optimizing Laravel..."
 php artisan config:cache || echo "⚠️  Config cache failed"
-php artisan route:cache || echo "⚠️  Route cache failed"
+php artisan route:cache 2>&1 || {
+    echo "⚠️  Route cache failed - continuing without cache"
+    echo "   (This is non-fatal, app will work slower)"
+}
 php artisan view:cache || echo "⚠️  View cache failed"
 
 # Fix permissions
