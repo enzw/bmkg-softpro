@@ -1,3 +1,6 @@
+# Alternative: Simpler Dockerfile (without Supervisor)
+# Use this if supervisord configuration causes issues on Koyeb
+
 # ======================
 # Stage 1 - Build Frontend (Vite)
 # ======================
@@ -16,7 +19,7 @@ RUN npm run build
 # ======================
 FROM php:8.2-cli-alpine
 
-# Install system deps + Node.js + Supervisor
+# Install system deps + Node.js
 RUN apk add --no-cache \
     nodejs npm \
     git curl unzip \
@@ -28,7 +31,6 @@ RUN apk add --no-cache \
     oniguruma-dev \
     libzip-dev \
     zip \
-    supervisor \
     bash \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
@@ -52,10 +54,9 @@ COPY . .
 # Copy Vite build result
 COPY --from=frontend /app/public/build ./public/build
 
-# Copy supervisor and entrypoint configs
-COPY supervisord.conf /etc/supervisord.conf
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# Copy simple startup script
+COPY startup.sh /usr/local/bin/startup.sh
+RUN chmod +x /usr/local/bin/startup.sh
 
 # Install PHP dependencies
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
@@ -64,7 +65,7 @@ RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-interaction \
     --no-progress
 
-# Install Node dependencies for chatbot ONLY
+# Install Node dependencies for chatbot
 RUN npm install @google/generative-ai express cors dotenv
 
 # Permission
@@ -72,7 +73,7 @@ RUN chown -R www-data:www-data storage bootstrap/cache
 
 # Create log directories
 RUN mkdir -p /var/log && \
-    touch /var/log/laravel.log /var/log/chatbot.log /var/log/supervisord.log && \
+    touch /var/log/laravel.log /var/log/chatbot.log && \
     chown -R www-data:www-data /var/log
 
 # Expose platform port
@@ -89,8 +90,5 @@ ENV PORT=8080 \
     PHP_OPCACHE_ENABLE=1 \
     PHP_OPCACHE_ENABLE_CLI=1
 
-# Start services via entrypoint
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-# Fallback command (if entrypoint fails)
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+# Start services
+CMD ["/usr/local/bin/startup.sh"]

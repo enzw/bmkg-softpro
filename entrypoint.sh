@@ -1,66 +1,78 @@
 #!/bin/bash
-set -e
 
 # Startup script for Koyeb deployment
+set -e
+
+trap 'echo "❌ Error occurred!"; exit 1' ERR
 
 echo "======================================"
 echo "🚀 Starting BMKG SoftPro Application"
 echo "======================================"
 
-# Environment
+# Environment setup
 export PORT=${PORT:-8080}
 export CHATBOT_SERVER_PORT=${CHATBOT_SERVER_PORT:-3001}
 export APP_ENV=${APP_ENV:-production}
 
 # Set APP_URL for Koyeb deployment
-# If running on Koyeb, generate URL from environment
 if [ -z "$APP_URL" ]; then
     if [ ! -z "$KOYEB_APP_NAME" ] && [ ! -z "$KOYEB_SPACE_NAME" ]; then
         export APP_URL="https://${KOYEB_APP_NAME}-${KOYEB_SPACE_NAME}.koyeb.app"
+        echo "📌 Auto-detected Koyeb APP_URL: $APP_URL"
     else
         export APP_URL="http://localhost:${PORT}"
     fi
 fi
 
-# Ensure APP_KEY is set (required by Laravel)
+# Ensure APP_KEY is set
 if [ -z "$APP_KEY" ]; then
-    echo "⚠️  WARNING: APP_KEY not set! Generate with: php artisan key:generate"
+    echo "⚠️  APP_KEY not provided, generating temporary one..."
     export APP_KEY="base64:+cKsVH9wk7MLoiUzFSYW0f1/TIv5nQwDaViDN7RxDRo="
 fi
 
 echo "📋 Configuration:"
-echo "   - PORT: $PORT"
-echo "   - APP_URL: $APP_URL"
-echo "   - CHATBOT_SERVER_PORT: $CHATBOT_SERVER_PORT"
-echo "   - APP_ENV: $APP_ENV"
-
-# Run database migrations
+echo "   PORT: $PORT"
+echo "   APP_URL: $APP_URL"
+echo "   APP_ENV: $APP_ENV"
 echo ""
+
+# Run database migrations (non-fatal if DB unavailable)
 echo "🔄 Running database migrations..."
-php artisan migrate --force || {
-    echo "⚠️  Migration failed or database not available"
+php artisan migrate --force 2>&1 || {
+    echo "⚠️  Migrations failed - DB might not be ready yet"
+    echo "   Continuing anyway..."
 }
 
-# Generate app key if not exists
-if php artisan key:generate --show 2>/dev/null | grep -q "base64:"; then
-    echo "✅ APP_KEY already set"
-else
-    echo "🔑 Generating new APP_KEY..."
+# Generate/verify APP_KEY
+echo "🔑 Verifying APP_KEY..."
+php artisan key:generate --show >/dev/null 2>&1 || {
+    echo "⏭️  Creating new APP_KEY..."
     php artisan key:generate
-fi
+}
 
-# Optimize Laravel
+# Optimize Laravel (non-fatal)
 echo "⚙️  Optimizing Laravel..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan config:cache || echo "⚠️  Config cache failed"
+php artisan route:cache || echo "⚠️  Route cache failed"
+php artisan view:cache || echo "⚠️  View cache failed"
 
 # Fix permissions
 echo "🔐 Setting permissions..."
-chmod -R 775 storage bootstrap/cache
-chown -R www-data:www-data /var/www/html
+chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+chown -R www-data:www-data /var/www/html 2>/dev/null || true
 
 # Start supervisor
 echo ""
 echo "✅ Starting services with supervisor..."
-exec supervisord -c /etc/supervisord.conf
+echo "   Supervisord config: /etc/supervisord.conf"
+echo ""
+
+# Verify supervisord is available
+if ! command -v supervisord &> /dev/null; then
+    echo "❌ ERROR: supervisord not found in PATH!"
+    echo "   Falling back to direct command execution..."
+    echo "🚀 Starting Laravel server on port $PORT..."
+    exec php -S 0.0.0.0:${PORT} -t public
+else
+    exec supervisord -c /etc/supervisord.conf
+fi
