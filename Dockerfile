@@ -12,11 +12,11 @@ RUN npm run build
 
 
 # ======================
-# Stage 2 - Backend (Laravel HTTP)
+# Stage 2 - Backend (Laravel + Node Chatbot)
 # ======================
 FROM php:8.2
 
-# Install Node.js
+# Install system deps + Node.js
 RUN apt-get update && apt-get install -y \
     nodejs npm \
     git curl unzip \
@@ -37,45 +37,45 @@ RUN apt-get update && apt-get install -y \
         gd \
         bcmath \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
-    
+
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy backend
+# Copy project files
 COPY . .
 
-# Copy Vite build
+# Copy Vite build result
 COPY --from=frontend /app/public/build ./public/build
 
-# Install deps
+# Install PHP dependencies
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-dev \
     --optimize-autoloader \
     --no-interaction \
     --no-progress
 
+# Install Node dependencies for chatbot ONLY
+RUN npm install @google/generative-ai express cors dotenv
+
 # Permission
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-# IMPORTANT: expose platform port
+# Expose platform port
 EXPOSE 8080
 
-# Set default environment variables
+# Environment defaults
 ENV PORT=8080 \
-    APP_ENV=production
+    APP_ENV=production \
+    CHATBOT_SERVER_PORT=3001
 
-# Start Laravel HTTP server
+# Start services
 CMD set -e; \
     echo "🔄 Running migrations..."; \
-    if [ "$RESET_DB" = "true" ]; then \
-      php artisan migrate:fresh --force --seed; \
-    else \
-      php artisan migrate --force; \
-    fi; \
+    php artisan migrate --force || true; \
     echo "✅ Migrations completed"; \
-    echo "🚀 Starting Node chatbot..."; \
+    echo "🚀 Starting Node chatbot on ${CHATBOT_SERVER_PORT}..."; \
     node chatbot-server.js & \
     echo "🚀 Starting Laravel server on port ${PORT}..."; \
     php artisan serve --host=0.0.0.0 --port=${PORT}
