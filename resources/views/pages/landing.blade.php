@@ -167,36 +167,9 @@
                         <div
                             class="accordion-content max-h-0 overflow-hidden transition-all duration-300 border-t border-gray-200 dark:border-slate-700">
                             <div class="px-6 py-6 bg-gradient-to-b from-gray-50 to-white dark:from-slate-700 dark:to-slate-800">
-                                @guest
-                                    <div class="space-y-4">
-                                        <p class="text-gray-700 dark:text-gray-300 mb-4">Untuk mengajukan permohonan layanan ini,
-                                            Anda perlu memiliki akun terlebih dahulu.</p>
-
-                                        <div class="flex flex-col sm:flex-row gap-3">
-                                            <a href="{{ route('login') }}"
-                                                class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-300 text-center">
-                                                <i class="fas fa-sign-in-alt mr-2"></i> Login
-                                            </a>
-                                            <a href="{{ route('register') }}"
-                                                class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-300 text-center">
-                                                <i class="fas fa-user-plus mr-2"></i> Daftar Akun
-                                            </a>
-                                        </div>
-                                    </div>
-                                @endguest
-
-                                @auth
-                                    <div class="space-y-4">
-                                        <div
-                                            class="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg p-4 mb-4">
-                                            <p class="text-green-800 dark:text-green-200 text-sm">
-                                                <i class="fas fa-check-circle mr-2"></i> Anda sudah login, siap untuk mengajukan
-                                                permohonan!
-                                            </p>
-                                        </div>
-
-                                        <p class="text-gray-700 dark:text-gray-300 font-semibold mb-3">Informasi yang perlu Anda
-                                            siapkan:</p>
+                                <div class="space-y-4">
+                                    <p class="text-gray-700 dark:text-gray-300 font-semibold mb-3">Informasi yang perlu Anda
+                                        siapkan:</p>
 
                                         <ul class="space-y-2 text-gray-700 dark:text-gray-300 mb-6">
                                             @if (str_contains($item['url'], 'sewa-alat'))
@@ -305,12 +278,15 @@
                                             @endif
                                         </ul>
 
-                                        <a href="{{ $item['url'] }}"
-                                            class="inline-block px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-300">
+                                    <a href="{{ auth()->check() ? $item['url'] : route('login') }}"
+                                        class="inline-block px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-300">
+                                        @if(auth()->check())
                                             <i class="fas fa-arrow-right mr-2"></i> Isi Formulir Permohonan
-                                        </a>
-                                    </div>
-                                @endauth
+                                        @else
+                                            <i class="fas fa-sign-in-alt mr-2"></i> Login untuk Melanjutkan
+                                        @endif
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
