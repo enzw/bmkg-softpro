@@ -26,6 +26,7 @@ RUN apk add --no-cache \
     freetype-dev \
     icu-dev \
     oniguruma-dev \
+    libzip-dev \
     zip \
     supervisor \
     bash \
