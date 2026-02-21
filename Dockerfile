@@ -25,6 +25,7 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     freetype-dev \
     icu-dev \
+    oniguruma-dev \
     zip \
     supervisor \
     bash \
