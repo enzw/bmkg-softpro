@@ -9,7 +9,9 @@
 
     <title>@yield('title', 'BMKG Geofisika Yogyakarta')</title>
 
-    <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/favicon.png') }}">
 
     @yield('styles')
 
