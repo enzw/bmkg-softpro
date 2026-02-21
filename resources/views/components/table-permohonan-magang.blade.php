@@ -141,225 +141,188 @@
                         <!-- Detail Modal -->
                         <div id="modal-{{ $loop->index }}"
                             class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-                            <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full shadow-2xl">
-                                <!-- Modal Header -->
-                                <div
-                                    class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                                            <i class="fas fa-info-circle text-white"></i>
+                            <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full shadow-2xl overflow-hidden">
+                                <!-- Modal Header with Gradient -->
+                                <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 dark:from-indigo-700 dark:to-indigo-800 p-6 text-white">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                                                <i class="fas fa-briefcase text-2xl text-white"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-semibold opacity-90">Detail Permohonan</p>
+                                                <h3 class="text-lg font-bold">{{ $item->jenis_layanan }}</h3>
+                                            </div>
                                         </div>
-                                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Detail Permohonan</h3>
+                                        <button type="button" onclick="closeModal('modal-{{ $loop->index }}')" class="text-white/70 hover:text-white transition">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
                                     </div>
-                                    <button type="button" onclick="closeModal('modal-{{ $loop->index }}')"
-                                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
-                                    </button>
                                 </div>
 
                                 <!-- Modal Content -->
-                                <div class="p-6 space-y-4 max-h-96 overflow-y-auto">
-                                    <div class="space-y-4">
-                                        <div>
-                                            <p
-                                                class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                Jenis Layanan</p>
-                                            <p class="text-gray-900 dark:text-white font-semibold">{{ $item->jenis_layanan }}
-                                            </p>
-                                        </div>
+                                <div class="p-6 space-y-4 max-h-[calc(100vh-240px)] overflow-y-auto">
+                                    <!-- Status Badge -->
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status Saat Ini</span>
+                                        @php
+                                            $statusValue = $item->status instanceof \App\Enums\Status ? $item->status->value : (string)$item->status;
+                                            $statusColor = match($statusValue) {
+                                                'Menunggu' => 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800',
+                                                'Diproses' => 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800',
+                                                'Ditolak' => 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800',
+                                                'Selesai' => 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800',
+                                                default => 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                                            };
+                                        @endphp
+                                        <span class="px-3 py-1 rounded-full font-semibold text-sm {{ $statusColor }}">{{ $statusLabel }}</span>
+                                    </div>
 
-                                        <div>
-                                            <p
-                                                class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                Status</p>
-                                            <p class="text-gray-900 dark:text-white font-semibold">{{ $statusLabel }}</p>
-                                        </div>
+                                    <div class="space-y-6">
 
                                         {{-- Magang Fields --}}
                                         @if($item->jenis_layanan === 'Magang')
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        Nama Lengkap</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->nama_lengkap ?? '-' }}</p>
-                                                </div>
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        No WhatsApp</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->no_whatsapp ?? '-' }}</p>
-                                                </div>
-                                            </div>
-
-                                            <div>
-                                                <p
-                                                    class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                    Email</p>
-                                                <p class="text-gray-900 dark:text-white font-semibold">{{ $item->email ?? '-' }}</p>
-                                            </div>
-
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        Universitas</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->universitas ?? '-' }}</p>
-                                                </div>
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        Fakultas</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->fakultas ?? '-' }}</p>
+                                            <!-- Informasi Peserta -->
+                                            <div class="space-y-3">
+                                                <h4 class="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">Informasi Peserta</h4>
+                                                <div class="space-y-2">
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Nama Lengkap</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->nama_lengkap ?? '-' }}</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Email</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->email ?? '-' }}</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">No WhatsApp</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->no_whatsapp ?? '-' }}</p>
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <div>
-                                                <p
-                                                    class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                    Program Studi</p>
-                                                <p class="text-gray-900 dark:text-white font-semibold">{{ $item->prodi ?? '-' }}</p>
+                                            <!-- Informasi Kampus -->
+                                            <div class="space-y-3">
+                                                <h4 class="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">Informasi Kampus</h4>
+                                                <div class="space-y-2">
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Universitas</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->universitas ?? '-' }}</p>
+                                                    </div>
+                                                    <div class="grid grid-cols-2 gap-2">
+                                                        <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                            <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Fakultas</p>
+                                                            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->fakultas ?? '-' }}</p>
+                                                        </div>
+                                                        <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                            <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Prodi</p>
+                                                            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->prodi ?? '-' }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        Tanggal Mulai</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->tanggal_mulai ? \Carbon\Carbon::parse($item->tanggal_mulai)->format('d/m/Y') : '-' }}
-                                                    </p>
-                                                </div>
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        Tanggal Selesai</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-' }}
-                                                    </p>
+                                            <!-- Periode Magang -->
+                                            <div class="space-y-3">
+                                                <h4 class="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">Periode Magang</h4>
+                                                <div class="grid grid-cols-2 gap-3">
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Mulai</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->tanggal_mulai ? \Carbon\Carbon::parse($item->tanggal_mulai)->format('d/m/Y') : '-' }}</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Selesai</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-' }}</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                             {{-- Klaim Asuransi Fields --}}
                                         @elseif($item->jenis_layanan === 'Layanan Klaim Asuransi')
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        Nama</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->nama_user ?? '-' }}</p>
-                                                </div>
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        No WhatsApp</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->no_whatsapp ?? '-' }}</p>
+                                            <!-- Informasi Pemohon -->
+                                            <div class="space-y-3">
+                                                <h4 class="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">Informasi Pemohon</h4>
+                                                <div class="space-y-2">
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Nama</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->nama_user ?? '-' }}</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">No WhatsApp</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->no_whatsapp ?? '-' }}</p>
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <div>
-                                                <p
-                                                    class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                    Perusahaan</p>
-                                                <p class="text-gray-900 dark:text-white font-semibold">
-                                                    {{ $item->perusahaan ?? '-' }}</p>
-                                            </div>
-
-                                            <div>
-                                                <p
-                                                    class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                    Lokasi</p>
-                                                <p class="text-gray-900 dark:text-white font-semibold">{{ $item->lokasi ?? '-' }}
-                                                </p>
-                                            </div>
-
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        Latitude</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->latitude ?? '-' }}</p>
-                                                </div>
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        Longitude</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->longitude ?? '-' }}</p>
+                                            <!-- Detail Klaim -->
+                                            <div class="space-y-3">
+                                                <h4 class="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">Detail Klaim</h4>
+                                                <div class="space-y-2">
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Perusahaan</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->perusahaan ?? '-' }}</p>
+                                                    </div>
+                                                    <div class="grid grid-cols-2 gap-2">
+                                                        <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                            <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Tanggal Kejadian</p>
+                                                            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') : '-' }}</p>
+                                                        </div>
+                                                        <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                            <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Lokasi</p>
+                                                            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->lokasi ?? '-' }}</p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <div>
-                                                <p
-                                                    class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                    Tanggal Kejadian</p>
-                                                <p class="text-gray-900 dark:text-white font-semibold">
-                                                    {{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') : '-' }}
-                                                </p>
+                                            <!-- Koordinat -->
+                                            <div class="space-y-3">
+                                                <h4 class="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">Koordinat Lokasi</h4>
+                                                <div class="grid grid-cols-2 gap-3">
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Latitude</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->latitude ?? '-' }}</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Longitude</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->longitude ?? '-' }}</p>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             @if($item->table_name === 'asuransi')
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        Tarif</p>
-                                                    <p class="text-blue-600 dark:text-blue-400 font-semibold">
-                                                        Rp 185.000
-                                                    </p>
+                                                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                                                    <p class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2">Tarif Layanan</p>
+                                                    <p class="text-lg font-bold text-blue-700 dark:text-blue-300">Rp 185.000</p>
                                                 </div>
                                             @endif
                                             {{-- Layanan Data Fields --}}
                                         @elseif($item->jenis_layanan === 'Layanan Data')
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        Nama Lengkap</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->nama_lengkap ?? '-' }}</p>
-                                                </div>
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        No WhatsApp</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->no_whatsapp ?? '-' }}</p>
+                                            <!-- Informasi Pemohon -->
+                                            <div class="space-y-3">
+                                                <h4 class="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">Informasi Pemohon</h4>
+                                                <div class="space-y-2">
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Nama Lengkap</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->nama_lengkap ?? '-' }}</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Email</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->email ?? '-' }}</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">No WhatsApp</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->no_whatsapp ?? '-' }}</p>
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <div>
-                                                <p
-                                                    class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                    Email</p>
-                                                <p class="text-gray-900 dark:text-white font-semibold">{{ $item->email ?? '-' }}</p>
-                                            </div>
-
-                                            <div class="relative pl-6 border-l-2 border-blue-500/30">
-                                                <h4
-                                                    class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                                                    Detail Layanan
-                                                </h4>
-                                                <div
-                                                    class="bg-gray-50 dark:bg-gray-900/40 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-700 text-left">
-                                                    <p
-                                                        class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2 text-left">
-                                                        Keterangan / Keperluan
-                                                    </p>
-                                                    <p
-                                                        class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed text-left w-full">
-                                                        {{ $item->keterangan }}</p>
-                                                </div>
+                                            <!-- Keterangan Permintaan -->
+                                            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                                                <p class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2">Keterangan / Keperluan</p>
+                                                <p class="text-sm text-blue-900 dark:text-blue-100 whitespace-pre-wrap">{{ $item->keterangan ?? 'Tidak ada keterangan' }}</p>
                                             </div>
                                             {{-- Layanan Peta Sebaran Fields --}}
                                         @elseif($item->jenis_layanan === 'Layanan Peta Sebaran')
@@ -450,46 +413,29 @@
                                             </div>
                                             {{-- Layanan Konsultasi Fields --}}
                                         @elseif($item->jenis_layanan === 'Layanan Konsultasi')
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        Nama Lengkap</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->nama_lengkap ?? '-' }}</p>
-                                                </div>
-                                                <div>
-                                                    <p
-                                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                        No WhatsApp</p>
-                                                    <p class="text-gray-900 dark:text-white font-semibold">
-                                                        {{ $item->no_whatsapp ?? '-' }}</p>
+                                            <!-- Informasi Pemohon -->
+                                            <div class="space-y-3">
+                                                <h4 class="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">Informasi Pemohon</h4>
+                                                <div class="space-y-2">
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Nama Lengkap</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->nama_lengkap ?? '-' }}</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Email</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->email ?? '-' }}</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">No WhatsApp</p>
+                                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->no_whatsapp ?? '-' }}</p>
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <div>
-                                                <p
-                                                    class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
-                                                    Email</p>
-                                                <p class="text-gray-900 dark:text-white font-semibold">{{ $item->email ?? '-' }}</p>
-                                            </div>
-
-                                            <div class="relative pl-6 border-l-2 border-blue-500/30">
-                                                <h4
-                                                    class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                                                    Detail Layanan
-                                                </h4>
-                                                <div
-                                                    class="bg-gray-50 dark:bg-gray-900/40 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-700 text-left">
-                                                    <p
-                                                        class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2 text-left">
-                                                        Keterangan / Keperluan
-                                                    </p>
-                                                    <p
-                                                        class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed text-left w-full">
-                                                        {{ $item->keterangan }}</p>
-                                                </div>
+                                            <!-- Keterangan Konsultasi -->
+                                            <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                                                <p class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest mb-2">Topik Konsultasi</p>
+                                                <p class="text-sm text-purple-900 dark:text-purple-100 whitespace-pre-wrap">{{ $item->keterangan ?? 'Tidak ada keterangan' }}</p>
                                             </div>
                                             {{-- Layanan Kunjungan Teknis Fields --}}
                                         @elseif($item->jenis_layanan === 'Layanan Kunjungan Teknis')
@@ -598,9 +544,9 @@
                                 </div>
 
                                 <!-- Modal Footer -->
-                                <div class="p-6 border-t border-gray-200 dark:border-gray-700">
+                                <div class="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
                                     <button type="button" onclick="closeModal('modal-{{ $loop->index }}')"
-                                        class="w-full px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
+                                        class="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-semibold transition shadow-lg">
                                         Tutup
                                     </button>
                                 </div>

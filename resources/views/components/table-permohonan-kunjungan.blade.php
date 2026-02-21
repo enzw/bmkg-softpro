@@ -102,100 +102,100 @@
 
                     <!-- Detail Modal -->
                     <div id="modal-{{ $loop->index }}" class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-                        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full shadow-2xl">
-                            <!-- Modal Header -->
-                            <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                                        <i class="fas fa-info-circle text-white"></i>
+                        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full shadow-2xl overflow-hidden">
+                            <!-- Modal Header with Gradient -->
+                            <div class="bg-gradient-to-r from-green-600 to-green-700 dark:from-green-700 dark:to-green-800 p-6 text-white">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                                            <i class="fas fa-map-pin text-2xl text-white"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-semibold opacity-90">Detail Permohonan</p>
+                                            <h3 class="text-lg font-bold">{{ e($item->jenis_kunjungan) }}</h3>
+                                        </div>
                                     </div>
-                                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">Detail Permohonan</h3>
+                                    <button type="button" onclick="closeModal('modal-{{ $loop->index }}')" class="text-white/70 hover:text-white transition">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
                                 </div>
-                                <button type="button" onclick="closeModal('modal-{{ $loop->index }}')" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
                             </div>
 
                             <!-- Modal Content -->
-                            <div class="p-6 space-y-4 max-h-96 overflow-y-auto">
-                                <div class="space-y-4">
-                                    <div>
-                                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Nama Instansi</p>
-                                        <p class="text-gray-900 dark:text-white font-semibold">{{ $item->nama_instansi }}</p>
-                                    </div>
-
-                                    <div>
-                                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Nama Lengkap</p>
-                                        <p class="text-gray-900 dark:text-white font-semibold">{{ $item->nama_lengkap }}</p>
-                                    </div>
-
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Jenis Kunjungan</p>
-                                            <p class="text-gray-900 dark:text-white font-semibold">{{ $item->jenis_kunjungan }}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Rombongan</p>
-                                            <p class="text-gray-900 dark:text-white font-semibold">{{ $item->jumlah_rombongan }} orang</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">No WhatsApp</p>
-                                            <p class="text-gray-900 dark:text-white font-semibold">{{ $item->no_whatsapp }}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Status</p>
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full border {{ $currentStatusColor }}">
-                                                {{ $statusLabel }}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div class="relative pl-6 border-l-2 border-blue-500/30">
-                                        <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                                            Detail Layanan
-                                        </h4>
-                                        <div class="bg-gray-50 dark:bg-gray-900/40 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-700 text-left">
-                                            <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2 text-left">
-                                                Keterangan / Keperluan
-                                            </p>
-                                            <p class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed text-left w-full">{{ $item->rencana_kunjungan }}</p>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Tanggal Permohonan</p>
-                                        <p class="text-gray-900 dark:text-white font-semibold">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</p>
-                                    </div>
-
-                                    @if($item->surat_permohonan || $item->ktp)
-                                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
-                                            @if($item->surat_permohonan)
-                                                <a href="{{ route('permohonan-kunjungan.download-file', ['id' => $item->id, 'fileName' => basename($item->surat_permohonan)]) }}"
-                                                    class="inline-flex items-center justify-center w-full px-4 py-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30 font-semibold text-sm transition">
-                                                    <i class="fas fa-file-pdf mr-2"></i>Download Surat Permohonan
-                                                </a>
-                                            @endif
-                                            @if($item->ktp)
-                                                <a href="{{ route('permohonan-kunjungan.download-file', ['id' => $item->id, 'fileName' => basename($item->ktp)]) }}"
-                                                    class="inline-flex items-center justify-center w-full px-4 py-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-semibold text-sm transition">
-                                                    <i class="fas fa-id-card mr-2"></i>Download KTP/Identitas
-                                                </a>
-                                            @endif
-                                        </div>
-                                    @endif
+                            <div class="p-6 space-y-6 max-h-[calc(100vh-240px)] overflow-y-auto">
+                                <!-- Status Badge -->
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status Saat Ini</span>
+                                    <span class="px-3 py-1 rounded-full font-semibold text-sm border {{ $currentStatusColor }}">{{ $statusLabel }}</span>
                                 </div>
+
+                                <!-- Informasi Pemohon -->
+                                <div class="space-y-3">
+                                    <h4 class="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">Informasi Pemohon</h4>
+                                    <div class="space-y-2">
+                                        <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Nama Lengkap</p>
+                                            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ e($item->nama_lengkap) }}</p>
+                                        </div>
+                                        <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">No WhatsApp</p>
+                                            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ e($item->no_whatsapp) }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Detail Kunjungan -->
+                                <div class="space-y-3">
+                                    <h4 class="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">Detail Kunjungan</h4>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Jenis</p>
+                                            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ e($item->jenis_kunjungan) }}</p>
+                                        </div>
+                                        <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Rombongan</p>
+                                            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->jumlah_rombongan }} orang</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Rencana Kunjungan -->
+                                <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                                    <p class="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-widest mb-2">Rencana Kunjungan</p>
+                                    <p class="text-sm text-green-900 dark:text-green-100 whitespace-pre-wrap">{{ e($item->rencana_kunjungan) }}</p>
+                                </div>
+
+                                <!-- Tanggal Permohonan -->
+                                <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Tanggal Permohonan</p>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</p>
+                                </div>
+
+                                @if($item->surat_permohonan || $item->ktp)
+                                    <!-- File Downloads -->
+                                    <div class="space-y-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                        @if($item->surat_permohonan)
+                                            <a href="{{ route('permohonan-kunjungan.download-file', ['id' => $item->id, 'fileName' => basename($item->surat_permohonan)]) }}"
+                                                class="flex items-center justify-center gap-2 w-full px-4 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30 font-semibold text-sm transition">
+                                                <i class="fas fa-file-pdf"></i>Surat Permohonan
+                                            </a>
+                                        @endif
+                                        @if($item->ktp)
+                                            <a href="{{ route('permohonan-kunjungan.download-file', ['id' => $item->id, 'fileName' => basename($item->ktp)]) }}"
+                                                class="flex items-center justify-center gap-2 w-full px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-semibold text-sm transition">
+                                                <i class="fas fa-id-card"></i>KTP/Identitas
+                                            </a>
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
 
                             <!-- Modal Footer -->
-                            <div class="p-6 border-t border-gray-200 dark:border-gray-700">
+                            <div class="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
                                 <button type="button" onclick="closeModal('modal-{{ $loop->index }}')"
-                                    class="w-full px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
+                                    class="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold transition shadow-lg">
                                     Tutup
                                 </button>
                             </div>
