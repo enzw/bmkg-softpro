@@ -2,20 +2,30 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config();
+// Get current directory for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load environment variables from .env file
+dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config({ path: path.join(__dirname, '.env.local') });
 
 const app = express();
 const PORT = process.env.CHATBOT_SERVER_PORT || 3001;
 const API_KEY = process.env.GOOGLE_AI_KEY;
 
+// Warning if API_KEY not set, but don't exit
 if (!API_KEY) {
-    console.error('❌ GOOGLE_AI_KEY is not set in environment variables');
-    process.exit(1);
+    console.warn('⚠️  WARNING: GOOGLE_AI_KEY is not set in environment variables');
+    console.warn('   Chatbot will not function, but server will continue running');
+    console.warn('   Please set GOOGLE_AI_KEY in environment or .env file');
 }
 
-const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
+const model = genAI ? genAI.getGenerativeModel({ model: 'gemini-2.5-flash' }) : null;
 
 // Middleware
 app.use(cors());
@@ -52,6 +62,16 @@ app.post('/chat', async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: 'Pesan tidak boleh kosong'
+            });
+        }
+
+        // Check if API_KEY is configured
+        if (!API_KEY || !model) {
+            console.warn('⚠️  Chat request received but GOOGLE_AI_KEY not configured');
+            return res.status(503).json({
+                success: false,
+                message: '❌ Chatbot service not available. GOOGLE_AI_KEY is not configured. Please contact administrator.',
+                statusCode: 503
             });
         }
 
@@ -110,4 +130,11 @@ app.listen(PORT, () => {
     console.log(`✅ Chatbot server running on port ${PORT}`);
     console.log(`   Chat endpoint: POST http://localhost:${PORT}/chat`);
     console.log(`   Health check: GET http://localhost:${PORT}/health`);
+    
+    if (API_KEY && model) {
+        console.log(`   Status: ✅ GOOGLE_AI_KEY configured - Chatbot READY`);
+    } else {
+        console.warn(`   Status: ⚠️  GOOGLE_AI_KEY NOT configured - Chat will return error 503`);
+        console.warn(`   Please set GOOGLE_AI_KEY environment variable to enable chatbot`);
+    }
 });

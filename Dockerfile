@@ -55,7 +55,8 @@ COPY --from=frontend /app/public/build ./public/build
 # Copy supervisor and entrypoint configs
 COPY supervisord.conf /etc/supervisord.conf
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+COPY chatbot-startup.sh /var/www/html/chatbot-startup.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh /var/www/html/chatbot-startup.sh
 
 # Install PHP dependencies
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
