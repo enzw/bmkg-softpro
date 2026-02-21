@@ -19,3 +19,4 @@ yarn-error.log
 /permohonan
 .vercel
 .env*.local
+.env.koyeb

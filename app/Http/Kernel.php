@@ -21,7 +21,8 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \App\Http\Middleware\ForceHttps::class,
+        // ForceHttps disabled for cloud platforms (Koyeb handles HTTPS at load balancer)
+        // \App\Http\Middleware\ForceHttps::class,
     ];
 
     /**

@@ -7,15 +7,13 @@ build:
 
 run:
   env:
-    - name: PORT
-      value: "8080"
-    - name: APP_ENV
-      value: "production"
-    - name: CHATBOT_SERVER_PORT
-      value: "3001"
-    # Uncomment and configure these:
-    # - name: DB_CONNECTION
-    #   value: "pgsql"
+    # ==================
+    # REQUIRED: Set these secrets in Koyeb console
+    # ==================
+    # - name: APP_KEY
+    #   secret: APP_KEY_SECRET          # From: php artisan key:generate --show
+    # - name: APP_URL
+    #   secret: APP_URL_SECRET          # e.g., https://your-app.koyeb.app
     # - name: DB_HOST
     #   secret: DB_HOST_SECRET
     # - name: DB_DATABASE
@@ -24,19 +22,59 @@ run:
     #   secret: DB_USERNAME_SECRET
     # - name: DB_PASSWORD
     #   secret: DB_PASSWORD_SECRET
-    # - name: APP_KEY
-    #   secret: APP_KEY_SECRET
+
+    # ==================
+    # Application Configuration
+    # ==================
+    - name: PORT
+      value: "8080"
+    - name: APP_ENV
+      value: "production"
+    - name: APP_DEBUG
+      value: "false"
+    - name: LOG_LEVEL
+      value: "info"
+
+    # ==================
+    # Database Configuration (if using PostgreSQL)
+    # ==================
+    - name: DB_CONNECTION
+      value: "pgsql"
+    - name: DB_PORT
+      value: "5432"
+    # DB_HOST, DB_DATABASE, DB_USERNAME, DB_PASSWORD: use secrets
+
+    # ==================
+    # Session & Cache (File-based for Koyeb ephemeral storage)
+    # ==================
+    - name: BROADCAST_DRIVER
+      value: "log"
+    - name: CACHE_DRIVER
+      value: "file"
+    - name: FILESYSTEM_DISK
+      value: "local"
+    - name: QUEUE_CONNECTION
+      value: "sync"
+    - name: SESSION_DRIVER
+      value: "file"
+
+    # ==================
+    # Chat Bot Configuration
+    # ==================
+    - name: CHATBOT_SERVER_PORT
+      value: "3001"
+    # - name: GOOGLE_AI_KEY
+    #   secret: GOOGLE_AI_KEY_SECRET
 
   ports:
     - name: http
       port: 8080
-    - name: chatbot
-      port: 3001
 
   healthcheck:
     http:
       path: /health
       port: 8080
-      initial_delay: 10
+      initial_delay: 15
       timeout: 10
       period: 30
+      failure_threshold: 3
