@@ -78,4 +78,4 @@ CMD set -e; \
     echo "🚀 Starting Node chatbot on ${CHATBOT_SERVER_PORT}..."; \
     node chatbot-server.js & \
     echo "🚀 Starting Laravel server on port ${PORT}..."; \
-    php artisan serve --host=0.0.0.0 --port=${PORT}
+    php -S 0.0.0.0:${PORT} -t public
