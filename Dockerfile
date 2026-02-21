@@ -72,6 +72,9 @@ RUN npm install @google/generative-ai express cors dotenv
 # Permission
 RUN chown -R www-data:www-data storage bootstrap/cache
 
+# Ensure favicon.ico exists in public root (browsers look for this by default)
+RUN ln -sf images/favicon.png public/favicon.ico || cp public/images/favicon.png public/favicon.ico
+
 # Create log directories
 RUN mkdir -p /var/log && \
     touch /var/log/laravel.log /var/log/chatbot.log /var/log/supervisord.log && \
