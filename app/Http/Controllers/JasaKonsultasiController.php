@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
 use App\Models\JasaKonsultasi;
 use App\Services\TelegramService;
 use App\Traits\HandlesFileDownload;
@@ -89,7 +90,7 @@ class JasaKonsultasiController extends Controller
         }
 
         $validated['user_id'] = Auth::id();
-        $validated['status'] = 'Menunggu';
+        $validated['status'] = Status::MENUNGGU->value;
 
         try {
             $jasaKonsultasi = JasaKonsultasi::create($validated);

@@ -195,6 +195,8 @@ class AdminController extends Controller
         $statistik['completion_rate_change'] = max(0, $currentPercentage - $percentageLastMonth);
 
         // $permohonan = collect([...$sewa_alat, ...$magang, ...$asuransi]);
+        // Chatbot/Dialogflow disabled
+        /*
         $rating = DB::select('select round(cast((sum(total)/count(question)::float) as numeric),1) as percentage ,sum(total) as total, count(question) as user
         from (select question , right(question,1) ::int as total
         from chatlogs c 
@@ -204,6 +206,9 @@ class AdminController extends Controller
         from chatlogs c 
         where intent = ?
         group by value order by value DESC', array('Bintang'));
+        */
+        $rating = [];
+        $bintang = [];
 
         $data = [
             'title' => 'Dashboard',
@@ -233,6 +238,8 @@ class AdminController extends Controller
         $month = $request->query('month', $currentMonth);
         $year = $request->query('year', $currentYear);
 
+        // Chatbot/Dialogflow disabled
+        /*
         // Build the query
         $query = DB::table('chatlogs as c')
             ->selectRaw("
@@ -255,6 +262,9 @@ class AdminController extends Controller
 
         // Calculate max value
         $maxValue = $results->max('value');
+        */
+        $results = [];
+        $maxValue = 0;
 
         // Return response
         return response()->json([

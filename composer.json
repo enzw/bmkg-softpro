@@ -11,7 +11,6 @@
         "php": "^8.1",
         "aws/aws-sdk-php": "^3.369",
         "fakerphp/faker": "^1.9.1",
-        "google/cloud-dialogflow": "^1.17",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",

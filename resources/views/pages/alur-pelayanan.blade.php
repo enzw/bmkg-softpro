@@ -167,71 +167,155 @@
                 @endphp
 
                 <div class="relative">
-                    {{-- Vertical connector line --}}
-                    <div class="absolute left-8 top-8 bottom-8 w-0.5 bg-gradient-to-b from-blue-200 via-green-200 to-slate-200 dark:from-blue-800 dark:via-green-800 dark:to-slate-700 hidden md:block"
-                        style="left: 2.75rem;"></div>
+                    {{-- Vertical connector line - centered --}}
+                    <div class="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-200 via-green-200 to-slate-200 dark:from-blue-800 dark:via-green-800 dark:to-slate-700 hidden md:block"></div>
 
                     <div class="space-y-6">
                         @foreach($steps as $step)
                                         @php
                                             $isEven = $step['number'] % 2 === 0;
                                         @endphp
-                                        <div class="group relative flex items-start gap-6 step-card opacity-0 translate-y-6 transition-all duration-700"
+                                        <div class="group relative flex items-stretch gap-6 step-card opacity-0 translate-y-6 transition-all duration-700 md:gap-0"
                                             data-index="{{ $step['number'] - 1 }}">
-                                            {{-- Step number circle --}}
-                                            <div class="relative flex-shrink-0 z-10">
-                                                <div
-                                                    class="w-14 h-14 rounded-2xl bg-gradient-to-br {{ $step['color'] }} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                                    <i class="fas {{ $step['icon'] }} text-white text-xl"></i>
-                                                </div>
-                                                <span
-                                                    class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white dark:bg-slate-800 border-2 border-current text-{{ $step['accent'] }}-600 dark:text-{{ $step['accent'] }}-400 flex items-center justify-center text-[10px] font-black shadow">
-                                                    {{ $step['number'] }}
-                                                </span>
+                                            
+                                            {{-- Left content (odd steps) or empty (even steps) --}}
+                                            <div class="{{ $isEven ? 'hidden md:block md:flex-1' : 'hidden md:block md:flex-1' }}">
+                                                @if (!$isEven)
+                                                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 group-hover:border-{{ $step['accent'] }}-200 dark:group-hover:border-{{ $step['accent'] }}-700 group-hover:shadow-xl dark:group-hover:shadow-{{ $step['accent'] }}-900/20 group-hover:-translate-y-1 transition-all duration-300 overflow-hidden h-full">
+                                                        {{-- Card top accent bar --}}
+                                                        <div class="h-1 bg-gradient-to-r {{ $step['color'] }}"></div>
+
+                                                        <div class="p-6">
+                                                            <div class="flex items-start justify-between gap-4 mb-3">
+                                                                <div>
+                                                                    <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-2
+                                                                                                                {{ $step['role'] === 'Pemohon'
+                                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                                        : 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' }}">
+                                                                        <i
+                                                                            class="fas {{ $step['role'] === 'Pemohon' ? 'fa-user' : 'fa-user-tie' }} mr-1"></i>
+                                                                        {{ $step['role'] }}
+                                                                    </span>
+                                                                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ $step['title'] }}
+                                                                    </h2>
+                                                                </div>
+                                                                <span
+                                                                    class="flex-shrink-0 text-3xl font-black text-gray-100 dark:text-slate-700 select-none">{{ str_pad($step['number'], 2, '0', STR_PAD_LEFT) }}</span>
+                                                            </div>
+
+                                                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">
+                                                                {{ $step['desc'] }}
+                                                            </p>
+
+                                                            <ul class="space-y-2">
+                                                                @foreach($step['items'] as $item)
+                                                                    <li class="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                                                        <span>{!! $item !!}</span>
+                                                                    </li>
+                                                                @endforeach
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                @endif
                                             </div>
 
-                                            {{-- Content card --}}
-                                            <div
-                                                class="flex-1 bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 group-hover:border-{{ $step['accent'] }}-200 dark:group-hover:border-{{ $step['accent'] }}-700 group-hover:shadow-xl dark:group-hover:shadow-{{ $step['accent'] }}-900/20 group-hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                                                {{-- Card top accent bar --}}
-                                                <div class="h-1 bg-gradient-to-r {{ $step['color'] }}"></div>
-
-                                                <div class="p-6">
-                                                    <div class="flex items-start justify-between gap-4 mb-3">
-                                                        <div>
-                                                            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-2
-                                                                                                        {{ $step['role'] === 'Pemohon'
-                            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
-                            : 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' }}">
-                                                                <i
-                                                                    class="fas {{ $step['role'] === 'Pemohon' ? 'fa-user' : 'fa-user-tie' }} mr-1"></i>
-                                                                {{ $step['role'] }}
-                                                            </span>
-                                                            <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ $step['title'] }}
-                                                            </h2>
-                                                        </div>
-                                                        <span
-                                                            class="flex-shrink-0 text-3xl font-black text-gray-100 dark:text-slate-700 select-none">{{ str_pad($step['number'], 2, '0', STR_PAD_LEFT) }}</span>
+                                            {{-- Center icon - sticky on line --}}
+                                            <div class="flex flex-col items-center gap-0 hidden md:flex">
+                                                <div class="relative flex-shrink-0 z-20">
+                                                    <div
+                                                        class="w-14 h-14 rounded-2xl bg-gradient-to-br {{ $step['color'] }} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 border-4 border-gray-50 dark:border-slate-900">
+                                                        <i class="fas {{ $step['icon'] }} text-white text-xl"></i>
                                                     </div>
+                                                    <span
+                                                        class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white dark:bg-slate-800 border-2 border-current text-{{ $step['accent'] }}-600 dark:text-{{ $step['accent'] }}-400 flex items-center justify-center text-[10px] font-black shadow">
+                                                        {{ $step['number'] }}
+                                                    </span>
+                                                </div>
+                                            </div>
 
-                                                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">
-                                                        {{ $step['desc'] }}
-                                                    </p>
+                                            {{-- Right content (even steps) or empty (odd steps) --}}
+                                            <div class="{{ !$isEven ? 'hidden md:block md:flex-1' : 'hidden md:block md:flex-1' }}">
+                                                @if ($isEven)
+                                                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 group-hover:border-{{ $step['accent'] }}-200 dark:group-hover:border-{{ $step['accent'] }}-700 group-hover:shadow-xl dark:group-hover:shadow-{{ $step['accent'] }}-900/20 group-hover:-translate-y-1 transition-all duration-300 overflow-hidden h-full">
+                                                        {{-- Card top accent bar --}}
+                                                        <div class="h-1 bg-gradient-to-r {{ $step['color'] }}"></div>
 
-                                                    <ul class="space-y-2">
-                                                        @foreach($step['items'] as $item)
-                                                            <li class="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
-                                                                <span>{!! $item !!}</span>
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
+                                                        <div class="p-6">
+                                                            <div class="flex items-start justify-between gap-4 mb-3">
+                                                                <span
+                                                                    class="flex-shrink-0 text-3xl font-black text-gray-100 dark:text-slate-700 select-none">{{ str_pad($step['number'], 2, '0', STR_PAD_LEFT) }}</span>
+                                                                <div class="text-right">
+                                                                    <span class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-2
+                                                                                                                {{ $step['role'] === 'Pemohon'
+                                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                                        : 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' }}">
+                                                                        <i
+                                                                            class="fas {{ $step['role'] === 'Pemohon' ? 'fa-user' : 'fa-user-tie' }} mr-1"></i>
+                                                                        {{ $step['role'] }}
+                                                                    </span>
+                                                                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ $step['title'] }}
+                                                                    </h2>
+                                                                </div>
+                                                            </div>
+
+                                                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">
+                                                                {{ $step['desc'] }}
+                                                            </p>
+
+                                                            <ul class="space-y-2">
+                                                                @foreach($step['items'] as $item)
+                                                                    <li class="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                                                        <span>{!! $item !!}</span>
+                                                                    </li>
+                                                                @endforeach
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            {{-- Mobile layout --}}
+                                            <div class="w-full md:hidden flex gap-6 items-start">
+                                                <div class="relative flex-shrink-0 z-10">
+                                                    <div
+                                                        class="w-12 h-12 rounded-xl bg-gradient-to-br {{ $step['color'] }} flex items-center justify-center shadow-lg">
+                                                        <i class="fas {{ $step['icon'] }} text-white text-lg"></i>
+                                                    </div>
+                                                    <span
+                                                        class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-white dark:bg-slate-800 border-2 border-current text-{{ $step['accent'] }}-600 dark:text-{{ $step['accent'] }}-400 flex items-center justify-center text-[9px] font-black shadow">
+                                                        {{ $step['number'] }}
+                                                    </span>
+                                                </div>
+                                                <div class="flex-1 bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-slate-900/50 border border-gray-100 dark:border-slate-700 overflow-hidden">
+                                                    <div class="h-1 bg-gradient-to-r {{ $step['color'] }}"></div>
+                                                    <div class="p-4">
+                                                        <span class="inline-block px-2 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-2
+                                                                                                            {{ $step['role'] === 'Pemohon'
+                                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                                        : 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' }}">
+                                                            <i
+                                                                class="fas {{ $step['role'] === 'Pemohon' ? 'fa-user' : 'fa-user-tie' }} mr-1"></i>
+                                                            {{ $step['role'] }}
+                                                        </span>
+                                                        <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">{{ $step['title'] }}</h2>
+                                                        <p class="text-gray-600 dark:text-gray-400 text-xs leading-relaxed mb-3">
+                                                            {{ $step['desc'] }}
+                                                        </p>
+                                                        <ul class="space-y-1">
+                                                            @foreach($step['items'] as $item)
+                                                                <li class="flex items-start gap-1 text-xs text-gray-700 dark:text-gray-300">
+                                                                    <span>{!! $item !!}</span>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         {{-- Arrow connector between steps (not after last) --}}
                                         @if (!$loop->last)
-                                            <div class="flex items-center justify-start pl-[1.75rem] my-1 hidden md:flex" aria-hidden="true">
+                                            <div class="flex items-center justify-center my-2 hidden md:flex" aria-hidden="true">
                                                 <i class="fas fa-chevron-down text-gray-300 dark:text-slate-600 text-lg"></i>
                                             </div>
                                         @endif

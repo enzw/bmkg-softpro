@@ -1,5 +1,9 @@
 <?php
 
+// CHATBOT/DIALOGFLOW DISABLED
+// This file has been disabled as per requirements
+
+/*
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,4 +17,5 @@ class Chatlog extends Model
     'user_name',
     'intent'];
 }
+*/
 

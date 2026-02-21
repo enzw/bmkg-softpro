@@ -10,7 +10,7 @@
             submitRating() {
                 if (this.rating === 0) return;
                 this.isLoading = true;
-                fetch('{{ route('rating.store') }}', {
+                fetch('/api/rating', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

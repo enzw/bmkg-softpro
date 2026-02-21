@@ -9,6 +9,8 @@ use App\Models\LayananData;
 use App\Models\Magang;
 use App\Models\SewaAlat;
 use App\Models\Survey;
+use App\Enums\Status;
+use App\Enums\SewaStatus;
 use App\Services\LayananService;
 use Illuminate\Support\Facades\Auth;
 
@@ -38,54 +40,55 @@ class DashboardPelayananController extends Controller
     private function getPendingRating()
     {
         $userId = Auth::id();
-        $completedStatuses = ['completed', 'selesai', 'Selesai', 'Dikembalikan'];
+        $statusCompletedValues = [Status::SELESAI->value, Status::DITOLAK->value];
+        $sewaStatusCompletedValues = [SewaStatus::DIKEMBALIKAN->value, SewaStatus::DITOLAK->value];
 
         // Check each service for unrated completed items
 
         $sewaAlat = SewaAlat::where('user_id', $userId)
-            ->whereIn('status', $completedStatuses)
+            ->whereIn('status', $sewaStatusCompletedValues)
             ->doesntHave('rating')
             ->first();
         if ($sewaAlat)
             return ['id' => $sewaAlat->id, 'type' => SewaAlat::class, 'jenis' => 'Jasa Sewa Alat MKG'];
 
         $magang = Magang::where('user_id', $userId)
-            ->whereIn('status', $completedStatuses)
+            ->whereIn('status', $statusCompletedValues)
             ->doesntHave('rating')
             ->first();
         if ($magang)
             return ['id' => $magang->id, 'type' => Magang::class, 'jenis' => 'Magang'];
 
         $asuransi = Asuransi::where('user_id', $userId)
-            ->whereIn('status', $completedStatuses)
+            ->whereIn('status', $statusCompletedValues)
             ->doesntHave('rating')
             ->first();
         if ($asuransi)
             return ['id' => $asuransi->id, 'type' => Asuransi::class, 'jenis' => 'Klaim Asuransi'];
 
         $kunjungan = Kunjungan::where('user_id', $userId)
-            ->whereIn('status', $completedStatuses)
+            ->whereIn('status', $statusCompletedValues)
             ->doesntHave('rating')
             ->first();
         if ($kunjungan)
             return ['id' => $kunjungan->id, 'type' => Kunjungan::class, 'jenis' => 'Permohonan Kunjungan Teknis'];
 
         $jasaKonsultasi = JasaKonsultasi::where('user_id', $userId)
-            ->whereIn('status', $completedStatuses)
+            ->whereIn('status', $statusCompletedValues)
             ->doesntHave('rating')
             ->first();
         if ($jasaKonsultasi)
             return ['id' => $jasaKonsultasi->id, 'type' => JasaKonsultasi::class, 'jenis' => 'Jasa Konsultasi'];
 
         $survey = Survey::where('user_id', $userId)
-            ->whereIn('status', $completedStatuses)
+            ->whereIn('status', $statusCompletedValues)
             ->doesntHave('rating')
             ->first();
         if ($survey)
             return ['id' => $survey->id, 'type' => Survey::class, 'jenis' => 'Layanan Survey'];
 
         $layananData = LayananData::where('user_id', $userId)
-            ->whereIn('status', $completedStatuses)
+            ->whereIn('status', $statusCompletedValues)
             ->doesntHave('rating')
             ->first();
         if ($layananData)
@@ -126,7 +129,7 @@ class DashboardPelayananController extends Controller
         foreach ($sewaAlat as $item) {
             $permohonan[] = [
                 'jenis' => 'Jasa Sewa Alat MKG',
-                'status' => $this->translateStatus($item->status ?? 'pending'),
+                'status' => $item->status?->label() ?? 'Menunggu',
                 'tanggal' => $item->created_at,
             ];
         }
@@ -136,7 +139,7 @@ class DashboardPelayananController extends Controller
         foreach ($magang as $item) {
             $permohonan[] = [
                 'jenis' => 'Magang',
-                'status' => $this->translateStatus($item->status ?? 'pending'),
+                'status' => $item->status?->label() ?? 'Menunggu',
                 'tanggal' => $item->created_at,
             ];
         }
@@ -146,7 +149,7 @@ class DashboardPelayananController extends Controller
         foreach ($asuransi as $item) {
             $permohonan[] = [
                 'jenis' => 'Klaim Asuransi',
-                'status' => $this->translateStatus($item->status ?? 'pending'),
+                'status' => $item->status?->label() ?? 'Menunggu',
                 'tanggal' => $item->created_at,
             ];
         }
@@ -156,7 +159,7 @@ class DashboardPelayananController extends Controller
         foreach ($kunjungan as $item) {
             $permohonan[] = [
                 'jenis' => 'Permohonan Kunjungan Teknis',
-                'status' => $this->translateStatus($item->status ?? 'pending'),
+                'status' => $item->status?->label() ?? 'Menunggu',
                 'tanggal' => $item->created_at,
             ];
         }
@@ -166,7 +169,7 @@ class DashboardPelayananController extends Controller
         foreach ($jasaKonsultasi as $item) {
             $permohonan[] = [
                 'jenis' => 'Jasa Konsultasi',
-                'status' => $this->translateStatus($item->status ?? 'pending'),
+                'status' => $item->status?->label() ?? 'Menunggu',
                 'tanggal' => $item->created_at,
             ];
         }
@@ -176,7 +179,7 @@ class DashboardPelayananController extends Controller
         foreach ($survey as $item) {
             $permohonan[] = [
                 'jenis' => 'Layanan Survey',
-                'status' => $this->translateStatus($item->status ?? 'pending'),
+                'status' => $item->status?->label() ?? 'Menunggu',
                 'tanggal' => $item->created_at,
             ];
         }
@@ -186,7 +189,7 @@ class DashboardPelayananController extends Controller
         foreach ($layananData as $item) {
             $permohonan[] = [
                 'jenis' => 'Layanan Data',
-                'status' => $this->translateStatus($item->status ?? 'pending'),
+                'status' => $item->status?->label() ?? 'Menunggu',
                 'tanggal' => $item->created_at,
             ];
         }

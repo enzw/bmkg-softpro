@@ -17,6 +17,7 @@
                     'Selesai' => 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300',
                 ];
                 $statusValue = $item->status instanceof \App\Enums\Status ? $item->status->value : (string)$item->status;
+                $statusLabel = $item->status instanceof \App\Enums\Status ? $item->status->label() : $statusValue;
                 $currentStatusColor = $statusColor[$statusValue] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
             @endphp
 
@@ -38,7 +39,7 @@
 
                     <div class="flex items-center gap-3">
                         <span class="px-4 py-2 rounded-lg border {{ $currentStatusColor }} font-semibold text-sm">
-                            {{ $item->status }}
+                            {{ $statusLabel }}
                         </span>
                     </div>
                 </div>
@@ -135,7 +136,7 @@
                                     </div>
                                     <div>
                                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Status</p>
-                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $item->status }}</p>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ $statusLabel }}</p>
                                     </div>
                                     <div class="md:col-span-2">
                                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Surat Permohonan</p>

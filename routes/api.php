@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\DialogflowWebhookController;
+// use App\Http\Controllers\DialogflowWebhookController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\ChatbotController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BeritaController;
@@ -19,6 +20,9 @@ use App\Http\Controllers\BeritaController;
 
 Route::get('/berita', [BeritaController::class, 'api']);
 
+// Chatbot API Routes (Public)
+Route::post('/chatbot/chat', [ChatbotController::class, 'chat']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -32,4 +36,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/files/folder/{serviceType}', [FileController::class, 'deleteFolderContents']);
 });
 
-Route::post('/webhook', [DialogflowWebhookController::class, 'handleWebhook']);
+// Route::post('/webhook', [DialogflowWebhookController::class, 'handleWebhook']);

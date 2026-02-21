@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
 use App\Models\Survey;
 use App\Services\TelegramService;
 use App\Traits\HandlesFileDownload;
@@ -90,7 +91,7 @@ class SurveyController extends Controller
         }
 
         $validated['user_id'] = Auth::id();
-        $validated['status'] = 'Menunggu';
+        $validated['status'] = Status::MENUNGGU->value;
 
         try {
             $survey = Survey::create($validated);
