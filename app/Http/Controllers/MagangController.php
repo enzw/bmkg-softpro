@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
 use App\Models\Magang;
 use App\Models\Asuransi;
 use App\Models\LayananData;
@@ -210,7 +211,7 @@ class MagangController extends Controller
 
         
         $validated['user_id'] = Auth::id();
-        $validated['status'] = 'Menunggu';
+        $validated['status'] = Status::MENUNGGU->value;
         
         // Auto-fill dari user profile jika tidak diisi
         $user = Auth::user();

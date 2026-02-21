@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kunjungan;
+use App\Enums\Status;
 use App\Traits\HandlesFileDownload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -75,7 +76,7 @@ class PermohonanKunjunganController extends Controller
         }
 
         $validated['user_id'] = Auth::id();
-        $validated['status'] = 'pending';
+        $validated['status'] = Status::MENUNGGU->value;
 
         try {
             \Log::info('Creating Kunjungan with validated data', ['surat_permohonan' => $validated['surat_permohonan'] ?? 'not set', 'ktp' => $validated['ktp'] ?? 'not set']);

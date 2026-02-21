@@ -245,7 +245,7 @@
                                         </p>
                                         <span
                                             class="inline-block mt-1 px-3 py-1 rounded-full border {{ $currentStatusColor }} text-[10px] font-bold uppercase tracking-widest">
-                                            {{ $item->status }}
+                                            {{ $statusLabel }}
                                         </span>
                                     </div>
                                 </div>

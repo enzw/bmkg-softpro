@@ -24,21 +24,25 @@
             <div class="space-y-4">
                 @foreach ($permohonan as $item)
                     @php
-                        $statusLabel = match($item->status) {
-                            'pending' => 'Menunggu',
-                            'approved' => 'Disetujui',
-                            'rejected' => 'Ditolak',
-                            'completed' => 'Selesai',
-                            default => ucfirst($item->status)
+                        // Get status value from enum
+                        $statusValue = $item->status instanceof \App\Enums\Status ? $item->status->value : (string)$item->status;
+                        
+                        // Map status values to labels
+                        $statusLabel = match($statusValue) {
+                            'Menunggu' => 'Menunggu',
+                            'Diproses' => 'Diproses',
+                            'Ditolak' => 'Ditolak',
+                            'Selesai' => 'Selesai',
+                            default => $statusValue
                         };
                         
+                        // Map status values to colors
                         $statusColor = [
-                            'pending' => 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800/50 text-yellow-700 dark:text-yellow-300',
-                            'approved' => 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300',
-                            'rejected' => 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300',
-                            'completed' => 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300'
+                            'Menunggu' => 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800/50 text-yellow-700 dark:text-yellow-300',
+                            'Diproses' => 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300',
+                            'Ditolak' => 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300',
+                            'Selesai' => 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300'
                         ];
-                        $statusValue = $item->status instanceof \App\Enums\Status ? $item->status->value : (string)$item->status;
                         $currentStatusColor = $statusColor[$statusValue] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
                     @endphp
                     
@@ -98,7 +102,7 @@
 
                     <!-- Detail Modal -->
                     <div id="modal-{{ $loop->index }}" class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-                        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full shadow-2xl">
+                        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full shadow-2xl">
                             <!-- Modal Header -->
                             <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                                 <div class="flex items-center gap-3">

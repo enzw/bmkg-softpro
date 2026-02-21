@@ -113,6 +113,7 @@ Route::middleware(['auth', 'session.timeout'])->group(function () {
     Route::middleware('throttle:3,1')->delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/rating', [App\Http\Controllers\RatingController::class, 'create'])->name('rating.create');
     Route::post('/rating', [App\Http\Controllers\RatingController::class, 'storeGeneral'])->name('rating.store');
+    Route::post('/api/rating', [App\Http\Controllers\RatingController::class, 'store'])->name('api.rating.store');
 });
 
 Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {

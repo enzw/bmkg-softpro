@@ -98,7 +98,7 @@
 
                     <!-- Detail Modal -->
                     <div id="modal-{{ $loop->index }}" class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-                        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full shadow-2xl">
+                        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full shadow-2xl">
                             <!-- Modal Header -->
                             <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                                 <div class="flex items-center gap-3">

@@ -43,13 +43,18 @@
                                     <span class="font-semibold text-gray-900 dark:text-white">Rp 185.000</span>
                                 </td>
                                 <td class="p-3 font-bold align-top dark:text-white">
+                                    @php
+                                        // Handle enum status
+                                        $statusValue = $item->status instanceof \App\Enums\Status ? $item->status->value : (string)$item->status;
+                                        $statusLabel = $item->status instanceof \App\Enums\Status ? $item->status->label() : $statusValue;
+                                    @endphp
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                        @if($item->status === 'Menunggu') text-yellow-600
-                                        @elseif($item->status === 'Diproses') text-blue-600
-                                        @elseif($item->status === 'Ditolak') text-red-600
-                                        @elseif($item->status === 'Selesai') text-green-600
+                                        @if($statusValue === 'Menunggu') text-yellow-600
+                                        @elseif($statusValue === 'Diproses') text-blue-600
+                                        @elseif($statusValue === 'Ditolak') text-red-600
+                                        @elseif($statusValue === 'Selesai') text-green-600
                                         @endif">
-                                        {{ $item->status }}
+                                        {{ $statusLabel }}
                                     </span>
                                 </td>
                                 <td class="p-3 text-center">
@@ -61,106 +66,107 @@
                             </tr>
 
                             <!-- Modal Detail -->
-                            <div id="modal-{{ $loop->index }}" class="hidden fixed inset-0 z-30 overflow-auto bg-black bg-opacity-50">
-                                <div class="w-full max-w-2xl p-6 mx-auto mt-20 mb-10 text-left bg-white rounded-lg shadow-lg dark:bg-slate-800">
-                                    <div class="flex items-center justify-between mb-5">
-                                        <h5 class="mr-3 font-bold">Detail Permohonan Asuransi</h5>
-                                        <button type="button" class="cursor-pointer" onclick="closeModal('modal-{{ $loop->index }}')">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            <div id="modal-{{ $loop->index }}" class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+                                <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full shadow-2xl">
+                                    <!-- Modal Header -->
+                                    <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                                                <i class="fas fa-info-circle text-white"></i>
+                                            </div>
+                                            <h3 class="text-xl font-bold text-gray-900 dark:text-white">Detail Permohonan</h3>
+                                        </div>
+                                        <button type="button" onclick="closeModal('modal-{{ $loop->index }}')" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                             </svg>
                                         </button>
                                     </div>
 
-                                    <div class="modal-content space-y-6">
-                                        <!-- Company Section -->
-                                        <div class="pb-4 border-b border-slate-200 dark:border-slate-700">
-                                            <dt class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Nama Instansi</dt>
-                                            <dd class="text-lg font-bold text-slate-900 dark:text-slate-100">{{ $item->perusahaan ?? '-' }}</dd>
-                                        </div>
-
-                                        <!-- Date and Location Section -->
-                                        <div class="grid grid-cols-2 gap-4">
+                                    <!-- Modal Content -->
+                                    <div class="p-6 space-y-4 max-h-96 overflow-y-auto">
+                                        <div class="space-y-4">
                                             <div>
-                                                <dt class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Tanggal Kejadian</dt>
-                                                <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') : '-' }}</dd>
-                                            </div>
-                                            <div>
-                                                <dt class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Lokasi Kejadian</dt>
-                                                <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->lokasi ?? '-' }}</dd>
-                                            </div>
-                                        </div>
-
-                                        <!-- Other Details Section -->
-                                        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                                            <div>
-                                                <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">Nama Lengkap</dt>
-                                                <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->nama_user ?? '-' }}</dd>
+                                                <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Perusahaan</p>
+                                                <p class="text-gray-900 dark:text-white font-semibold">{{ $item->perusahaan ?? '-' }}</p>
                                             </div>
 
-                                            <div>
-                                                <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">No WhatsApp</dt>
-                                                <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->no_whatsapp ?? '-' }}</dd>
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Nama Lengkap</p>
+                                                    <p class="text-gray-900 dark:text-white font-semibold">{{ $item->nama_user ?? '-' }}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">No WhatsApp</p>
+                                                    <p class="text-gray-900 dark:text-white font-semibold">{{ $item->no_whatsapp ?? '-' }}</p>
+                                                </div>
                                             </div>
 
-                                            <div>
-                                                <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">Latitude</dt>
-                                                <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->latitude ?? '-' }}</dd>
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Tanggal Kejadian</p>
+                                                    <p class="text-gray-900 dark:text-white font-semibold">{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') : '-' }}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Lokasi Kejadian</p>
+                                                    <p class="text-gray-900 dark:text-white font-semibold">{{ $item->lokasi ?? '-' }}</p>
+                                                </div>
                                             </div>
 
-                                            <div>
-                                                <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">Longitude</dt>
-                                                <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->longitude ?? '-' }}</dd>
-                                            </div>
-
-                                            <div>
-                                                <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">Status</dt>
-                                                <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ $item->status ?? '-' }}</dd>
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Latitude</p>
+                                                    <p class="text-gray-900 dark:text-white font-semibold">{{ $item->latitude ?? '-' }}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Longitude</p>
+                                                    <p class="text-gray-900 dark:text-white font-semibold">{{ $item->longitude ?? '-' }}</p>
+                                                </div>
                                             </div>
 
                                             <div>
-                                                <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">Tanggal Permohonan</dt>
-                                                <dd class="text-slate-900 dark:text-slate-100 font-semibold">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</dd>
-                                            </div>
-
-                                            <div class="col-span-2">
-                                                <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">Surat Permohonan</dt>
-                                                @if($item->surat_permohonan)
-                                                    <dd>
-                                                        <a href="{{ route('permohonan-asuransi.download-file', ['id' => $item->id, 'fileName' => basename($item->surat_permohonan)]) }}"
-                                                            class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold text-sm transition">
-                                                            <i class="fas fa-download"></i>Download
-                                                        </a>
-                                                    </dd>
-                                                @else
-                                                    <dd class="text-slate-900 dark:text-slate-100 font-semibold">-</dd>
-                                                @endif
-                                            </div>
-
-                                            <div class="col-span-2">
-                                                <dt class="text-sm font-semibold text-slate-600 dark:text-slate-400">KTP</dt>
-                                                @if($item->ktp)
-                                                    <dd>
-                                                        <a href="{{ route('permohonan-asuransi.download-file', ['id' => $item->id, 'fileName' => basename($item->ktp)]) }}"
-                                                            class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold text-sm transition">
-                                                            <i class="fas fa-download"></i>Download
-                                                        </a>
-                                                    </dd>
-                                                @else
-                                                    <dd class="text-slate-900 dark:text-slate-100 font-semibold">-</dd>
-                                                @endif
+                                                <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Status</p>
+                                                <p class="text-gray-900 dark:text-white font-semibold">{{ $statusLabel }}</p>
                                             </div>
                                         </div>
+                                    </div>
 
+                                    <!-- Modal Footer -->
+                                    <div class="p-6 border-t border-gray-200 dark:border-gray-700">
                                         <button type="button" onclick="closeModal('modal-{{ $loop->index }}')"
-                                            class="w-full p-3 mt-5 text-center text-white bg-slate-400 rounded hover:bg-slate-500">
+                                            class="w-full px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
                                             Tutup
                                         </button>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Delete Confirmation Modal -->
+                            <div id="modal-delete-{{ $loop->index }}" class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+                                <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full shadow-2xl">
+                                    <div class="flex items-center justify-center w-16 h-16 mx-auto mt-6 rounded-full bg-red-100 dark:bg-red-900/20">
+                                        <i class="fas fa-exclamation-triangle text-3xl text-red-600 dark:text-red-400"></i>
+                                    </div>
+                                    
+                                    <div class="mt-4 text-center px-6">
+                                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Hapus Permohonan?</h3>
+                                        <p class="text-gray-600 dark:text-gray-400 mt-2">Yakin ingin menghapus permohonan asuransi dari <strong>{{ $item->perusahaan }}</strong>?</p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">Tindakan ini tidak dapat dibatalkan.</p>
+                                    </div>
+
+                                    <div class="flex gap-3 p-6">
+                                        <button type="button" onclick="closeModal('modal-delete-{{ $loop->index }}')"
+                                            class="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold transition">
+                                            Batal
+                                        </button>
+                                        <button type="button" id="btn-delete-{{ $loop->index }}" onclick="deleteRecord('{{ $item->id }}', 'modal-delete-{{ $loop->index }}')"
+                                            class="flex-1 px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white font-semibold transition">
+                                            Hapus
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         @endforeach
-                    </tbody>
                 </table>
             </div>
         @endif

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
 use App\Models\LayananData;
 use App\Services\TelegramService;
 use App\Traits\HandlesFileDownload;
@@ -90,7 +91,7 @@ class LayananDataController extends Controller
         }
 
         $validated['user_id'] = Auth::id();
-        $validated['status'] = 'Menunggu';
+        $validated['status'] = Status::MENUNGGU->value;
 
         try {
             $layananData = LayananData::create($validated);

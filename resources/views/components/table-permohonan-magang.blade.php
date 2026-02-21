@@ -36,6 +36,7 @@
                                 'Selesai' => 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-300',
                             ];
                             $statusValue = $item->status instanceof \App\Enums\Status ? $item->status->value : (string)$item->status;
+                            $statusLabel = $item->status instanceof \App\Enums\Status ? $item->status->label() : $statusValue;
                             $currentStatusColor = $statusColor[$statusValue] ?? 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
 
                             $serviceColor = [
@@ -81,7 +82,7 @@
 
                                 <div class="flex items-center gap-3">
                                     <span class="px-4 py-2 rounded-lg border {{ $currentStatusColor }} font-semibold text-sm">
-                                        {{ $item->status }}
+                                        {{ $statusLabel }}
                                     </span>
                                 </div>
                             </div>
@@ -140,7 +141,7 @@
                         <!-- Detail Modal -->
                         <div id="modal-{{ $loop->index }}"
                             class="hidden fixed inset-0 z-50 overflow-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-                            <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full shadow-2xl">
+                            <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full shadow-2xl">
                                 <!-- Modal Header -->
                                 <div
                                     class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
@@ -175,7 +176,7 @@
                                             <p
                                                 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
                                                 Status</p>
-                                            <p class="text-gray-900 dark:text-white font-semibold">{{ $item->status }}</p>
+                                            <p class="text-gray-900 dark:text-white font-semibold">{{ $statusLabel }}</p>
                                         </div>
 
                                         {{-- Magang Fields --}}
