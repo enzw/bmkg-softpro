@@ -56,7 +56,8 @@ COPY --from=frontend /app/public/build ./public/build
 COPY supervisord.conf /etc/supervisord.conf
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY chatbot-startup.sh /var/www/html/chatbot-startup.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh /var/www/html/chatbot-startup.sh
+COPY docker-healthcheck.sh /usr/local/bin/docker-healthcheck.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh /var/www/html/chatbot-startup.sh /usr/local/bin/docker-healthcheck.sh
 
 # Install PHP dependencies
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
@@ -80,8 +81,8 @@ RUN mkdir -p /var/log && \
 EXPOSE 8080
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
-    CMD curl -sf http://localhost:8080/health || exit 1
+HEALTHCHECK --interval=30s --timeout=15s --start-period=90s --retries=5 \
+    CMD /usr/local/bin/docker-healthcheck.sh || exit 1
 
 # Environment defaults
 ENV PORT=8080 \

@@ -45,6 +45,13 @@ echo "   APP_URL: $APP_URL"
 echo "   APP_ENV: $APP_ENV"
 echo ""
 
+# Make sure PORT is exported for supervisord child processes
+export PORT
+export CHATBOT_SERVER_PORT
+export APP_ENV
+export APP_URL
+export APP_KEY
+
 # Run database migrations (non-fatal if DB unavailable)
 echo "🔄 Running database migrations..."
 php artisan migrate --force 2>&1 || {
@@ -75,6 +82,8 @@ chown -R www-data:www-data /var/www/html 2>/dev/null || true
 echo ""
 echo "✅ Starting services with supervisor..."
 echo "   Supervisord config: /etc/supervisord.conf"
+echo "   Laravel will listen on: 0.0.0.0:${PORT}"
+echo "   Chatbot will listen on: 0.0.0.0:${CHATBOT_SERVER_PORT}"
 echo ""
 
 # Verify supervisord is available
