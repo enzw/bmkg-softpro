@@ -3,7 +3,16 @@
 # Startup script for Koyeb deployment
 set -e
 
-trap 'echo "❌ Error occurred!"; exit 1' ERR
+# Signal handling for graceful shutdown
+cleanup() {
+    echo ""
+    echo "🛑 Shutdown signal received, cleaning up..."
+    kill %1 %2 2>/dev/null || true
+    wait
+    exit 0
+}
+
+trap cleanup SIGTERM SIGINT
 
 echo "======================================"
 echo "🚀 Starting BMKG SoftPro Application"
@@ -14,7 +23,7 @@ export PORT=${PORT:-8080}
 export CHATBOT_SERVER_PORT=${CHATBOT_SERVER_PORT:-3001}
 export APP_ENV=${APP_ENV:-production}
 
-# Set APP_URL for Koyeb deployment
+# Set APP_URL for Koyeb
 if [ -z "$APP_URL" ]; then
     if [ ! -z "$KOYEB_APP_NAME" ] && [ ! -z "$KOYEB_SPACE_NAME" ]; then
         export APP_URL="https://${KOYEB_APP_NAME}-${KOYEB_SPACE_NAME}.koyeb.app"
@@ -50,13 +59,11 @@ php artisan key:generate --show >/dev/null 2>&1 || {
     php artisan key:generate
 }
 
-# Optimize Laravel (non-fatal)
+# Optimize Laravel (skip route:cache - it has conflicts)
 echo "⚙️  Optimizing Laravel..."
 php artisan config:cache || echo "⚠️  Config cache failed"
-php artisan route:cache 2>&1 || {
-    echo "⚠️  Route cache failed - continuing without cache"
-    echo "   (This is non-fatal, app will work slower)"
-}
+# SKIP route:cache - too many naming conflicts
+# php artisan route:cache will cause deployment failures
 php artisan view:cache || echo "⚠️  View cache failed"
 
 # Fix permissions
