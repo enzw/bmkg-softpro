@@ -16,8 +16,9 @@ RUN npm run build
 # ======================
 FROM php:8.2
 
-# Install system & PHP extensions
+# Install Node.js
 RUN apt-get update && apt-get install -y \
+    nodejs npm \
     git curl unzip \
     libpq-dev \
     libonig-dev \
@@ -36,7 +37,7 @@ RUN apt-get update && apt-get install -y \
         gd \
         bcmath \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
-
+    
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -74,5 +75,7 @@ CMD set -e; \
       php artisan migrate --force; \
     fi; \
     echo "✅ Migrations completed"; \
+    echo "🚀 Starting Node chatbot..."; \
+    node chatbot-server.js & \
     echo "🚀 Starting Laravel server on port ${PORT}..."; \
     php artisan serve --host=0.0.0.0 --port=${PORT}
