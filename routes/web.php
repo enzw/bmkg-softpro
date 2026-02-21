@@ -240,6 +240,14 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
     });
 });
 
+// Health check endpoint for Koyeb deployment
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'timestamp' => now(),
+        'service' => 'BMKG SoftPro',
+    ]);
+});
 
 // Route::post('/webhook', [DialogflowWebhookController::class, 'handleWebhook']);
 

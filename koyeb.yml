@@ -1,0 +1,42 @@
+# Koyeb Deployment Configuration
+# Reference: https://docs.koyeb.com/
+
+build:
+  docker:
+    dockerfile: ./Dockerfile
+
+run:
+  env:
+    - name: PORT
+      value: "8080"
+    - name: APP_ENV
+      value: "production"
+    - name: CHATBOT_SERVER_PORT
+      value: "3001"
+    # Uncomment and configure these:
+    # - name: DB_CONNECTION
+    #   value: "pgsql"
+    # - name: DB_HOST
+    #   secret: DB_HOST_SECRET
+    # - name: DB_DATABASE
+    #   secret: DB_DATABASE_SECRET
+    # - name: DB_USERNAME
+    #   secret: DB_USERNAME_SECRET
+    # - name: DB_PASSWORD
+    #   secret: DB_PASSWORD_SECRET
+    # - name: APP_KEY
+    #   secret: APP_KEY_SECRET
+
+  ports:
+    - name: http
+      port: 8080
+    - name: chatbot
+      port: 3001
+
+  healthcheck:
+    http:
+      path: /health
+      port: 8080
+      initial_delay: 10
+      timeout: 10
+      period: 30
