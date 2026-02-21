@@ -383,11 +383,12 @@
             input.disabled = true;
 
             try {
-                // Send to Node.js chatbot server
-                const response = await fetch('http://localhost:3001/chat', {
+                // Send to Laravel API endpoint (which calls Gemini API)
+                const response = await fetch('/api/chatbot/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
                     },
                     body: JSON.stringify({ message: message })
                 });
@@ -407,7 +408,7 @@
                 console.error('Error:', error);
                 // Remove typing indicator
                 removeTypingIndicator(typingId);
-                addBotMessage('❌ Gagal terhubung dengan server chatbot. Pastikan Node.js server running di port 3001.');
+                addBotMessage('❌ Gagal menghubungi server chatbot. Silakan coba lagi atau hubungi administrator.');
             } finally {
                 sendBtn.disabled = false;
                 input.disabled = false;
