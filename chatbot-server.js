@@ -25,7 +25,7 @@ if (!API_KEY) {
 }
 
 const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
-const model = genAI ? genAI.getGenerativeModel({ model: 'gemini-2.5-flash' }) : null;
+const model = genAI ? genAI.getGenerativeModel({ model: 'gemini-2.5-pro' }) : null;
 
 // Middleware
 app.use(cors());

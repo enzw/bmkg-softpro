@@ -44,7 +44,7 @@ class ChatbotController extends Controller
             $prompt = $this->buildPrompt($validated['message']);
             
             $response = $this->guzzleClient->post(
-                'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+                'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent',
                 [
                     'query' => [
                         'key' => $this->googleAiKey,

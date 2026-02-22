@@ -131,7 +131,7 @@
                             'items' => [
                                 '<i class="fas fa-smile mr-2 text-pink-500"></i>Kuisioner Kepuasan Pelanggan',
                                 '<i class="fas fa-shield-alt mr-2 text-pink-500"></i>Kuisioner Persepsi Korupsi',
-                                '<i class="fas fa-link mr-2 text-pink-500"></i><a href="http://bit.ly/QuestionerSKM-Stageof-Sleman" target="_blank" class="text-pink-600 dark:text-pink-400 font-semibold hover:underline">bit.ly/QuestionerSKM-Stageof-Sleman</a>',
+                                '<i class="fas fa-link mr-2 text-pink-500"></i><a href="https://link.bmkg.go.id/ikmstageofsleman" target="_blank" class="text-pink-600 dark:text-pink-400 font-semibold hover:underline">link.bmkg.go.id/ikmstageofsleman</a>',
                             ],
                         ],
                         [

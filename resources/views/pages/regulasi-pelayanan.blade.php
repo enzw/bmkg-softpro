@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Regulasi PTSP')
+@section('title', 'Regulasi Pelayanan')
 
 @section('content')
     <div class="dark:bg-slate-900 dark:text-white">
@@ -19,7 +19,7 @@
                     <i class="fas fa-gavel mr-2 text-emerald-400"></i>Dasar Hukum & Aturan
                 </span>
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
-                    Regulasi <span class="text-emerald-400">PTSP</span>
+                    Regulasi <span class="text-emerald-400">Pelayanan</span>
                 </h1>
                 <p class="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] mb-6">Stasiun Geofisika Kelas I Sleman</p>
                 <p class="text-base text-white/60 max-w-xl mx-auto leading-relaxed font-medium">

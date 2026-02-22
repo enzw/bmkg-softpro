@@ -88,14 +88,14 @@
                                 <div class="text-xs text-gray-400 dark:text-gray-500">ATM, m-banking, e-commerce</div>
                             </div>
                         </a>
-                        <a href="{{ route('regulasi-ptsp') }}"
-                            class="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-400 transition duration-150 {{ request()->is('regulasi-ptsp*') ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 font-semibold' : '' }}">
+                        <a href="{{ route('regulasi-pelayanan') }}"
+                            class="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-400 transition duration-150 {{ request()->is('regulasi-pelayanan*') ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 font-semibold' : '' }}">
                             <span
                                 class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center flex-shrink-0">
                                 <i class="fas fa-gavel text-emerald-600 dark:text-emerald-400 text-xs"></i>
                             </span>
                             <div>
-                                <div class="font-semibold">Regulasi PTSP</div>
+                                <div class="font-semibold">Regulasi Pelayanan</div>
                                 <div class="text-xs text-gray-400 dark:text-gray-500">Perka, PP, & Kebijakan SMKI</div>
                             </div>
                         </a>
@@ -217,9 +217,9 @@
                         class="flex items-center gap-2 px-5 py-2.5 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 text-sm {{ request()->is('pembayaran-pnbp*') ? 'text-green-700 font-semibold' : '' }}">
                         <i class="fas fa-credit-card text-green-500 w-4 text-center"></i> Cara Pembayaran PNBP
                     </a>
-                    <a href="{{ route('regulasi-ptsp') }}"
-                        class="flex items-center gap-2 px-5 py-2.5 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 text-sm {{ request()->is('regulasi-ptsp*') ? 'text-green-700 font-semibold' : '' }}">
-                        <i class="fas fa-gavel text-emerald-500 w-4 text-center"></i> Regulasi PTSP
+                    <a href="{{ route('regulasi-pelayanan') }}"
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-xl dark:text-gray-300 text-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 hover:text-green-700 text-sm {{ request()->is('regulasi-pelayanan*') ? 'text-green-700 font-semibold' : '' }}">
+                        <i class="fas fa-gavel text-emerald-500 w-4 text-center"></i> Regulasi Pelayanan
                     </a>
                 </div>
             </li>

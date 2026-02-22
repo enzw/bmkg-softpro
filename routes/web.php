@@ -86,9 +86,9 @@ Route::get('/pembayaran-pnbp', function () {
     return view('pages.pembayaran-pnbp');
 })->name('pembayaran-pnbp');
 
-Route::get('/regulasi-ptsp', function () {
-    return view('pages.regulasi-ptsp');
-})->name('regulasi-ptsp');
+Route::get('/regulasi-pelayanan', function () {
+    return view('pages.regulasi-pelayanan');
+})->name('regulasi-pelayanan');
 
 Route::get('/tarif-layanan', function () {
     return view('pages.tarif-layanan');
