@@ -196,7 +196,7 @@ Memberikan panduan langkah-demi-langkah yang JELAS dan AKURAT untuk membantu mem
    • prodi (required) - program studi/jurusan mahasiswa
    • tanggal_mulai (required) - tanggal direncanakan mulai magang (format: YYYY-MM-DD)
    • tanggal_selesai (required) - tanggal direncanakan selesai magang (format: YYYY-MM-DD)
-   • surat_permohonan (required) - surat permohonan magang (PDF/JPG/PNG, maksimal 2MB). Biasanya dari universitas atau atas nama mahasiswa
+   • surat_permohonan & kartu tanda mahasiswa (required) - surat permohonan magang (PDF/JPG/PNG, maksimal 2MB). Biasanya dari universitas atau atas nama mahasiswa
    
    ⚠️ TIPS PENGISIAN:
    - Surat bisa dari universitas atau dari pribadi mahasiswa
