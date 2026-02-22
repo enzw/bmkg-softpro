@@ -290,6 +290,31 @@
         background-color: #cbd5e1;
     }
 
+    /* Star Rating Styles */
+    .star-rating {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    .star-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.25rem;
+        padding: 0;
+        margin: 0;
+        line-height: 1;
+        transition: all 0.2s ease;
+    }
+
+    .star-btn:hover {
+        transform: scale(1.2);
+    }
+
+    .star-btn:disabled {
+        cursor: not-allowed;
+    }
+
     /* Mobile responsive */
     @media (max-width: 640px) {
         #chatbot-modal.modal-open {
@@ -441,6 +466,7 @@
             
             // Parse markdown to HTML
             const htmlContent = marked.parse(markdown);
+            const messageId = 'bot-msg-' + Date.now();
             
             messageDiv.innerHTML = `
                 <div class="flex-shrink-0">
@@ -452,11 +478,66 @@
                             ${htmlContent}
                         </div>
                     </div>
+                    <div class="flex items-center gap-2 mt-3">
+                        <span class="text-xs text-gray-400 dark:text-gray-500">Apakah jawaban ini membantu?</span>
+                        <div class="flex gap-1 star-rating" data-message-id="${messageId}">
+                            <button class="star-btn text-gray-300 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400 transition-colors" data-rating="1" title="Tidak membantu">★</button>
+                            <button class="star-btn text-gray-300 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400 transition-colors" data-rating="2" title="Kurang membantu">★</button>
+                            <button class="star-btn text-gray-300 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400 transition-colors" data-rating="3" title="Cukup membantu">★</button>
+                            <button class="star-btn text-gray-300 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400 transition-colors" data-rating="4" title="Membantu">★</button>
+                            <button class="star-btn text-gray-300 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400 transition-colors" data-rating="5" title="Sangat membantu">★</button>
+                        </div>
+                    </div>
                     <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Sekarang</p>
                 </div>
             `;
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Add star rating event listeners
+            const starRating = messageDiv.querySelector('.star-rating');
+            const starBtns = starRating.querySelectorAll('.star-btn');
+            
+            starBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const rating = btn.getAttribute('data-rating');
+                    const ratingText = ['Tidak membantu', 'Kurang membantu', 'Cukup membantu', 'Membantu', 'Sangat membantu'];
+                    
+                    // Mark selected stars as active
+                    starBtns.forEach((b, index) => {
+                        if (index < rating) {
+                            b.classList.remove('text-gray-300', 'dark:text-gray-500');
+                            b.classList.add('text-yellow-400');
+                        }
+                    });
+                    
+                    // Disable all buttons after rating
+                    starBtns.forEach(b => {
+                        b.disabled = true;
+                        b.classList.add('cursor-not-allowed', 'opacity-50');
+                    });
+                    
+                    // Show thank you message
+                    const thankYouDiv = document.createElement('div');
+                    thankYouDiv.className = 'mt-2 text-xs text-green-600 dark:text-green-400 font-semibold';
+                    thankYouDiv.textContent = `✓ Terima kasih! Rating ${rating} bintang untuk "${ratingText[rating-1]}" telah tercatat.`;
+                    starRating.parentElement.replaceChild(thankYouDiv, starRating);
+                    
+                    // Optional: send rating to server
+                    fetch('/api/chatbot/rate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: JSON.stringify({ 
+                            rating: rating,
+                            message_id: messageId
+                        })
+                    }).catch(err => console.log('Rating saved locally'));
+                });
+            });
         }
 
         function escapeHtml(text) {
