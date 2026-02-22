@@ -64,8 +64,5 @@ class DatabaseSeeder extends Seeder
             'harga' => 270000,
             'deskripsi' => 'Per Unit / Per Hari',
         ]);
-
-        // Seed chatbot ratings
-        $this->call(ChatbotRatingSeeder::class);
     }
 }

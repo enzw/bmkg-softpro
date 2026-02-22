@@ -52,11 +52,24 @@ export APP_ENV
 export APP_URL
 export APP_KEY
 
+# Drop all tables first for clean deployment
+echo "🗑️  Dropping all tables..."
+php artisan db:wipe --force 2>&1 || {
+    echo "⚠️  Table wipe failed - DB might not be ready yet"
+    echo "   Continuing anyway..."
+}
+
 # Run database migrations (non-fatal if DB unavailable)
 echo "🔄 Running database migrations..."
 php artisan migrate --force 2>&1 || {
     echo "⚠️  Migrations failed - DB might not be ready yet"
     echo "   Continuing anyway..."
+}
+
+# Run database seeders
+echo "🌱 Seeding database..."
+php artisan db:seed --force 2>&1 || {
+    echo "⚠️  Seeding failed - continuing anyway..."
 }
 
 # Generate/verify APP_KEY
