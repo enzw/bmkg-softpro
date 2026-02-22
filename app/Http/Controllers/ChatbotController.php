@@ -357,17 +357,17 @@ PROMPT;
         ]);
 
         try {
+            // Map rating to rating text
+            $ratingTexts = [
+                1 => 'Tidak membantu',
+                2 => 'Kurang membantu',
+                3 => 'Cukup membantu',
+                4 => 'Membantu',
+                5 => 'Sangat membantu',
+            ];
+
             // Get user_id: use logged-in user or 999 for guests
             $userId = auth()->check() ? auth()->id() : 999;
-
-            // Create review text combining message and bot response
-            $reviewText = '';
-            if (!empty($validated['message'])) {
-                $reviewText .= "User: " . $validated['message'];
-            }
-            if (!empty($validated['bot_response'])) {
-                $reviewText .= ($reviewText ? "\n\n" : "") . "Bot: " . $validated['bot_response'];
-            }
 
             // Always generate a proper UUID for rateable_id (PostgreSQL UUID type requirement)
             $rateableId = \Illuminate\Support\Str::uuid();
@@ -376,7 +376,7 @@ PROMPT;
             \App\Models\ServiceRating::create([
                 'user_id' => $userId,
                 'rating' => $validated['rating'],
-                'review' => !empty($reviewText) ? $reviewText : null,
+                'review' => $ratingTexts[$validated['rating']], // Only store the rating text
                 'rateable_id' => (string) $rateableId, // Explicit string cast to UUID
                 'rateable_type' => 'ChatbotMessage', // Polymorphic type for chatbot feedback
             ]);
