@@ -500,17 +500,46 @@
             const starRating = messageDiv.querySelector('.star-rating');
             const starBtns = starRating.querySelectorAll('.star-btn');
             
-            starBtns.forEach(btn => {
+            // Hover effect - light up stars up to hovered star
+            starBtns.forEach((btn, index) => {
+                btn.addEventListener('mouseenter', () => {
+                    starBtns.forEach((b, i) => {
+                        if (i <= index) {
+                            b.classList.remove('text-gray-300', 'dark:text-gray-500');
+                            b.classList.add('text-yellow-400', 'dark:text-yellow-300');
+                        } else {
+                            b.classList.remove('text-yellow-400', 'dark:text-yellow-300');
+                            b.classList.add('text-gray-300', 'dark:text-gray-500');
+                        }
+                    });
+                });
+            });
+
+            // Reset stars on mouse leave
+            starRating.addEventListener('mouseleave', () => {
+                starBtns.forEach(b => {
+                    if (!b.disabled) {
+                        b.classList.remove('text-yellow-400', 'dark:text-yellow-300');
+                        b.classList.add('text-gray-300', 'dark:text-gray-500');
+                    }
+                });
+            });
+
+            // Click event - auto send rating to database
+            starBtns.forEach((btn, index) => {
                 btn.addEventListener('click', async (e) => {
                     e.preventDefault();
                     const rating = btn.getAttribute('data-rating');
                     const ratingText = ['Tidak membantu', 'Kurang membantu', 'Cukup membantu', 'Membantu', 'Sangat membantu'];
                     
-                    // Mark selected stars as active
-                    starBtns.forEach((b, index) => {
-                        if (index < rating) {
+                    // Mark selected stars as active - permanently
+                    starBtns.forEach((b, i) => {
+                        if (i < rating) {
                             b.classList.remove('text-gray-300', 'dark:text-gray-500');
-                            b.classList.add('text-yellow-400');
+                            b.classList.add('text-yellow-400', 'dark:text-yellow-300');
+                        } else {
+                            b.classList.remove('text-yellow-400', 'dark:text-yellow-300');
+                            b.classList.add('text-gray-300', 'dark:text-gray-500');
                         }
                     });
                     
@@ -527,10 +556,10 @@
                     // Show thank you message
                     const thankYouDiv = document.createElement('div');
                     thankYouDiv.className = 'mt-2 text-xs text-green-600 dark:text-green-400 font-semibold';
-                    thankYouDiv.textContent = `✓ Terima kasih! Rating ${rating} bintang untuk "${ratingText[rating-1]}" telah tercatat.`;
+                    thankYouDiv.textContent = `✓ Rating ${rating} bintang untuk "${ratingText[rating-1]}" telah tersimpan.`;
                     starRating.parentElement.replaceChild(thankYouDiv, starRating);
                     
-                    // Send rating to server with message and response
+                    // Auto-send rating to server with message and response
                     try {
                         const response = await fetch('/api/chatbot/rate', {
                             method: 'POST',
@@ -548,9 +577,11 @@
                         const result = await response.json();
                         if (!result.success) {
                             console.error('Failed to save rating:', result);
+                            thankYouDiv.textContent = `✗ Gagal menyimpan rating. Coba lagi.`;
                         }
                     } catch (err) {
-                        console.log('Rating saved locally:', err);
+                        console.error('Error sending rating:', err);
+                        thankYouDiv.textContent = `✗ Error: Tidak bisa mengirim rating.`;
                     }
                 });
             });
