@@ -11,7 +11,16 @@ class AdminRatingController extends Controller
 {
     public function index()
     {
-        $ratings = ServiceRating::with('user', 'rateable')->latest()->take(10)->get();
+        // Load ratings with user, but handle polymorphic relationship carefully
+        // to avoid errors when rateable_type references non-existent classes
+        try {
+            $ratings = ServiceRating::with('user', 'rateable')->latest()->take(10)->get();
+        } catch (\Exception $e) {
+            // If polymorphic loading fails, load without rateable relationship
+            // This handles cases where old data has invalid rateable_type values
+            \Log::warning('Failed to load ratings with polymorphic relationship: ' . $e->getMessage());
+            $ratings = ServiceRating::with('user')->latest()->take(10)->get();
+        }
 
         // Calculate average rating
         $averageRating = ServiceRating::avg('rating') ?? 0;
