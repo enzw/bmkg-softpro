@@ -180,7 +180,6 @@ PROMPT;
 
         return $systemPrompt . "\n\nPertanyaan Pengguna:\n" . $userMessage;
     }
-    }
 
     /**
      * Save chatbot feedback/rating to database
