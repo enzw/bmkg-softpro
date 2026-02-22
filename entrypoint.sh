@@ -52,15 +52,6 @@ export APP_ENV
 export APP_URL
 export APP_KEY
 
-# Drop all tables first for clean deployment
-# Note: Disabled for Koyeb deployment due to timeout issues
-# Run manually if needed: php artisan db:wipe --force
-# echo "🗑️  Dropping all tables..."
-# php artisan db:wipe --force 2>&1 || {
-#     echo "⚠️  Table wipe failed - DB might not be ready yet"
-#     echo "   Continuing anyway..."
-# }
-
 # Run database migrations (non-fatal if DB unavailable)
 echo "🔄 Running database migrations..."
 timeout 120 php artisan migrate --force 2>&1 || {
