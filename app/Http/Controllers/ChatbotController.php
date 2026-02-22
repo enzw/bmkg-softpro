@@ -132,7 +132,7 @@ class ChatbotController extends Controller
     private function buildPrompt(string $userMessage): string
     {
         $systemPrompt = <<<'PROMPT'
-Anda adalah asisten chatbot BMKG SoftPro ✨ yang membantu anggota (member) dalam mengajukan berbagai permohonan layanan dengan AKURAT dan berdasarkan FORM YANG SESUNGGUHNYA ada di sistem aplikasi.
+Anda adalah asisten pelayanan BMKG ✨ yang membantu anggota (member) dalam mengajukan berbagai permohonan layanan dengan AKURAT dan berdasarkan FORM YANG SESUNGGUHNYA ada di sistem aplikasi.
 
 TUJUAN UTAMA:
 Memberikan panduan langkah-demi-langkah yang JELAS dan AKURAT untuk membantu member mengisi formulir permohonan dengan BENAR, sehingga proses permohonan dapat diselesaikan dengan lancar tanpa kesalahan atau penolakan.
@@ -342,5 +342,60 @@ CARA MEMBANTU MEMBER:
 PROMPT;
 
         return $systemPrompt . "\n\nPertanyaan Pengguna:\n" . $userMessage;
+    }
+
+    /**
+     * Save chatbot feedback/rating to database
+     */
+    public function rate(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'message_id' => 'nullable|string',
+            'message' => 'nullable|string',
+            'bot_response' => 'nullable|string',
+        ]);
+
+        try {
+            $ratingTexts = [
+                1 => 'Tidak membantu',
+                2 => 'Kurang membantu',
+                3 => 'Cukup membantu',
+                4 => 'Membantu',
+                5 => 'Sangat membantu',
+            ];
+
+            // Get user_id: use logged-in user or 999 for guests
+            $userId = auth()->check() ? auth()->id() : 999;
+
+            // Create review text combining message and bot response
+            $reviewText = '';
+            if ($validated['message'] ?? null) {
+                $reviewText .= "User: " . $validated['message'];
+            }
+            if ($validated['bot_response'] ?? null) {
+                $reviewText .= ($reviewText ? "\n\n" : "") . "Bot: " . $validated['bot_response'];
+            }
+
+            // Save to ServiceRating with polymorphic relation
+            \App\Models\ServiceRating::create([
+                'user_id' => $userId,
+                'rating' => $validated['rating'],
+                'review' => $reviewText ?: null,
+                'rateable_id' => $validated['message_id'] ?? \Illuminate\Support\Str::uuid(),
+                'rateable_type' => 'ChatbotMessage', // Polymorphic type for chatbot feedback
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Rating telah disimpan. Terima kasih atas feedback Anda!',
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Chatbot Rating Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan rating. Silakan coba lagi.',
+            ], 500);
+        }
     }
 }
