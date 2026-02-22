@@ -83,8 +83,8 @@ RUN mkdir -p /var/log && \
 # Expose platform port
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=15s --start-period=90s --retries=5 \
+# Health check - increased delay to allow migrations to complete
+HEALTHCHECK --interval=30s --timeout=20s --start-period=180s --retries=5 \
     CMD /usr/local/bin/docker-healthcheck.sh || exit 1
 
 # Environment defaults
