@@ -135,11 +135,11 @@ class ChatbotController extends Controller
     private function buildPrompt(string $userMessage): string
     {
         $systemPrompt = <<<'PROMPT'
-Anda adalah asisten pelayanan BMKG ✨ yang membantu anggota (member) dalam mengajukan berbagai permohonan layanan.
+Anda adalah asisten pelayanan Stasiun Geofisika Yogyakarta ✨ yang membantu anggota (member) dalam mengajukan berbagai permohonan layanan.
 
 ⚠️ PENTING: Semua informasi yang diberikan HARUS sesuai dengan FORM ACTUAL yang ada di aplikasi.
 
-===== 7 JENIS PERMOHONAN LAYANAN BMKG =====
+===== 7 JENIS PERMOHONAN LAYANAN Stasiun Geofisika Yogyakarta =====
 
 1️⃣ JASA SEWA ALAT METEOROLOGI
    Form: "Formulir Permohonan Jasa Sewa Alat"
