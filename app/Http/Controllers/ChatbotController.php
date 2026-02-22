@@ -357,32 +357,27 @@ PROMPT;
         ]);
 
         try {
-            $ratingTexts = [
-                1 => 'Tidak membantu',
-                2 => 'Kurang membantu',
-                3 => 'Cukup membantu',
-                4 => 'Membantu',
-                5 => 'Sangat membantu',
-            ];
-
             // Get user_id: use logged-in user or 999 for guests
             $userId = auth()->check() ? auth()->id() : 999;
 
             // Create review text combining message and bot response
             $reviewText = '';
-            if ($validated['message'] ?? null) {
+            if (!empty($validated['message'])) {
                 $reviewText .= "User: " . $validated['message'];
             }
-            if ($validated['bot_response'] ?? null) {
+            if (!empty($validated['bot_response'])) {
                 $reviewText .= ($reviewText ? "\n\n" : "") . "Bot: " . $validated['bot_response'];
             }
+
+            // Always generate a proper UUID for rateable_id (PostgreSQL UUID type requirement)
+            $rateableId = \Illuminate\Support\Str::uuid();
 
             // Save to ServiceRating with polymorphic relation
             \App\Models\ServiceRating::create([
                 'user_id' => $userId,
                 'rating' => $validated['rating'],
-                'review' => $reviewText ?: null,
-                'rateable_id' => $validated['message_id'] ?? \Illuminate\Support\Str::uuid(),
+                'review' => !empty($reviewText) ? $reviewText : null,
+                'rateable_id' => (string) $rateableId, // Explicit string cast to UUID
                 'rateable_type' => 'ChatbotMessage', // Polymorphic type for chatbot feedback
             ]);
 
@@ -391,10 +386,11 @@ PROMPT;
                 'message' => 'Rating telah disimpan. Terima kasih atas feedback Anda!',
             ]);
         } catch (\Exception $e) {
-            \Log::error('Chatbot Rating Error: ' . $e->getMessage());
+            \Log::error('Chatbot Rating Error: ' . $e->getMessage() . ' | Stack: ' . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menyimpan rating. Silakan coba lagi.',
+                'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
     }
