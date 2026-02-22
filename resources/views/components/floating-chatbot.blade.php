@@ -389,7 +389,7 @@
             if (timeSinceLastMessage < COOLDOWN_MS) {
                 const remainingMs = COOLDOWN_MS - timeSinceLastMessage;
                 const remainingSeconds = Math.ceil(remainingMs / 1000);
-                addBotMessage(`⏳ Silakan tunggu ${remainingSeconds} detik sebelum mengirim pesan berikutnya (rate limit API).`);
+                addBotMessage(`⏳ Silakan tunggu ${remainingSeconds} detik sebelum mengirim pesan berikutnya (rate limit API).`, null);
                 return;
             }
 
@@ -424,16 +424,16 @@
                 removeTypingIndicator(typingId);
 
                 if (data.success) {
-                    addBotMessage(data.message);
+                    addBotMessage(data.message, message);
                 } else {
-                    addBotMessage(data.message || 'Maaf, terjadi kesalahan. Silakan coba lagi.');
+                    addBotMessage(data.message || 'Maaf, terjadi kesalahan. Silakan coba lagi.', message);
                 }
 
             } catch (error) {
                 console.error('Error:', error);
                 // Remove typing indicator
                 removeTypingIndicator(typingId);
-                addBotMessage('❌ Gagal menghubungi server chatbot. Silakan coba lagi atau hubungi administrator.');
+                addBotMessage('❌ Gagal menghubungi server chatbot. Silakan coba lagi atau hubungi administrator.', message);
             } finally {
                 sendBtn.disabled = false;
                 input.disabled = false;
@@ -460,7 +460,7 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        function addBotMessage(markdown) {
+        function addBotMessage(markdown, userMessage = null) {
             const messageDiv = document.createElement('div');
             messageDiv.className = 'flex gap-3 animate-fade-in';
             
@@ -491,6 +491,8 @@
                     <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Sekarang</p>
                 </div>
             `;
+            messageDiv.setAttribute('data-user-message', userMessage || '');
+            messageDiv.setAttribute('data-bot-response', markdown);
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
             
@@ -499,7 +501,7 @@
             const starBtns = starRating.querySelectorAll('.star-btn');
             
             starBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
+                btn.addEventListener('click', async (e) => {
                     e.preventDefault();
                     const rating = btn.getAttribute('data-rating');
                     const ratingText = ['Tidak membantu', 'Kurang membantu', 'Cukup membantu', 'Membantu', 'Sangat membantu'];
@@ -518,24 +520,38 @@
                         b.classList.add('cursor-not-allowed', 'opacity-50');
                     });
                     
+                    // Get message and response from messageDiv attributes
+                    const userMsg = messageDiv.getAttribute('data-user-message');
+                    const botResp = messageDiv.getAttribute('data-bot-response');
+                    
                     // Show thank you message
                     const thankYouDiv = document.createElement('div');
                     thankYouDiv.className = 'mt-2 text-xs text-green-600 dark:text-green-400 font-semibold';
                     thankYouDiv.textContent = `✓ Terima kasih! Rating ${rating} bintang untuk "${ratingText[rating-1]}" telah tercatat.`;
                     starRating.parentElement.replaceChild(thankYouDiv, starRating);
                     
-                    // Optional: send rating to server
-                    fetch('/api/chatbot/rate', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                        body: JSON.stringify({ 
-                            rating: rating,
-                            message_id: messageId
-                        })
-                    }).catch(err => console.log('Rating saved locally'));
+                    // Send rating to server with message and response
+                    try {
+                        const response = await fetch('/api/chatbot/rate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            body: JSON.stringify({ 
+                                rating: rating,
+                                message_id: messageId,
+                                message: userMsg,
+                                bot_response: botResp
+                            })
+                        });
+                        const result = await response.json();
+                        if (!result.success) {
+                            console.error('Failed to save rating:', result);
+                        }
+                    } catch (err) {
+                        console.log('Rating saved locally:', err);
+                    }
                 });
             });
         }
