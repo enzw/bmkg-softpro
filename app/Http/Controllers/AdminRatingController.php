@@ -11,7 +11,7 @@ class AdminRatingController extends Controller
 {
     public function index()
     {
-        $ratings = ServiceRating::with('user')->latest()->take(10)->get();
+        $ratings = ServiceRating::with('user', 'rateable')->latest()->take(10)->get();
 
         // Calculate average rating
         $averageRating = ServiceRating::avg('rating') ?? 0;

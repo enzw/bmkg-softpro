@@ -349,6 +349,9 @@
         const messagesContainer = document.getElementById('chatbot-messages');
         const sendBtn = document.getElementById('send-btn');
 
+        // Generate unique session ID for chatbot conversation
+        const sessionId = `chatbot-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
         // Rate limiting: prevent spam requests
         let lastMessageTime = 0;
         const COOLDOWN_MS = 2000; // 2 second cooldown between messages
@@ -568,6 +571,7 @@
                                 'X-Requested-With': 'XMLHttpRequest',
                             },
                             body: JSON.stringify({ 
+                                session_id: sessionId,
                                 rating: rating,
                                 message_id: messageId,
                                 message: userMsg,

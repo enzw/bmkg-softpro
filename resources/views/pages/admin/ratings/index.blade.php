@@ -164,6 +164,7 @@
                             $typeKey = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $rawType));
                             if ($typeKey == 'klaim_asuransi') $typeKey = 'asuransi';
                             if ($typeKey == 'jasa_konsultasi') $typeKey = 'jasa_konsultasi';
+                            if ($typeKey == 'chatbot') $typeKey = 'chatbot';
 
                             $serviceIconConfig = [
                                 'sewa_alat' => ['icon' => 'fa-tools', 'bg' => 'bg-green-100 dark:bg-emerald-900/40', 'text' => 'text-green-600 dark:text-emerald-400'],
@@ -173,6 +174,7 @@
                                 'asuransi' => ['icon' => 'fa-file-invoice-dollar', 'bg' => 'bg-orange-100 dark:bg-orange-900/40', 'text' => 'text-orange-600 dark:text-orange-400'],
                                 'survey' => ['icon' => 'fa-compass', 'bg' => 'bg-red-100 dark:bg-red-900/40', 'text' => 'text-red-600 dark:text-red-400'],
                                 'layanan_data' => ['icon' => 'fa-database', 'bg' => 'bg-cyan-100 dark:bg-cyan-900/40', 'text' => 'text-cyan-600 dark:text-cyan-400'],
+                                'chatbot' => ['icon' => 'fa-robot', 'bg' => 'bg-indigo-100 dark:bg-indigo-900/40', 'text' => 'text-indigo-600 dark:text-indigo-400'],
                             ];
                             $config = $serviceIconConfig[$typeKey] ?? ['icon' => 'fa-star', 'bg' => 'bg-slate-100 dark:bg-slate-700', 'text' => 'text-slate-500'];
                         @endphp

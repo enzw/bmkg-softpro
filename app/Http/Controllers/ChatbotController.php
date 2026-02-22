@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use App\Models\Chatbot;
+use App\Models\ServiceRating;
+use Illuminate\Support\Str;
 
 class ChatbotController extends Controller
 {
@@ -351,39 +354,46 @@ PROMPT;
     {
         $validated = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
+            'session_id' => 'required|string|max:255',
+            'review' => 'nullable|string|max:1000',
             'message_id' => 'nullable|string',
             'message' => 'nullable|string',
             'bot_response' => 'nullable|string',
         ]);
 
         try {
-            // Map rating to rating text
-            $ratingTexts = [
-                1 => 'Tidak membantu',
-                2 => 'Kurang membantu',
-                3 => 'Cukup membantu',
-                4 => 'Membantu',
-                5 => 'Sangat membantu',
-            ];
+            // Get user_id: use logged-in user or null for guests
+            $userId = auth()->check() ? auth()->id() : null;
 
-            // Get user_id: use logged-in user or 999 for guests
-            $userId = auth()->check() ? auth()->id() : 999;
-
-            // Always generate a proper UUID for rateable_id (PostgreSQL UUID type requirement)
-            $rateableId = \Illuminate\Support\Str::uuid();
+            // Get or create chatbot session
+            $chatbot = Chatbot::firstOrCreate(
+                ['session_id' => $validated['session_id']],
+                [
+                    'user_id' => $userId,
+                    'status' => 'completed'
+                ]
+            );
 
             // Save to ServiceRating with polymorphic relation
-            \App\Models\ServiceRating::create([
-                'user_id' => $userId,
-                'rating' => $validated['rating'],
-                'review' => $ratingTexts[$validated['rating']], // Only store the rating text
-                'rateable_id' => (string) $rateableId, // Explicit string cast to UUID
-                'rateable_type' => 'ChatbotMessage', // Polymorphic type for chatbot feedback
-            ]);
+            ServiceRating::updateOrCreate(
+                [
+                    'user_id' => $userId,
+                    'rateable_id' => $chatbot->id,
+                    'rateable_type' => Chatbot::class,
+                ],
+                [
+                    'rating' => $validated['rating'],
+                    'review' => $validated['review'] ?? 'Feedback dari pengguna chatbot',
+                ]
+            );
 
             return response()->json([
                 'success' => true,
                 'message' => 'Rating telah disimpan. Terima kasih atas feedback Anda!',
+                'data' => [
+                    'rating' => $validated['rating'],
+                    'timestamp' => now()->toIso8601String(),
+                ]
             ]);
         } catch (\Exception $e) {
             \Log::error('Chatbot Rating Error: ' . $e->getMessage() . ' | Stack: ' . $e->getTraceAsString());
