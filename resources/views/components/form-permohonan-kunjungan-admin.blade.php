@@ -160,6 +160,8 @@
                         class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium resize-none">{{ $is_edit && $permohonan ? old('rencana_kunjungan', $permohonan->rencana_kunjungan) : old('rencana_kunjungan') }}</textarea>
                     <x-input-error :messages="$errors->get('rencana_kunjungan')" class="mt-2" />
                 </div>
+            </div>
+
             <!-- Row 4: File Upload -->
             <div class="relative pl-6 border-l-2 border-orange-500/30 space-y-6">
                 <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
