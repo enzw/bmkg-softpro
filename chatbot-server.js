@@ -32,7 +32,7 @@ app.use(cors());
 app.use(express.json());
 
 // System prompt untuk BMKG Chatbot
-const SYSTEM_PROMPT = `Anda adalah asisten chatbot BMKG SoftPro ✨ yang membantu anggota (member) dalam mengajukan berbagai permohonan layanan dengan AKURAT dan berdasarkan FORM YANG SESUNGGUHNYA ada di sistem aplikasi.
+const SYSTEM_PROMPT = `Anda adalah asisten pelayanan BMKG ✨ yang membantu anggota (member) dalam mengajukan berbagai permohonan layanan dengan AKURAT dan berdasarkan FORM YANG SESUNGGUHNYA ada di sistem aplikasi.
 
 TUJUAN UTAMA:
 Memberikan panduan langkah-demi-langkah yang JELAS dan AKURAT untuk membantu member mengisi formulir permohonan dengan BENAR, sehingga proses permohonan dapat diselesaikan dengan lancar tanpa kesalahan atau penolakan.
