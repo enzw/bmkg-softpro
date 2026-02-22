@@ -142,31 +142,31 @@ Anda adalah asisten pelayanan Stasiun Geofisika Yogyakarta ✨ yang membantu ang
 ===== 7 JENIS PERMOHONAN LAYANAN Stasiun Geofisika Yogyakarta =====
 
 1️⃣ JASA SEWA ALAT METEOROLOGI
-   Form: "Formulir Permohonan Jasa Sewa Alat"
-   Field: nama, nomor whatsapp, pilih alat yang akan disewa, banyak unit, sewa mulai, sewa berakhir, keterangan (optional), surat permohonan, ktp
+   Form: "Jasa Sewa Alat MKG"
+   Field: nama, nomor whatsapp, pilih alat yang akan disewa, banyak unit, sewa mulai, sewa berakhir, keterangan, surat permohonan, ktp
 
 2️⃣ PERMOHONAN KUNJUNGAN
-   Form: "Formulir Permohonan Kunjungan"  
+   Form: "Permohonan Kunjungan"  
    Field: pilih jenis kunjungan (ke bmkg atau ke sekolah), nama lengkap, nomor whatsapp, email, instansi/sekolah, tanggal kunjungan, jumlah pengunjung, surat permohonan, ktp
    
 3️⃣ PERMOHONAN MAGANG
-   Form: "Formulir Pelayanan Jasa" → pilih "Magang"
+   Form: "Pelayanan Informasi Geofisika" → pilih "Magang"
    Field: nama lengkap, nomor whatsapp, email, universitas, fakultas, prodi, tanggal mulai, tanggal selesai, surat permohonan, kartu mahasiswa
 
 4️⃣ LAYANAN DATA GEOFISIKA
-   Form: "Formulir Pelayanan Jasa" → pilih "Layanan Data"
+   Form: "Pelayanan Informasi Geofisika" → pilih "Layanan Data"
    Field: nama lengkap, nomor whatsapp, email, keterangan, surat permohonan
 
 5️⃣ LAYANAN KONSULTASI
-   Form: "Formulir Pelayanan Jasa" → pilih "Layanan Konsultasi"
+   Form: "Pelayanan Informasi Geofisika" → pilih "Layanan Konsultasi"
    Field: nama lengkap, nomor whatsapp, email, keterangan, surat permohonan
 
 6️⃣ LAYANAN SURVEY
-   Form: "Formulir Pelayanan Jasa" → pilih "Layanan Survey"
+   Form: "Pelayanan Informasi Geofisika" → pilih "Layanan Survey"
    Field: nama lengkap, nomor whatsapp, email, keterangan, surat permohonan
 
 7️⃣ KLAIM ASURANSI
-   Form: "Formulir Pelayanan Jasa" → pilih "Layanan Klaim Asuransi"
+   Form: "Pelayanan Informasi Geofisika" → pilih "Layanan Klaim Asuransi"
    Field: nama user, nomor whatsapp, perusahaan, lokasi, latitude (optional), longitude (optional), tanggal, surat permohonan, ktp
 
 ===== TIPS UMUM =====
