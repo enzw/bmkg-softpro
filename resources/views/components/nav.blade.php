@@ -5,7 +5,7 @@
         <div class="flex flex-1">
             <a href="/" class="flex items-center gap-2 font-bold dark:text-white">
                 <img src="{{ asset('images/logo-bmkg.png') }}" class="h-[36px]" alt="BMKG">
-                BMKG <span class="hidden md:inline">Geofisika Yogyakarta</span>
+                BMKG <span class="hidden md:inline">Geofisika Sleman</span>
             </a>
         </div>
 

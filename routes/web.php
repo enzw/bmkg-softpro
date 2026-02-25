@@ -250,4 +250,9 @@ Route::get('/health', function () {
 
 // Route::post('/webhook', [DialogflowWebhookController::class, 'handleWebhook']);
 
+// Graceful GET logout redirect (prevents 405 when user types /logout in URL bar)
+Route::get('/logout', function () {
+    return redirect()->route('login');
+});
+
 require __DIR__ . '/auth.php';

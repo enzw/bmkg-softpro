@@ -42,9 +42,9 @@ class ChatbotController extends Controller
 
         try {
             $prompt = $this->buildPrompt($validated['message']);
-            
+
             $response = $this->guzzleClient->post(
-                'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent',
+                'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
                 [
                     'query' => [
                         'key' => $this->googleAiKey,
@@ -95,11 +95,11 @@ class ChatbotController extends Controller
 
         } catch (RequestException $e) {
             $statusCode = $e->getResponse()?->getStatusCode();
-            
+
             if ($statusCode === 401) {
                 $message = 'API Key tidak valid atau sudah expired.';
             } elseif ($statusCode === 429) {
-                $message = 'Terlalu banyak permintaan. Silakan coba lagi dalam beberapa saat.';
+                $message = 'Chatbot sedang sibuk. Silakan tunggu 1-2 menit lalu coba lagi.';
             } elseif ($statusCode === 500) {
                 $message = 'Server Google AI sedang mengalami gangguan. Silakan coba lagi nanti.';
             } else {
@@ -135,11 +135,11 @@ class ChatbotController extends Controller
     private function buildPrompt(string $userMessage): string
     {
         $systemPrompt = <<<'PROMPT'
-Anda adalah asisten pelayanan Stasiun Geofisika Yogyakarta ✨ yang membantu anggota (member) dalam mengajukan berbagai permohonan layanan.
+Anda adalah asisten pelayanan Stasiun Geofisika Sleman ✨ yang membantu anggota (member) dalam mengajukan berbagai permohonan layanan.
 
 ⚠️ PENTING: Semua informasi yang diberikan HARUS sesuai dengan FORM ACTUAL yang ada di aplikasi.
 
-===== 7 JENIS PERMOHONAN LAYANAN Stasiun Geofisika Yogyakarta =====
+===== 7 JENIS PERMOHONAN LAYANAN Stasiun Geofisika Sleman =====
 
 1️⃣ JASA SEWA ALAT METEOROLOGI
    Form: "Jasa Sewa Alat MKG"

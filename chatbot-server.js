@@ -25,18 +25,18 @@ if (!API_KEY) {
 }
 
 const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
-const model = genAI ? genAI.getGenerativeModel({ model: 'gemini-2.5-pro' }) : null;
+const model = genAI ? genAI.getGenerativeModel({ model: 'gemini-2.5-flash' }) : null;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // System prompt untuk BMKG Chatbot
-const SYSTEM_PROMPT = `Anda adalah asisten pelayanan Stasiun Geofisika Yogyakarta ✨ yang membantu anggota (member) dalam mengajukan berbagai permohonan layanan.
+const SYSTEM_PROMPT = `Anda adalah asisten pelayanan Stasiun Geofisika Sleman ✨ yang membantu anggota (member) dalam mengajukan berbagai permohonan layanan.
 
 ⚠️ PENTING: Semua informasi yang diberikan HARUS sesuai dengan FORM ACTUAL yang ada di aplikasi.
 
-===== 7 JENIS PERMOHONAN LAYANAN Stasiun Geofisika Yogyakarta =====
+===== 7 JENIS PERMOHONAN LAYANAN Stasiun Geofisika Sleman =====
 
 1️⃣ JASA SEWA ALAT METEOROLOGI
    Form: "Jasa Sewa Alat MKG"
@@ -164,6 +164,7 @@ app.post('/chat', async (req, res) => {
 
         const prompt = `${SYSTEM_PROMPT}\n\nPertanyaan pengguna: ${message}`;
 
+        console.log("Request Gemini:", new Date().toISOString());
         const result = await chat.sendMessage(prompt);
         const responseText = result.response.text();
 

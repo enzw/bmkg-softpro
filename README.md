@@ -1,6 +1,6 @@
 <h1 align="center">
   <img src="https://github.com/ycrus/bmkg-softpro/blob/main/public/images/logo-bmkg.png?raw=true" width="100" > <br>
-  BMKG Yogyakarta
+  BMKG Sleman
 </h1>
 
 <p align="center">Praktik Kerja Lapangan 2026</p>
