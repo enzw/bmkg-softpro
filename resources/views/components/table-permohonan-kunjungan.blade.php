@@ -161,7 +161,6 @@
                                         </div>
                                         <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
                                             <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">No WhatsApp
-                                     v
                                             <p class="text-sm font-semibold text-gray-900 dark:text-white">
                                                 {{ e($item->no_whatsapp) }}</p>
                                         </div>
