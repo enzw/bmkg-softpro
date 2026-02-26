@@ -219,11 +219,18 @@
                                 <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">
                                     Permohonan pelayanan dapat dilakukan secara online dengan mengirimkan berkas persyaratan melalui email resmi kami.
                                 </p>
-                                <a href="mailto:stageof.yogya@bmkg.go.id"
-                                    class="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white font-semibold rounded-full transition duration-300 shadow-lg hover:shadow-violet-500/40">
-                                    <i class="fas fa-envelope"></i>
-                                    stageof.yogya@bmkg.go.id
-                                </a>
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <a href="mailto:stageof.yogya@bmkg.go.id"
+                                        class="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white font-semibold rounded-full transition duration-300 shadow-lg hover:shadow-violet-500/40">
+                                        <i class="fas fa-envelope"></i>
+                                        stageof.yogya@bmkg.go.id
+                                    </a>
+                                    <a href="https://wa.me/6289612643202" target="_blank"
+                                        class="inline-flex items-center justify-center gap-3 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-full transition duration-300 shadow-lg hover:shadow-green-500/40">
+                                        <i class="fab fa-whatsapp"></i>
+                                        WhatsApp
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
