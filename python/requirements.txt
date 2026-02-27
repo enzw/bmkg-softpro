@@ -1,0 +1,22 @@
+# Flask web framework
+Flask==3.0.0
+Flask-CORS==4.0.0
+
+# Google Generative AI
+google-generativeai==0.3.0
+
+# Database / Vector Storage
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.23
+pgvector==0.2.1
+
+# Text processing and chunking
+nltk==3.8.1
+tiktoken==0.5.2
+
+# Utilities
+python-dotenv==1.0.0
+requests==2.31.0
+
+# Logging
+python-json-logger==2.0.7

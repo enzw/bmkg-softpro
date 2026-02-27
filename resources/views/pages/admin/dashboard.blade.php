@@ -359,8 +359,12 @@
                             <i class="fa-solid {{ $config['icon'] }} text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-tight">Detail Permohonan</h3>
-                            <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Type: {{ $request['service'] }}</p>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                {{ $type === 'kunjungan' ? 'Detail Kunjungan' : 'Detail Permohonan' }}
+                            </h3>
+                            <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">
+                                {{ $type === 'kunjungan' ? 'ID: #' . substr($item->id, 0, 8) : 'Type: ' . $request['service'] }}
+                            </p>
                         </div>
                     </div>
                     <button type="button" onclick="closeDetailModal('{{ $modalId }}')" class="w-10 h-10 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors shadow-sm border border-gray-100 dark:border-gray-700">
@@ -400,12 +404,13 @@
                         </div>
                     </div>
 
-                    <!-- Service Specific Info -->
-                    <div class="relative pl-6 border-l-2 border-blue-500/30">
-                        <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                            Detail Layanan
-                        </h4>
+                    @if($type !== 'kunjungan')
+                        <!-- Service Specific Info -->
+                        <div class="relative pl-6 border-l-2 border-blue-500/30">
+                            <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                Detail Layanan
+                            </h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             @if($type === 'sewa_alat')
                                 <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700 col-span-2">
@@ -465,27 +470,6 @@
                                         <p class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed text-left w-full">{{ $item->keterangan }}</p>
                                     </div>
                                 @endif
-                            @elseif($type === 'kunjungan')
-                                <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700 col-span-2">
-                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Lembaga / Sekolah</p>
-                                    <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ $item->nama_instansi }}</p>
-                                </div>
-                                <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700 col-span-2">
-                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Lokasi</p>
-                                    <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ $item->lokasi ?? '-' }}</p>
-                                </div>
-                                <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
-                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Peserta</p>
-                                    <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ $item->jumlah_rombongan }} Orang</p>
-                                </div>
-                                <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
-                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Waktu</p>
-                                    <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d M Y') : '-' }}</p>
-                                </div>
-                                <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700 col-span-2">
-                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1 text-left">Rencana Kunjungan</p>
-                                    <p class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed text-left w-full">{{ $item->rencana_kunjungan }}</p>
-                                </div>
                             @elseif($type === 'asuransi')
                                 <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700 col-span-2">
                                     <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Perusahaan</p>
@@ -515,6 +499,52 @@
                             @endif
                         </div>
                     </div>
+                    @else
+                        <!-- Informasi Kunjungan -->
+                        <div class="relative pl-6 border-l-2 border-cyan-500/30">
+                            <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+                                Informasi Kunjungan
+                            </h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Jenis Kunjungan</p>
+                                    <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ $item->jenis_kunjungan }}</p>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Nama Instansi</p>
+                                    <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ $item->nama_instansi }}</p>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Jumlah Rombongan</p>
+                                    <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ $item->jumlah_rombongan }} Orang</p>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Status</p>
+                                    @php
+                                        $isEnum = $item->status instanceof \App\Enums\Status;
+                                        $currStatusColor = $isEnum ? $item->status->color() : 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
+                                        $statLabel = $isEnum ? $item->status->label() : ($item->status->value ?? $item->status ?? 'Menunggu');
+                                    @endphp
+                                    <span class="inline-block mt-1 px-3 py-1 rounded-full border {{ $currStatusColor }} text-[10px] font-bold uppercase tracking-widest">
+                                        {{ $statLabel }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detail Layanan -->
+                        <div class="relative pl-6 border-l-2 border-blue-500/30">
+                            <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                Detail Layanan
+                            </h4>
+                            <div class="bg-gray-50 dark:bg-gray-900/40 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-700 text-left">
+                                <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2 text-left">Keterangan / Keperluan</p>
+                                <p class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed text-left w-full">{{ $item->rencana_kunjungan }}</p>
+                            </div>
+                        </div>
+                    @endif
 
                     <!-- Documents -->
                     <div class="relative pl-6 border-l-2 border-purple-500/30">
@@ -571,7 +601,7 @@
                     @php
                         $editRoute = 'admin.' . ($routeMap[$type] ?? str_replace('_', '-', $type)) . '.edit';
                     @endphp
-                    <a href="{{ route($editRoute, $item->id) }}" class="flex-1 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-blue-200 dark:shadow-none text-center">
+                    <a href="{{ route($editRoute, $item->id) }}" class="flex-1 px-8 py-4 {{ $type === 'kunjungan' ? 'bg-green-600 hover:bg-green-700 shadow-green-200' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-200' }} text-white rounded-2xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg dark:shadow-none text-center">
                         Edit Data
                     </a>
                 </div>

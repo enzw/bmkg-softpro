@@ -12,13 +12,14 @@ RUN npm run build
 
 
 # ======================
-# Stage 2 - Backend (Laravel + Node Chatbot)
+# Stage 2 - Backend (Laravel + Node Chatbot + Python RAG)
 # ======================
 FROM php:8.2-cli-alpine
 
-# Install system deps + Node.js + Supervisor
+# Install system deps + Node.js + Python + Supervisor
 RUN apk add --no-cache \
     nodejs npm \
+    python3 py3-pip \
     git curl unzip \
     postgresql-dev \
     libpng-dev \
@@ -30,6 +31,9 @@ RUN apk add --no-cache \
     zip \
     supervisor \
     bash \
+    g++ \
+    make \
+    libc-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
         pdo \
@@ -66,8 +70,24 @@ RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-interaction \
     --no-progress
 
-# Install Node dependencies for chatbot ONLY
-RUN npm install @google/generative-ai express cors dotenv
+# Install Node dependencies for chatbot
+RUN npm install @google/generative-ai express cors dotenv axios
+
+# Install Python dependencies for RAG
+RUN pip install --no-cache-dir -q \
+    Flask==3.0.0 \
+    Flask-CORS==4.0.0 \
+    google-generativeai==0.3.0 \
+    psycopg2-binary==2.9.9 \
+    sqlalchemy==2.0.23 \
+    pgvector==0.2.1 \
+    nltk==3.8.1 \
+    tiktoken==0.5.2 \
+    python-dotenv==1.0.0 \
+    requests==2.31.0
+
+# Download NLTK data
+RUN python3 -c "import nltk; nltk.download('punkt', quiet=True)"
 
 # Permission
 RUN chown -R www-data:www-data storage bootstrap/cache

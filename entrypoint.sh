@@ -71,7 +71,63 @@ php artisan key:generate --show >/dev/null 2>&1 || {
     php artisan key:generate
 }
 
-# Optimize Laravel (skip route:cache - it has conflicts)
+# ============================================================================
+# RAG System Initialization
+# ============================================================================
+echo ""
+echo "🤖 Initializing RAG System..."
+echo "================================"
+
+# Setup Python environment for RAG
+if command -v python3 &> /dev/null; then
+    echo "📦 Setting up RAG dependencies..."
+    
+    # Install/verify Python packages
+    cd /var/www/html/python
+    
+    # Quick check if packages are installed
+    python3 -c "import flask, google.generativeai, sqlalchemy, pgvector" 2>/dev/null || {
+        echo "   Installing Python packages..."
+        pip install -q -r requirements.txt 2>/dev/null || {
+            echo "   ⚠️  Some packages failed to install - continuing..."
+        }
+    }
+    
+    # Initialize RAG database
+    echo "📊 Initializing RAG database and tables..."
+    python3 << 'PYTHON_INIT'
+import sys
+import logging
+from pathlib import Path
+
+# Add project to path
+sys.path.insert(0, '/var/www/html/python')
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+try:
+    from config import engine, Base, POSTGRES_DB, POSTGRES_HOST
+    from models import Document, TextChunk
+    
+    # Create all tables
+    Base.metadata.create_all(bind=engine)
+    logger.info(f"✅ RAG database initialized in {POSTGRES_DB}@{POSTGRES_HOST}")
+    
+except Exception as e:
+    logger.warning(f"⚠️  RAG initialization warning: {str(e)}")
+    logger.info("   This is normal on first startup")
+
+PYTHON_INIT
+    
+    cd /var/www/html
+    
+    echo "✅ RAG System initialized"
+else
+    echo "⚠️  Python 3 not found - RAG will not be available"
+fi
+
+echo ""
 echo "⚙️  Optimizing Laravel..."
 php artisan config:cache || echo "⚠️  Config cache failed"
 # SKIP route:cache - too many naming conflicts
