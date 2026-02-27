@@ -74,7 +74,7 @@ RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
 RUN npm install @google/generative-ai express cors dotenv axios
 
 # Install Python dependencies for RAG
-RUN pip install --no-cache-dir -q \
+RUN pip install --no-cache-dir --break-system-packages -q \
     Flask==3.0.0 \
     Flask-CORS==4.0.0 \
     google-generativeai==0.3.0 \

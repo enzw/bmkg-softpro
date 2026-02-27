@@ -88,7 +88,7 @@ if command -v python3 &> /dev/null; then
     # Quick check if packages are installed
     python3 -c "import flask, google.generativeai, sqlalchemy, pgvector" 2>/dev/null || {
         echo "   Installing Python packages..."
-        pip install -q -r requirements.txt 2>/dev/null || {
+        pip install --break-system-packages -q -r requirements.txt 2>/dev/null || {
             echo "   ⚠️  Some packages failed to install - continuing..."
         }
     }

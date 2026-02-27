@@ -90,7 +90,7 @@ services:
       
       echo '🔧 Installing Python dependencies...';
       cd /var/www/html/python;
-      pip install -q -r requirements.txt;
+      pip install --break-system-packages -q -r requirements.txt;
       
       echo '📥 Initializing RAG system...';
       python initialize_rag.py;
