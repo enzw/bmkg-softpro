@@ -453,17 +453,9 @@
                     <h4
                         class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                        Detail Kebutuhan & Dokumen
+                        Dokumen Pendukung
                     </h4>
                     <div class="space-y-6">
-                        <div>
-                            <label
-                                class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Keterangan/Deskripsi
-                                <span class="text-red-500">*</span></label>
-                            <textarea name="keterangan" rows="4"
-                                class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium resize-none">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
-                            <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
-                        </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
                                 <label for="surat_permohonan_common"

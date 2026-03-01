@@ -450,12 +450,14 @@
                                     <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Universitas / Sekolah</p>
                                     <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ $item->universitas }}</p>
                                 </div>
-                                @if($item->prodi)
-                                    <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700 col-span-2">
-                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Program Studi</p>
-                                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ $item->prodi }}</p>
-                                    </div>
-                                @endif
+                                <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Fakultas</p>
+                                    <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ $item->fakultas ?? '-' }}</p>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Program Studi</p>
+                                    <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ $item->prodi ?? '-' }}</p>
+                                </div>
                                 <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
                                     <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Mulai</p>
                                     <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</p>
@@ -464,12 +466,6 @@
                                     <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Berakhir</p>
                                     <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d M Y') }}</p>
                                 </div>
-                                @if($item->keterangan)
-                                    <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700 col-span-2">
-                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1 text-left">Keterangan / Keperluan</p>
-                                        <p class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed text-left w-full">{{ $item->keterangan }}</p>
-                                    </div>
-                                @endif
                             @elseif($type === 'asuransi')
                                 <div class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700 col-span-2">
                                     <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Perusahaan</p>
