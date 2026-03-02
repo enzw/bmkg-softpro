@@ -69,7 +69,7 @@ class AdminSurveyController extends Controller
             try {
                 $file = $request->file('surat_permohonan');
                 $file_name = 'survey_user:' . Auth::id() . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
-                $path_permohonan = $file->storeAs('permohonan/survey', $file_name);
+                $path_permohonan = $file->storeAs('permohonan/survey', $file_name, 's3');
                 $validated['surat_permohonan'] = $path_permohonan;
             } catch (Exception $error) {
                 return back()->with('error', 'Gagal upload surat permohonan: ' . $error->getMessage());
@@ -80,7 +80,7 @@ class AdminSurveyController extends Controller
             try {
                 $file = $request->file('ktp');
                 $file_name = 'ktp_survey_user:' . Auth::id() . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
-                $path_ktp = $file->storeAs('permohonan/survey', $file_name);
+                $path_ktp = $file->storeAs('permohonan/survey', $file_name, 's3');
                 $validated['ktp'] = $path_ktp;
             } catch (Exception $error) {
                 return back()->with('error', 'Gagal upload KTP: ' . $error->getMessage());
@@ -136,23 +136,23 @@ class AdminSurveyController extends Controller
 
         if ($request->hasFile('surat_permohonan')) {
             if ($survey->surat_permohonan) {
-                Storage::delete($survey->surat_permohonan);
+                Storage::disk('s3')->delete($survey->surat_permohonan);
             }
 
             $file = $request->file('surat_permohonan');
             $file_name = 'survey_user:' . $survey->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
-            $path_permohonan = $file->storeAs('permohonan/survey', $file_name);
+            $path_permohonan = $file->storeAs('permohonan/survey', $file_name, 's3');
             $validated['surat_permohonan'] = $path_permohonan;
         }
 
         if ($request->hasFile('ktp')) {
             if ($survey->ktp) {
-                Storage::delete($survey->ktp);
+                Storage::disk('s3')->delete($survey->ktp);
             }
 
             $file = $request->file('ktp');
             $file_name = 'ktp_survey_user:' . $survey->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
-            $path_ktp = $file->storeAs('permohonan/survey', $file_name);
+            $path_ktp = $file->storeAs('permohonan/survey', $file_name, 's3');
             $validated['ktp'] = $path_ktp;
         }
 

@@ -69,7 +69,7 @@ class AdminJasaKonsultasiController extends Controller
             try {
                 $file = $request->file('surat_permohonan');
                 $file_name = 'jasa-konsultasi_user:' . Auth::id() . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
-                $path_permohonan = $file->storeAs('layanan-konsultasi', $file_name);
+                $path_permohonan = $file->storeAs('layanan-konsultasi', $file_name, 's3');
                 $validated['surat_permohonan'] = $path_permohonan;
             } catch (Exception $error) {
                 return back()->with('error', 'Gagal upload surat permohonan: ' . $error->getMessage());
@@ -80,7 +80,7 @@ class AdminJasaKonsultasiController extends Controller
             try {
                 $file = $request->file('ktp');
                 $file_name = 'ktp_jasa-konsultasi_user:' . Auth::id() . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
-                $path_ktp = $file->storeAs('layanan-konsultasi', $file_name);
+                $path_ktp = $file->storeAs('layanan-konsultasi', $file_name, 's3');
                 $validated['ktp'] = $path_ktp;
             } catch (Exception $error) {
                 return back()->with('error', 'Gagal upload KTP: ' . $error->getMessage());
@@ -136,23 +136,23 @@ class AdminJasaKonsultasiController extends Controller
 
         if ($request->hasFile('surat_permohonan')) {
             if ($jasa_konsultasi->surat_permohonan) {
-                Storage::delete($jasa_konsultasi->surat_permohonan);
+                Storage::disk('s3')->delete($jasa_konsultasi->surat_permohonan);
             }
 
             $file = $request->file('surat_permohonan');
             $file_name = 'jasa-konsultasi_user:' . $jasa_konsultasi->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
-            $path_permohonan = $file->storeAs('layanan-konsultasi', $file_name);
+            $path_permohonan = $file->storeAs('layanan-konsultasi', $file_name, 's3');
             $validated['surat_permohonan'] = $path_permohonan;
         }
 
         if ($request->hasFile('ktp')) {
             if ($jasa_konsultasi->ktp) {
-                Storage::delete($jasa_konsultasi->ktp);
+                Storage::disk('s3')->delete($jasa_konsultasi->ktp);
             }
 
             $file = $request->file('ktp');
             $file_name = 'ktp_jasa-konsultasi_user:' . $jasa_konsultasi->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
-            $path_ktp = $file->storeAs('layanan-konsultasi', $file_name);
+            $path_ktp = $file->storeAs('layanan-konsultasi', $file_name, 's3');
             $validated['ktp'] = $path_ktp;
         }
 
@@ -173,12 +173,12 @@ class AdminJasaKonsultasiController extends Controller
         try {
             $this->authorize('delete', $jasaKonsultasi);
 
-            // Delete associated files from local storage
+            // Delete associated files from Cloudflare S3
             if ($jasaKonsultasi->surat_permohonan) {
-                Storage::delete($jasaKonsultasi->surat_permohonan);
+                Storage::disk('s3')->delete($jasaKonsultasi->surat_permohonan);
             }
             if ($jasaKonsultasi->ktp) {
-                Storage::delete($jasaKonsultasi->ktp);
+                Storage::disk('s3')->delete($jasaKonsultasi->ktp);
             }
 
             $jasaKonsultasi->delete();
