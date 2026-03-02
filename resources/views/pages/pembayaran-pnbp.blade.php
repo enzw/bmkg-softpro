@@ -127,7 +127,10 @@
                                 @if($m['tab'])
                                     <div
                                         class="mt-4 flex items-center gap-1 text-xs font-semibold {{ explode(' ', $m['badge'])[3] ?? 'text-blue-700' }}">
-                                        <span class="px-3 py-1 rounded-full {{ $m['badge'] }}">Lihat panduan →</span>
+                                        <button type="button" onclick="event.stopPropagation(); switchTab('{{ $m['tab'] }}')"
+                                            class="px-3 py-1 rounded-full {{ $m['badge'] }} hover:scale-105 transition-transform duration-200">
+                                            Lihat panduan →
+                                        </button>
                                     </div>
                                 @else
                                     <div class="mt-4">
