@@ -47,7 +47,24 @@
             </div>
             <div>
                 <h2 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-tight">
-                    {{ $is_edit ? 'Edit' : 'Buat' }} Formulir Pelayanan Jasa
+                    @if($is_edit)
+                        Edit Formulir
+                        @if($jenis_layanan === 'Magang')
+                            Magang
+                        @elseif($jenis_layanan === 'Layanan Klaim Asuransi')
+                            Asuransi
+                        @elseif($jenis_layanan === 'Layanan Data')
+                            Data
+                        @elseif($jenis_layanan === 'Layanan Survey')
+                            Survey
+                        @elseif($jenis_layanan === 'Layanan Konsultasi')
+                            Konsultasi
+                        @else
+                            Pelayanan Jasa
+                        @endif
+                    @else
+                        Buat Formulir Pelayanan Jasa
+                    @endif
                 </h2>
                 <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest text-shadow-sm">
                     Lengkapi data permohonan layanan
@@ -115,7 +132,8 @@
 
         <form
             action="{{ $is_edit ? url('admin/pelayanan-jasa/' . $permohonan->id) : route('admin.pelayanan-jasa.store') }}"
-            method="POST" class="space-y-8" enctype="multipart/form-data" id="form-layanan">
+            method="POST" class="space-y-8" enctype="multipart/form-data" id="form-layanan" novalidate
+            onsubmit="return validateVisibleFields()">
             @csrf
             @if ($is_edit)
                 @method('put')
@@ -562,6 +580,17 @@
 </div>
 
 <script>
+    // Store initial required state for all fields
+    const requiredFields = {};
+
+    function storeRequiredState() {
+        document.querySelectorAll('input, select, textarea').forEach(input => {
+            if (input.hasAttribute('required')) {
+                requiredFields[input.name] = true;
+            }
+        });
+    }
+
     function disableHiddenFields(visibleSectionId) {
         // List semua field section IDs yang mungkin
         const allSections = ['magang-fields', 'asuransi-fields', 'common-fields'];
@@ -571,7 +600,16 @@
             if (section) {
                 const inputs = section.querySelectorAll('input, select, textarea');
                 inputs.forEach(input => {
-                    input.disabled = (sectionId !== visibleSectionId);
+                    if (sectionId !== visibleSectionId) {
+                        input.disabled = true;
+                        input.removeAttribute('required');
+                    } else {
+                        input.disabled = false;
+                        // Restore required if it was originally required
+                        if (requiredFields[input.name]) {
+                            input.setAttribute('required', 'required');
+                        }
+                    }
                 });
             }
         });
@@ -649,7 +687,44 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', updateFormFields);
+    function validateVisibleFields() {
+        // Only validate fields that are visible and enabled
+        const visibleFields = Array.from(document.querySelectorAll('input, select, textarea'))
+            .filter(field => {
+                const style = window.getComputedStyle(field.closest('[style*="display"]') || field.parentElement);
+                return field.offsetParent !== null && !field.disabled; // offsetParent !== null means field is visible
+            });
+
+        let isValid = true;
+        let firstInvalidField = null;
+
+        visibleFields.forEach(field => {
+            if (field.hasAttribute('required') && !field.value.trim()) {
+                field.classList.add('border-red-500');
+                isValid = false;
+                if (!firstInvalidField) firstInvalidField = field;
+            } else {
+                field.classList.remove('border-red-500');
+            }
+        });
+
+        if (!isValid && firstInvalidField) {
+            firstInvalidField.focus();
+            // Show a brief error message
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-3 rounded-lg';
+            errorMsg.textContent = 'Harap isi semua field yang diperlukan';
+            document.body.appendChild(errorMsg);
+            setTimeout(() => errorMsg.remove(), 3000);
+        }
+
+        return isValid;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        storeRequiredState();
+        updateFormFields();
+    });
 </script>
 
 <style>
