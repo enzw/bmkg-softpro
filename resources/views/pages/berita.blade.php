@@ -3,7 +3,7 @@
 @section('content')
 <div class="min-h-screen bg-white dark:bg-gray-900 pt-[96px] py-10 px-6">
     <h1 class="text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">
-        Berita BMKG Geofisika Yogyakarta
+        Berita BMKG Geofisika Sleman
     </h1>
 
     <div id="loading" class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">

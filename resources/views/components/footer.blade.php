@@ -5,7 +5,7 @@
 
             <div class="flex items-start gap-5 max-w-sm">
                 <img src="{{ asset('/images/logo-bmkg.png') }}"
-                     alt="Logo BMKG Geofisika Yogyakarta"
+                     alt="Logo BMKG Geofisika Sleman"
                      class="h-20 w-auto shrink-0">
 
                 <div class="space-y-3">
@@ -58,7 +58,7 @@
         </div>
 
         <div class="border-t border-gray-700 mt-14 pt-6 text-center text-sm text-gray-500">
-            © {{ date('Y') }} BMKG Geofisika Yogyakarta. Seluruh hak cipta dilindungi.
+            © {{ date('Y') }} BMKG Geofisika Sleman. Seluruh hak cipta dilindungi.
         </div>
 
     </div>

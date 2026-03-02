@@ -3,7 +3,7 @@
 
 Halo {{ $displayName }},
 
-Kami menerima permintaan untuk **reset password** akun Anda di sistem BMKG Geofisika Yogyakarta. Klik tombol di bawah untuk membuat password baru:
+Kami menerima permintaan untuk **reset password** akun Anda di sistem BMKG Geofisika Sleman. Klik tombol di bawah untuk membuat password baru:
 
 @component('mail::button', ['url' => $actionUrl, 'color' => 'success'])
 {{ $actionText }}
@@ -26,7 +26,7 @@ Kami menerima permintaan untuk **reset password** akun Anda di sistem BMKG Geofi
 Jika ada pertanyaan atau masalah, silakan hubungi support kami.
 
 Terima kasih,  
-**BMKG Geofisika Yogyakarta**
+**BMKG Geofisika Sleman**
 
 @component('mail::subcopy')
 Jika tombol "Reset Password" tidak bekerja, copy-paste URL berikut di browser Anda:
