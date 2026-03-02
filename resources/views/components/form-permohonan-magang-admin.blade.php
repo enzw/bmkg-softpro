@@ -137,7 +137,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Nama Lengkap
                                 <span class="text-red-500">*</span></label>
-                            <input type="text" name="nama_lengkap"
+                            <input type="text" name="nama_lengkap" required
                                 value="{{ $is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
@@ -145,7 +145,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Email <span
                                     class="text-red-500">*</span></label>
-                            <input type="email" name="email"
+                            <input type="email" name="email" required
                                 value="{{ $is_edit ? old('email', $permohonan->email ?? '') : old('email') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
@@ -153,7 +153,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">WhatsApp <span
                                     class="text-red-500">*</span></label>
-                            <input type="text" name="no_whatsapp"
+                            <input type="text" name="no_whatsapp" required
                                 value="{{ $is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
@@ -171,7 +171,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Universitas
                                 <span class="text-red-500">*</span></label>
-                            <input type="text" name="universitas"
+                            <input type="text" name="universitas" required
                                 value="{{ $is_edit ? old('universitas', $permohonan->universitas ?? '') : old('universitas') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('universitas')" class="mt-2" />
@@ -179,7 +179,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Fakultas <span
                                     class="text-red-500">*</span></label>
-                            <input type="text" name="fakultas"
+                            <input type="text" name="fakultas" required
                                 value="{{ $is_edit ? old('fakultas', $permohonan->fakultas ?? '') : old('fakultas') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('fakultas')" class="mt-2" />
@@ -187,7 +187,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Program Studi
                                 <span class="text-red-500">*</span></label>
-                            <input type="text" name="prodi"
+                            <input type="text" name="prodi" required
                                 value="{{ $is_edit ? old('prodi', $permohonan->prodi ?? '') : old('prodi') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('prodi')" class="mt-2" />
@@ -196,7 +196,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Tgl Mulai
                                     <span class="text-red-500">*</span></label>
-                                <input type="date" name="tanggal_mulai"
+                                <input type="date" name="tanggal_mulai" required
                                     value="{{ $is_edit && $permohonan ? old('tanggal_mulai', optional($permohonan->tanggal_mulai)->format('Y-m-d')) : old('tanggal_mulai') }}"
                                     class="w-full px-4 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                                 <x-input-error :messages="$errors->get('tanggal_mulai')" class="mt-2" />
@@ -204,7 +204,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Tgl Selesai
                                     <span class="text-red-500">*</span></label>
-                                <input type="date" name="tanggal_selesai"
+                                <input type="date" name="tanggal_selesai" required
                                     value="{{ $is_edit && $permohonan ? old('tanggal_selesai', optional($permohonan->tanggal_selesai)->format('Y-m-d')) : old('tanggal_selesai') }}"
                                     class="w-full px-4 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                                 <x-input-error :messages="$errors->get('tanggal_selesai')" class="mt-2" />
@@ -291,7 +291,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Nama <span
                                     class="text-red-500">*</span></label>
-                            <input type="text" name="nama_user"
+                            <input type="text" name="nama_user" required
                                 value="{{ $is_edit ? old('nama_user', $permohonan->nama_user ?? '') : old('nama_user') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('nama_user')" class="mt-2" />
@@ -299,7 +299,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">WhatsApp <span
                                     class="text-red-500">*</span></label>
-                            <input type="text" name="no_whatsapp"
+                            <input type="text" name="no_whatsapp" required
                                 value="{{ $is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
@@ -308,7 +308,7 @@
                             <label
                                 class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Institusi/Perusahaan
                                 <span class="text-red-500">*</span></label>
-                            <input type="text" name="perusahaan"
+                            <input type="text" name="perusahaan" required
                                 value="{{ $is_edit ? old('perusahaan', $permohonan->perusahaan ?? '') : old('perusahaan') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('perusahaan')" class="mt-2" />
@@ -316,7 +316,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Tanggal Kejadian
                                 <span class="text-red-500">*</span></label>
-                            <input type="date" name="tanggal"
+                            <input type="date" name="tanggal" required
                                 value="{{ $is_edit && $permohonan ? old('tanggal', optional($permohonan->tanggal)->format('Y-m-d')) : old('tanggal') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
@@ -334,7 +334,7 @@
                         <div class="sm:col-span-2">
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Lokasi Kejadian
                                 <span class="text-red-500">*</span></label>
-                            <input type="text" name="lokasi"
+                            <input type="text" name="lokasi" required
                                 value="{{ $is_edit ? old('lokasi', $permohonan->lokasi ?? '') : old('lokasi') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('lokasi')" class="mt-2" />
@@ -425,7 +425,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Nama Lengkap
                                 <span class="text-red-500">*</span></label>
-                            <input type="text" name="nama_lengkap"
+                            <input type="text" name="nama_lengkap" required
                                 value="{{ $is_edit ? old('nama_lengkap', $permohonan->nama_lengkap ?? '') : old('nama_lengkap') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
@@ -433,7 +433,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">WhatsApp <span
                                     class="text-red-500">*</span></label>
-                            <input type="text" name="no_whatsapp"
+                            <input type="text" name="no_whatsapp" required
                                 value="{{ $is_edit ? old('no_whatsapp', $permohonan->no_whatsapp ?? '') : old('no_whatsapp') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
@@ -441,7 +441,7 @@
                         <div class="sm:col-span-2">
                             <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Email <span
                                     class="text-red-500">*</span></label>
-                            <input type="email" name="email"
+                            <input type="email" name="email" required
                                 value="{{ $is_edit ? old('email', $permohonan->email ?? '') : old('email') }}"
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
@@ -555,7 +555,7 @@
 <script>
     function disableHiddenFields(visibleSectionId) {
         // List semua field section IDs yang mungkin
-        const allSections = ['magang-fields', 'asuransi-     fields', 'common-fields'];
+        const allSections = ['magang-fields', 'asuransi-fields', 'common-fields'];
 
         allSections.forEach(sectionId => {
             const section = document.getElementById(sectionId);

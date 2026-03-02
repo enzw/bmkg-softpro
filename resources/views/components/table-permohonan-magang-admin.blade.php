@@ -219,6 +219,14 @@
                                             {{ $item->no_whatsapp ?? '-' }}
                                         </p>
                                     </div>
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Email
+                                        </p>
+                                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                            {{ $item->email ?? '-' }}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 

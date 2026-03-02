@@ -101,9 +101,8 @@
                         <label for="no_whatsapp" class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                             No WhatsApp <span class="text-red-500">*</span>
                         </label>
-                        <input id="no_whatsapp" type="text" name="no_whatsapp" placeholder="62..."
+                        <input id="no_whatsapp" type="text" name="no_whatsapp" placeholder="62..." required
                             value="{{ $is_edit ? old('no_whatsapp', $permohonan->no_whatsapp) : old('no_whatsapp') }}"
-                            required
                             class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                         <x-input-error :messages="$errors->get('no_whatsapp')" class="mt-2" />
                     </div>
