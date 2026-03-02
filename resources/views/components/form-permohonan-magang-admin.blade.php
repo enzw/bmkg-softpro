@@ -446,6 +446,15 @@
                                 class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium" />
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
                         </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Keterangan <span
+                                    class="text-red-500 keterangan-required">*</span></label>
+                            <textarea name="keterangan" rows="4"
+                                placeholder="Jelaskan kebutuhan atau deskripsi layanan Anda..."
+                                data-required="true"
+                                class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium resize-none">{{ $is_edit ? old('keterangan', $permohonan->keterangan ?? '') : old('keterangan') }}</textarea>
+                            <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
+                        </div>
                     </div>
                 </div>
 
@@ -598,6 +607,27 @@
         if (visibleSectionId) {
             document.getElementById(visibleSectionId).style.display = 'block';
             disableHiddenFields(visibleSectionId);
+        }
+
+        // Update keterangan required status
+        const keteranganField = document.querySelector('textarea[name="keterangan"]');
+        const keteranganRequired = document.querySelector('.keterangan-required');
+        if (keteranganField) {
+            if (serviceType === 'Layanan Data' || serviceType === 'Layanan Survey' || serviceType === 'Layanan Konsultasi') {
+                keteranganField.setAttribute('required', 'required');
+                if (keteranganRequired) keteranganRequired.style.display = 'inline';
+                if (serviceType === 'Layanan Data') {
+                    keteranganField.placeholder = 'Jelaskan data yang Anda butuhkan...';
+                } else if (serviceType === 'Layanan Survey') {
+                    keteranganField.placeholder = 'Jelaskan kebutuhan survey Anda...';
+                } else if (serviceType === 'Layanan Konsultasi') {
+                    keteranganField.placeholder = 'Jelaskan kebutuhan konsultasi Anda...';
+                }
+            } else {
+                keteranganField.removeAttribute('required');
+                if (keteranganRequired) keteranganRequired.style.display = 'none';
+                keteranganField.placeholder = 'Jelaskan kebutuhan atau deskripsi layanan Anda (opsional)...';
+            }
         }
 
         // Activate current tab
