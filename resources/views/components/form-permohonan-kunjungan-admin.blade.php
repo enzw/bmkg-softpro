@@ -16,11 +16,19 @@
             </div>
         </div>
 
-        <a href="{{ url()->previous() }}"
-            class="px-5 py-2.5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-emerald-400 hover:border-green-200 dark:hover:border-emerald-800/50 transition-all font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-sm">
-            <i class="fas fa-arrow-left"></i>
-            Kembali
-        </a>
+        @if($is_edit)
+            <button type="button" onclick="showConfirmModal()"
+                class="px-5 py-2.5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-emerald-400 hover:border-green-200 dark:hover:border-emerald-800/50 transition-all font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-sm">
+                <i class="fas fa-arrow-left"></i>
+                Kembali
+            </button>
+        @else
+            <a href="{{ url()->previous() }}"
+                class="px-5 py-2.5 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-emerald-400 hover:border-green-200 dark:hover:border-emerald-800/50 transition-all font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-sm">
+                <i class="fas fa-arrow-left"></i>
+                Kembali
+            </a>
+        @endif
     </div>
 
     <div class="p-8">
@@ -269,3 +277,99 @@
         </form>
     </div>
 </div>
+
+<!-- Confirmation Modal -->
+@if($is_edit)
+<div id="confirmModal"
+    class="hidden fixed inset-0 z-50 overflow-auto bg-gray-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div
+        class="bg-white dark:bg-gray-800 rounded-[2.5rem] max-w-sm w-full shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden animate-in fade-in zoom-in duration-300">
+        <!-- Header -->
+        <div
+            class="p-8 border-b border-gray-50 dark:border-gray-700 flex items-center justify-between bg-gray-50/30 dark:bg-gray-900/10">
+            <div class="flex items-center gap-4">
+                <div
+                    class="w-12 h-12 rounded-2xl bg-red-100 dark:bg-red-900/40 flex items-center justify-center text-red-600 dark:text-red-400">
+                    <i class="fas fa-exclamation-triangle text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-tight">Konfirmasi
+                        Kembali</h3>
+                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Apakah Anda yakin?</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeConfirmModal()"
+                class="w-10 h-10 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors shadow-sm border border-gray-100 dark:border-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Content -->
+        <div class="px-8 pt-6 pb-8 text-center">
+            <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest leading-relaxed mb-2">
+                Perubahan yang belum disimpan akan hilang
+            </p>
+            <p class="text-xs text-gray-600 dark:text-gray-500">
+                Pastikan semua data telah disimpan sebelum kembali ke halaman sebelumnya.
+            </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3 p-6 bg-gray-50/50 dark:bg-gray-900/20 border-t border-gray-50 dark:border-gray-700">
+            <button type="button" onclick="closeConfirmModal()"
+                class="flex-1 px-6 py-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 font-bold text-[10px] uppercase tracking-widest transition-all hover:bg-gray-50 dark:hover:bg-gray-700">
+                Batal
+            </button>
+            <button type="button" onclick="confirmBack()"
+                class="flex-1 px-6 py-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-red-200 dark:shadow-none flex items-center justify-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                Kembali
+            </button>
+        </div>
+    </div>
+</div>
+@endif
+
+<script>
+    function showConfirmModal() {
+        @if($is_edit)
+            const modal = document.getElementById('confirmModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        @endif
+    }
+
+    function closeConfirmModal() {
+        const modal = document.getElementById('confirmModal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    function confirmBack() {
+        window.history.back();
+    }
+
+    @if($is_edit)
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('confirmModal');
+        if (modal && !modal.classList.contains('hidden')) {
+            const modalContent = modal.querySelector('.bg-white, .dark\:bg-gray-800');
+            if (event.target === modal) {
+                closeConfirmModal();
+            }
+        }
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeConfirmModal();
+        }
+    });
+    @endif
+</script>

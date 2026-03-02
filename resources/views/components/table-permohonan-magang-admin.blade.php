@@ -219,6 +219,7 @@
                                             {{ $item->no_whatsapp ?? '-' }}
                                         </p>
                                     </div>
+                                    @if($item->jenis_layanan !== 'Layanan Klaim Asuransi')
                                     <div
                                         class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
                                         <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Email
@@ -227,6 +228,7 @@
                                             {{ $item->email ?? '-' }}
                                         </p>
                                     </div>
+                                    @endif
                                 </div>
                             </div>
 
