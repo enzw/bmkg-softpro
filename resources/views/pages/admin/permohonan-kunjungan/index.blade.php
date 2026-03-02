@@ -44,9 +44,90 @@
                 </div>
             </div>
 
+            <!-- Search Bar -->
+            <div class="px-8 pt-8">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400 dark:text-gray-500 text-sm"></i>
+                    </div>
+                    <input type="text" id="searchPermohonan" 
+                        placeholder="Cari nama institusi, pemohon, atau status permohonan..."
+                        class="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300">
+                </div>
+            </div>
+
             <div class="p-8">
-                @include('components.table-permohonan-kunjungan-admin', ['permohonan' => $permohonan])
+                <div id="table-container">
+                    @include('components.table-permohonan-kunjungan-admin', ['permohonan' => $permohonan])
+                </div>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchPermohonan');
+            const tableContainer = document.getElementById('table-container');
+
+            searchInput.addEventListener('input', function() {
+                const searchQuery = this.value.toLowerCase().trim();
+                const items = tableContainer.querySelectorAll('.space-y-4 > div[class*="bg-white"]');
+                let visibleCount = 0;
+                let emptyStateShown = false;
+
+                // Get the empty state div if it exists
+                const emptyState = tableContainer.querySelector('.flex.flex-col.items-center.justify-center');
+
+                items.forEach(item => {
+                    // Extract searchable text from the item
+                    const itemText = item.innerText.toLowerCase();
+                    const matches = itemText.includes(searchQuery);
+
+                    if (searchQuery === '') {
+                        item.style.display = '';
+                        visibleCount++;
+                    } else if (matches) {
+                        item.style.display = '';
+                        visibleCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Handle empty state
+                if (emptyState) {
+                    if (searchQuery === '' && visibleCount === 0) {
+                        emptyState.style.display = '';
+                    } else if (searchQuery !== '' && visibleCount === 0) {
+                        emptyState.style.display = 'none';
+                    } else {
+                        emptyState.style.display = 'none';
+                    }
+                }
+
+                // Show no results message if search is active but no results
+                if (searchQuery !== '' && visibleCount === 0) {
+                    let noResultsMsg = tableContainer.querySelector('.no-results-message');
+                    if (!noResultsMsg) {
+                        noResultsMsg = document.createElement('div');
+                        noResultsMsg.className = 'no-results-message flex flex-col items-center justify-center py-16';
+                        noResultsMsg.innerHTML = `
+                            <div class="w-24 h-24 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-4">
+                                <i class="fas fa-search text-4xl text-gray-400 dark:text-gray-500"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Tidak Ada Hasil Pencarian</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Coba gunakan kata kunci yang berbeda</p>
+                        `;
+                        tableContainer.appendChild(noResultsMsg);
+                    }
+                    noResultsMsg.style.display = '';
+                } else {
+                    const noResultsMsg = tableContainer.querySelector('.no-results-message');
+                    if (noResultsMsg) {
+                        noResultsMsg.style.display = 'none';
+                    }
+                }
+            });
+        });
+    </script>
 @endsection
