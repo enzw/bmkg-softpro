@@ -250,14 +250,14 @@
                         <div>
                             <label for="kartu_mahasiswa"
                                 class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                                Kartu Mahasiswa (Image)
+                                Kartu Mahasiswa (Image/PDF)
                             </label>
                             <div class="relative">
-                                <input id="kartu_mahasiswa" type="file" name="kartu_mahasiswa" accept="image/*"
+                                <input id="kartu_mahasiswa" type="file" name="kartu_mahasiswa" accept=".pdf,.jpg,.jpeg,.png"
                                     class="w-full px-6 py-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-green-100 dark:file:bg-emerald-900/40 file:text-green-700 dark:file:text-emerald-400 hover:file:bg-green-200 cursor-pointer" />
                             </div>
                             <p class="text-[10px] text-gray-500 dark:text-gray-400 mt-2">
-                                <i class="fas fa-info-circle mr-1 text-green-500"></i>Format: JPG, PNG. Maksimal 2MB
+                                <i class="fas fa-info-circle mr-1 text-green-500"></i>Format: PDF, JPG, PNG. Maksimal 2MB
                             </p>
                             @if ($is_edit && $permohonan && !empty($permohonan->kartu_mahasiswa))
                                 <div

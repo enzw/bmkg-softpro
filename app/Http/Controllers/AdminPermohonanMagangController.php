@@ -127,7 +127,7 @@ class AdminPermohonanMagangController extends Controller
                     'tanggal_mulai' => 'required|date',
                     'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-                    'kartu_mahasiswa' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+                    'kartu_mahasiswa' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                 ]);
                 $validated['user_id'] = auth()->id();
 
@@ -374,7 +374,7 @@ class AdminPermohonanMagangController extends Controller
                     'tanggal_mulai' => 'required|date',
                     'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
                     'surat_permohonan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
-                    'kartu_mahasiswa' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+                    'kartu_mahasiswa' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
                     'status' => 'nullable',
                 ]);
 

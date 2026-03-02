@@ -597,7 +597,7 @@
                     @php
                         $editRoute = 'admin.' . ($routeMap[$type] ?? str_replace('_', '-', $type)) . '.edit';
                     @endphp
-                    <a href="{{ route($editRoute, $item->id) }}" class="flex-1 px-8 py-4 {{ $type === 'kunjungan' ? 'bg-green-600 hover:bg-green-700 shadow-green-200' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-200' }} text-white rounded-2xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg dark:shadow-none text-center">
+                    <a href="{{ route($editRoute, $item->id) }}" class="flex-1 px-8 py-4 bg-green-600 hover:bg-green-700 shadow-green-200 text-white rounded-2xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg dark:shadow-none text-center">
                         Edit Data
                     </a>
                 </div>

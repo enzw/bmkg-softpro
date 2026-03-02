@@ -292,7 +292,7 @@ class MagangController extends Controller
                 'prodi' => 'required|string',
                 'tanggal_mulai' => 'required|date',
                 'tanggal_selesai' => 'required|date',
-                'kartu_mahasiswa' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+                'kartu_mahasiswa' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ]),
             'Layanan Kunjungan Teknis' => $rules = array_merge($rules, [
                 'nama_user' => 'nullable|string',
@@ -535,7 +535,7 @@ class MagangController extends Controller
                 'prodi' => 'required|string',
                 'tanggal_mulai' => 'required|date',
                 'tanggal_selesai' => 'required|date',
-                'kartu_mahasiswa' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+                'kartu_mahasiswa' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ]),
             'Layanan Kunjungan Teknis' => $rules = array_merge($rules, [
                 'nama_user' => 'nullable|string',

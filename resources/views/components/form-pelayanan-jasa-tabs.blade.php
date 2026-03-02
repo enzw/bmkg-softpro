@@ -200,11 +200,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
                     Kartu Mahasiswa <span class="text-xs text-gray-500 dark:text-gray-400">(Opsional)</span>
                 </label>
                 <div class="relative">
-                    <input id="kartu_mahasiswa_magang" type="file" name="kartu_mahasiswa" accept=".jpg,.jpeg,.png"
+                    <input id="kartu_mahasiswa_magang" type="file" name="kartu_mahasiswa" accept=".pdf,.jpg,.jpeg,.png"
                         class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:focus:ring-green-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-100 dark:file:bg-green-900/30 file:text-green-700 dark:file:text-green-300 hover:file:bg-green-200 dark:hover:file:bg-green-900/50 cursor-pointer" />
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    <i class="fas fa-info-circle mr-1"></i>Format: JPG, PNG. Maksimal 2MB
+                    <i class="fas fa-info-circle mr-1"></i>Format: PDF, JPG, PNG. Maksimal 2MB
                 </p>
                 <x-input-error :messages="$errors->get('kartu_mahasiswa')" class="mt-2" />
             </div>

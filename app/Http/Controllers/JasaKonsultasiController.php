@@ -55,11 +55,11 @@ class JasaKonsultasiController extends Controller
 
         if ($request->hasFile('surat_permohonan')) {
             try {
-                $directory = 'permohonan/jasa-konsultasi';
+                $directory = 'layanan-konsultasi';
                 
                 $file = $request->file('surat_permohonan');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 's3');
+                $path = $file->storeAs($directory, $fileName);
                 
                 if ($path) {
                     $validated['surat_permohonan'] = $path;
@@ -73,11 +73,11 @@ class JasaKonsultasiController extends Controller
 
         if ($request->hasFile('ktp')) {
             try {
-                $directory = 'permohonan/jasa-konsultasi';
+                $directory = 'layanan-konsultasi';
                 
                 $file = $request->file('ktp');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs($directory, $fileName, 's3');
+                $path = $file->storeAs($directory, $fileName);
                 
                 if ($path) {
                     $validated['ktp'] = $path;
