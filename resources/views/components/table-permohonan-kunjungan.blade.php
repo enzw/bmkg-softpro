@@ -207,13 +207,13 @@
                                     <!-- File Downloads -->
                                     <div class="space-y-2 pt-4 border-t border-gray-200 dark:border-gray-700">
                                         @if($item->surat_permohonan)
-                                            <a href="{{ route('permohonan-kunjungan.download-file', ['id' => $item->id, 'fileName' => basename($item->surat_permohonan)]) }}"
+                                            <a href="{{ route('permohonan.permohonan-kunjungan.download', ['fileName' => basename($item->surat_permohonan)]) }}"
                                                 class="flex items-center justify-center gap-2 w-full px-4 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/30 font-semibold text-sm transition">
                                                 <i class="fas fa-file-pdf"></i>Surat Permohonan
                                             </a>
                                         @endif
                                         @if($item->ktp)
-                                            <a href="{{ route('permohonan-kunjungan.download-file', ['id' => $item->id, 'fileName' => basename($item->ktp)]) }}"
+                                            <a href="{{ route('permohonan.permohonan-kunjungan.download', ['fileName' => basename($item->ktp)]) }}"
                                                 class="flex items-center justify-center gap-2 w-full px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-semibold text-sm transition">
                                                 <i class="fas fa-id-card"></i>KTP/Identitas
                                             </a>

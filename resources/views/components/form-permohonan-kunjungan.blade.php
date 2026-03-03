@@ -107,7 +107,7 @@
                         <i class="fas fa-file text-blue-600 dark:text-blue-400"></i>
                         File saat ini:
                     </p>
-                    <a href="{{ route('permohonan-kunjungan.download-file', ['id' => $kunjungan->id, 'fileName' => basename($kunjungan->surat_permohonan)]) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
+                    <a href="{{ route('permohonan.permohonan-kunjungan.download', ['fileName' => basename($kunjungan->surat_permohonan)]) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
                         <i class="fas fa-download"></i>
                         {{ basename($kunjungan->surat_permohonan) }}
                     </a>
@@ -129,7 +129,7 @@
                         <i class="fas fa-file text-blue-600 dark:text-blue-400"></i>
                         File saat ini:
                     </p>
-                    <a href="{{ route('permohonan-kunjungan.download-file', ['id' => $kunjungan->id, 'fileName' => basename($kunjungan->ktp)]) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
+                    <a href="{{ route('permohonan.permohonan-kunjungan.download', ['fileName' => basename($kunjungan->ktp)]) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition">
                         <i class="fas fa-download"></i>
                         {{ basename($kunjungan->ktp) }}
                     </a>

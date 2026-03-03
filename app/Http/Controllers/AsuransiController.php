@@ -244,4 +244,43 @@ class AsuransiController extends Controller
             abort(500, 'Error mengakses file: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Simplified direct file download from permohonan/asuransi folder
+     * Route: /permohonan/permohonan-asuransi/{fileName}
+     */
+    public function downloadFileSimple($fileName)
+    {
+        try {
+            // Construct full file path
+            $filePath = 'permohonan/asuransi/' . $fileName;
+
+            // Verify that the authenticated user has a record with this file
+            $asuransi = Asuransi::where('user_id', Auth::id())
+                ->where(function ($query) use ($filePath, $fileName) {
+                    $query->where('surat_permohonan', $filePath)
+                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
+                        ->orWhere('ktp', $filePath)
+                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
+                })
+                ->first();
+
+            if (!$asuransi) {
+                abort(404, 'File tidak ditemukan atau Anda tidak memiliki akses ke file ini.');
+            }
+
+            // Check if file exists in storage
+            if (!Storage::disk('s3')->exists($filePath)) {
+                abort(404, 'File tidak ditemukan di sistem penyimpanan.');
+            }
+
+            return $this->redirectToTemporaryUrl($filePath, 60);
+        } catch (\Exception $e) {
+            if ($e->getStatusCode() === 404) {
+                throw $e;
+            }
+            \Log::error('Error downloading file: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengakses file.');
+        }
+    }
 }

@@ -188,4 +188,43 @@ class LayananDataController extends Controller
 
         return $this->redirectToTemporaryUrl($layanan_data->surat_permohonan, 60);
     }
+
+    /**
+     * Simplified direct file download from permohonan/layanan-data folder
+     * Route: /permohonan/layanan-data/{fileName}
+     */
+    public function downloadFileSimple($fileName)
+    {
+        try {
+            // Construct full file path
+            $filePath = 'permohonan/layanan-data/' . $fileName;
+
+            // Verify that the authenticated user has a record with this file
+            $layanan_data = LayananData::where('user_id', Auth::id())
+                ->where(function ($query) use ($filePath, $fileName) {
+                    $query->where('surat_permohonan', $filePath)
+                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
+                        ->orWhere('ktp', $filePath)
+                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
+                })
+                ->first();
+
+            if (!$layanan_data) {
+                abort(404, 'File tidak ditemukan atau Anda tidak memiliki akses ke file ini.');
+            }
+
+            // Check if file exists in storage
+            if (!Storage::disk('s3')->exists($filePath)) {
+                abort(404, 'File tidak ditemukan di sistem penyimpanan.');
+            }
+
+            return $this->redirectToTemporaryUrl($filePath, 60);
+        } catch (\Exception $e) {
+            if ($e->getStatusCode() === 404) {
+                throw $e;
+            }
+            \Log::error('Error downloading file: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengakses file.');
+        }
+    }
 }

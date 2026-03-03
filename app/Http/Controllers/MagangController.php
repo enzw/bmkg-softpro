@@ -757,4 +757,47 @@ class MagangController extends Controller
 
         return $this->redirectToTemporaryUrl($pelayanan_jasa->surat_permohonan, 60);
     }
+
+    /**
+     * Simplified direct file download from permohonan/kunjungan-teknis folder
+     * Route: /permohonan/pelayanan-jasa/{fileName}
+     */
+    public function downloadFileSimple($fileName)
+    {
+        try {
+            // Construct full file path
+            $filePath = 'permohonan/kunjungan-teknis/' . $fileName;
+
+            // Verify that the authenticated user has a record with this file
+            $magang = Magang::where('user_id', Auth::id())
+                ->where(function ($query) use ($filePath, $fileName) {
+                    $query->where('surat_permohonan', $filePath)
+                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
+                        ->orWhere('ktp', $filePath)
+                        ->orWhere('ktp', 'LIKE', '%' . $fileName)
+                        ->orWhere('kartu_mahasiswa', $filePath)
+                        ->orWhere('kartu_mahasiswa', 'LIKE', '%' . $fileName)
+                        ->orWhere('kartu_identitas', $filePath)
+                        ->orWhere('kartu_identitas', 'LIKE', '%' . $fileName);
+                })
+                ->first();
+
+            if (!$magang) {
+                abort(404, 'File tidak ditemukan atau Anda tidak memiliki akses ke file ini.');
+            }
+
+            // Check if file exists in storage
+            if (!Storage::disk('s3')->exists($filePath)) {
+                abort(404, 'File tidak ditemukan di sistem penyimpanan.');
+            }
+
+            return $this->redirectToTemporaryUrl($filePath, 60);
+        } catch (\Exception $e) {
+            if ($e->getStatusCode() === 404) {
+                throw $e;
+            }
+            \Log::error('Error downloading file: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengakses file.');
+        }
+    }
 }

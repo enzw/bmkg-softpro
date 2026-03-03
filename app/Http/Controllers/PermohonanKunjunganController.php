@@ -283,4 +283,45 @@ class PermohonanKunjunganController extends Controller
         // File downloads directly from Cloudflare R2, not through Laravel
         return $this->redirectToTemporaryUrl($kunjungan->$fileField, 60);
     }
+
+    /**
+     * Simplified direct file download from permohonan/kunjungan folder
+     * Route: /permohonan/permohonan-kunjungan/{fileName}
+     */
+    public function downloadFileSimple($fileName)
+    {
+        try {
+            // Construct full file path - uses 'permohonan/kunjungan' directory not 'permohonan/permohonan-kunjungan'
+            $filePath = 'permohonan/kunjungan/' . $fileName;
+
+            // Verify that the authenticated user has a record with this file
+            $kunjungan = Kunjungan::where('user_id', Auth::id())
+                ->where(function ($query) use ($filePath, $fileName) {
+                    $query->where('surat_permohonan', $filePath)
+                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
+                        ->orWhere('ktp', $filePath)
+                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
+                })
+                ->first();
+
+            if (!$kunjungan) {
+                abort(404, 'File tidak ditemukan atau Anda tidak memiliki akses ke file ini.');
+            }
+
+            // Check if file exists in storage
+            if (!Storage::disk('s3')->exists($filePath) && !Storage::disk('r2')->exists($filePath)) {
+                abort(404, 'File tidak ditemukan di sistem penyimpanan.');
+            }
+
+            // Try R2 first, then S3
+            $disk = Storage::disk('r2')->exists($filePath) ? 'r2' : 's3';
+            return $this->redirectToTemporaryUrl($filePath, 60, $disk);
+        } catch (\Exception $e) {
+            if ($e->getStatusCode() === 404) {
+                throw $e;
+            }
+            Log::error('Error downloading file: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengakses file.');
+        }
+    }
 }

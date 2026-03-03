@@ -205,4 +205,43 @@ class JasaKonsultasiController extends Controller
 
         return $this->redirectToTemporaryUrl($jasa_konsultasi->surat_permohonan, 60);
     }
+
+    /**
+     * Simplified direct file download from layanan-konsultasi folder
+     * Route: /permohonan/jasa-konsultasi/{fileName}
+     */
+    public function downloadFileSimple($fileName)
+    {
+        try {
+            // Construct full file path
+            $filePath = 'layanan-konsultasi/' . $fileName;
+
+            // Verify that the authenticated user has a record with this file
+            $jasaKonsultasi = JasaKonsultasi::where('user_id', Auth::id())
+                ->where(function ($query) use ($filePath, $fileName) {
+                    $query->where('surat_permohonan', $filePath)
+                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
+                        ->orWhere('ktp', $filePath)
+                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
+                })
+                ->first();
+
+            if (!$jasaKonsultasi) {
+                abort(404, 'File tidak ditemukan atau Anda tidak memiliki akses ke file ini.');
+            }
+
+            // Check if file exists in storage
+            if (!Storage::disk('s3')->exists($filePath)) {
+                abort(404, 'File tidak ditemukan di sistem penyimpanan.');
+            }
+
+            return $this->redirectToTemporaryUrl($filePath, 60);
+        } catch (\Exception $e) {
+            if ($e->getStatusCode() === 404) {
+                throw $e;
+            }
+            \Log::error('Error downloading file: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengakses file.');
+        }
+    }
 }
