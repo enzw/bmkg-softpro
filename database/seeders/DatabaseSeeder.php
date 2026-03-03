@@ -16,54 +16,66 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'role' => 'admin',
-            'password' => Hash::make('PelayananGeof2026!'),
+        User::updateOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin',
+                'role' => 'admin',
+                'password' => Hash::make('PelayananGeof2026!'),
+                'npwp' => fake()->randomNumber(9, true),
+                'no_identitas' => fake()->randomNumber(9, true),
+                'pekerjaan' => 'admin',
+                'pendidikan' => 's2',
+                'telp' => fake()->unique()->e164PhoneNumber(),
+                'alamat' => fake()->address(),
+            ]
+        );
 
-            'npwp' => fake()->randomNumber(9, true),
-            'no_identitas' => fake()->randomNumber(9, true),
-            'pekerjaan' => 'admin',
-            'pendidikan' => array_rand(['sd', 'smp', 'sma', 'd3', 's1', 's2', 's3']),
-            'telp' => fake()->unique()->e164PhoneNumber(),
-            'alamat' => fake()->address(),
-        ]);
-        User::factory(5)->create();
-        User::factory()->create([
-            'name' => 'Nihala Nyala Ittaqi',
-            'email' => 'nyala.ittaqi@example.com',
-            'role' => 'member',
-            'password' => Hash::make('12345678'),
+        if (User::count() < 7) {
+            User::factory(5)->create();
+        }
 
-            'npwp' => fake()->randomNumber(9, true),
-            'no_identitas' => fake()->unique()->randomNumber(9, true),
-            'pekerjaan' => 'Pelajar',
-            'pendidikan' => array_rand(['sd', 'smp', 'sma', 'd3', 's1', 's2', 's3']),
-            'telp' => fake()->unique()->e164PhoneNumber(),
-            'alamat' => fake()->address(),
-        ]);
+        User::updateOrCreate(
+            ['email' => 'nyala.ittaqi@example.com'],
+            [
+                'name' => 'Nihala Nyala Ittaqi',
+                'role' => 'member',
+                'password' => Hash::make('12345678'),
+                'npwp' => fake()->randomNumber(9, true),
+                'no_identitas' => fake()->unique()->randomNumber(9, true),
+                'pekerjaan' => 'Pelajar',
+                'pendidikan' => 'sma',
+                'telp' => fake()->unique()->e164PhoneNumber(),
+                'alamat' => fake()->address(),
+            ]
+        );
 
-        Alat::create([
-            'nama' => 'Proton Magnetometer',
-            'slug' => 'proton-magnetometer',
-            'harga' => 400000,
-            'deskripsi' => 'Per Unit / Per Hari',
-        ]);
+        Alat::updateOrCreate(
+            ['slug' => 'proton-magnetometer'],
+            [
+                'nama' => 'Proton Magnetometer',
+                'harga' => 400000,
+                'deskripsi' => 'Per Unit / Per Hari',
+            ]
+        );
 
-        Alat::create([
-            'nama' => 'Portable Digital Short Period Seismograph',
-            'slug' => 'portable-digital-short-period-seismograph',
-            'harga' => 640000,
-            'deskripsi' => 'Per Unit / Per Hari',
-        ]);
+        Alat::updateOrCreate(
+            ['slug' => 'portable-digital-short-period-seismograph'],
+            [
+                'nama' => 'Portable Digital Short Period Seismograph',
+                'harga' => 640000,
+                'deskripsi' => 'Per Unit / Per Hari',
+            ]
+        );
 
-        Alat::create([
-            'nama' => 'GPS Geodesi',
-            'slug' => 'gps-geodesi',
-            'harga' => 270000,
-            'deskripsi' => 'Per Unit / Per Hari',
-        ]);
+        Alat::updateOrCreate(
+            ['slug' => 'gps-geodesi'],
+            [
+                'nama' => 'GPS Geodesi',
+                'harga' => 270000,
+                'deskripsi' => 'Per Unit / Per Hari',
+            ]
+        );
 
         $this->call([
             GuestUserSeeder::class,

@@ -284,4 +284,15 @@ Route::get('/logout', function () {
     return redirect()->route('login');
 });
 
+Route::get('/dbg-routes', function () {
+    $routes = collect(Route::getRoutes())->map(function ($route) {
+        return [
+            'methods' => $route->methods(),
+            'uri' => $route->uri(),
+            'name' => $route->getName(),
+        ];
+    });
+    return response()->json($routes);
+});
+
 require __DIR__ . '/auth.php';

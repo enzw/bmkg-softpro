@@ -1,7 +1,11 @@
 import os
 import sys
+import logging
 from pathlib import Path
 from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 # Load from root .env (parent directory of python folder)
 root_env_path = Path(__file__).parent.parent / '.env'
