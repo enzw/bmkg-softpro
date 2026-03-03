@@ -128,10 +128,17 @@ else
 fi
 
 echo ""
+echo "🧹 Clearing Laravel cache..."
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+php artisan cache:clear
+
 echo "⚙️  Optimizing Laravel..."
 php artisan config:cache || echo "⚠️  Config cache failed"
 # SKIP route:cache - too many naming conflicts
-# php artisan route:cache will cause deployment failures
+# php artisan route:cache will cause deployment failures, so we just clear it
+php artisan route:clear
 php artisan view:cache || echo "⚠️  View cache failed"
 
 # Fix permissions

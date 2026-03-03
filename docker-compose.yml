@@ -82,23 +82,25 @@ services:
       - bmkg_network
     
     # Override entrypoint to start all services
-    entrypoint: /bin/sh -c "
+    entrypoint: >
+      /bin/sh -c "
       echo '🚀 Starting BMKG Application Stack...';
-      
       echo '📊 Setting up database...';
       php artisan migrate --force;
-      
       echo '🔧 Installing Python dependencies...';
       cd /var/www/html/python;
       pip install --break-system-packages -q -r requirements.txt;
-      
       echo '📥 Initializing RAG system...';
       python initialize_rag.py;
-      
       echo '🤖 Starting services...';
       cd /var/www/html;
+      echo '🧹 Clearing cache...';
+      php artisan config:clear;
+      php artisan route:clear;
+      php artisan view:clear;
+      php artisan cache:clear;
       supervisord -c /etc/supervisord.conf;
-    "
+      "
 
 volumes:
   postgres_data:
