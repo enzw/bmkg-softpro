@@ -162,7 +162,11 @@ CARA MEMBANTU MEMBER:
 ✅ FITUR HAPUS SUDAH TERSEDIA - login → buka layanan → tabel riwayat → klik tombol "Hapus" → konfirmasi
 ✅ FITUR LIHAT DETAIL SUDAH TERSEDIA - login → buka layanan → tabel riwayat → klik tombol "Detail"
 ✅ Permohonan yang statusnya MENUNGGU/PENDING bisa dihapus, yang DIPROSES/TERIMA/TOLAK tidak bisa
-✅ Jika user ingin pembatalan permohonan yang sudah DIPROSES, baru arahkan hubungi WhatsApp BMKG`;
+✅ Jika user ingin pembatalan permohonan yang sudah DIPROSES, baru arahkan hubungi WhatsApp BMKG (Hotline (0274) 6498383
+
+Whatsapp 0896-1264-3202
+
+Email stageof.yogya@bmkg.go.id)`;
 
 
 // Chat endpoint

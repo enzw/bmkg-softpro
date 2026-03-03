@@ -117,6 +117,13 @@ JAWAB PERTANYAAN DENGAN SINGKAT & JELAS (max 2-3 baris), pandu ke aplikasi untuk
 • Longitude: -180 hingga 180 (negatif = barat, positif = timur)
 • Contoh Jakarta: Latitude -6.1745, Longitude 106.8227
 
+KONTAK BMKG : 
+📞 (0274) 6498383
+
+📱 0896-1264-3202
+
+✉️ stageof.yogya@bmkg.go.id
+
 ⚠️ PENTING SEKALI: HANYA gunakan informasi field yang SESUNGGUHNYA ada di form aplikasi.
 
 ===== INSTRUKSI KHUSUS FITUR HAPUS =====
