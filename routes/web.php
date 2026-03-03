@@ -101,6 +101,11 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Temporary debugging for chatbot route
+Route::get('/api/chatbot/test-web', function () {
+    return response()->json(['status' => 'Web route test is working']);
+});
+
 Route::get('/dashboard-pelayanan', [DashboardPelayananController::class, 'index'])
     ->middleware(['auth', 'verified', 'auth.notadmin'])->name('dashboard-pelayanan');
 
@@ -285,14 +290,18 @@ Route::get('/logout', function () {
 });
 
 Route::get('/dbg-routes', function () {
-    $routes = collect(Route::getRoutes())->map(function ($route) {
-        return [
-            'methods' => $route->methods(),
-            'uri' => $route->uri(),
-            'name' => $route->getName(),
-        ];
-    });
-    return response()->json($routes);
+    return response()->json([
+        'app_url' => config('app.url'),
+        'app_env' => config('app.env'),
+        'current_url' => url()->current(),
+        'routes' => collect(Route::getRoutes())->map(function ($route) {
+            return [
+                'methods' => $route->methods(),
+                'uri' => $route->uri(),
+                'name' => $route->getName(),
+            ];
+        })
+    ]);
 });
 
 require __DIR__ . '/auth.php';
