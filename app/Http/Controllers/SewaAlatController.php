@@ -227,5 +227,44 @@ class SewaAlatController extends Controller
             abort(500, 'Error mengakses file.');
         }
     }
+
+    /**
+     * Simplified direct file download from permohonan/sewa-alat folder
+     * Route: /permohonan/sewa-alat/{fileName}
+     */
+    public function downloadFileSimple($fileName)
+    {
+        try {
+            // Construct full file path in permohonan/sewa-alat folder
+            $filePath = 'permohonan/sewa-alat/' . $fileName;
+
+            // Verify that the authenticated user has a record with this file
+            $sewaAlat = SewaAlat::where('user_id', Auth::id())
+                ->where(function ($query) use ($filePath, $fileName) {
+                    $query->where('surat_permohonan', $filePath)
+                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
+                        ->orWhere('ktp', $filePath)
+                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
+                })
+                ->first();
+
+            if (!$sewaAlat) {
+                abort(404, 'File tidak ditemukan atau Anda tidak memiliki akses ke file ini.');
+            }
+
+            // Check if file exists in S3
+            if (!Storage::disk('s3')->exists($filePath)) {
+                abort(404, 'File tidak ditemukan di sistem penyimpanan.');
+            }
+
+            return $this->redirectToTemporaryUrl($filePath, 60);
+        } catch (\Exception $e) {
+            if ($e->getStatusCode() === 404) {
+                throw $e;
+            }
+            \Log::error('Error downloading file: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengakses file.');
+        }
+    }
 }
 

@@ -125,6 +125,12 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
     Route::prefix('layanan')->group(function () {
         Route::get('/', [DashboardPelayananController::class, 'index'])->name('layanan');
 
+        // Simple direct file download route: /permohonan/sewa-alat/{fileName}
+        Route::get('/permohonan/sewa-alat/{fileName}', [SewaAlatController::class, 'downloadFileSimple'])
+            ->name('permohonan.sewa-alat.download')
+            ->where('fileName', '.+')
+            ->middleware(['auth', 'verified']);
+
         Route::name('sewa-alat.')
             ->prefix('sewa-alat')
             ->controller(SewaAlatController::class)
