@@ -152,7 +152,7 @@ if ! command -v supervisord &> /dev/null; then
     echo "❌ ERROR: supervisord not found in PATH!"
     echo "   Falling back to direct command execution..."
     echo "🚀 Starting Laravel server on port $PORT..."
-    exec php -S 0.0.0.0:${PORT} -t public
+    exec php -S 0.0.0.0:${PORT} /var/www/html/server.php
 else
     exec supervisord -c /etc/supervisord.conf
 fi
