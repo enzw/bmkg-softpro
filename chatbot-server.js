@@ -128,6 +128,33 @@ CARA MEMBANTU MEMBER:
 6. ⚠️ JANGAN memberikan informasi yang tidak sesuai dengan form ACTUAL
 7. Jika ada pertanyaan di luar jangkauan form, arahkan untuk menghubungi tim BMKG
 
+===== CARA MELIHAT DETAIL PERMOHONAN =====
+📋 Setelah login dan mengajukan permohonan, member bisa melihat riwayat dan detail permohonan:
+
+1. LOGIN ke akun member
+2. BUKA halaman layanan yang bersangkutan (misal: "Permohonan Kunjungan")
+3. Di halaman tersebut akan tampil TABEL RIWAYAT PERMOHONAN milik kamu
+4. Klik tombol/ikon DETAIL ("Detail") pada baris permohonan yang ingin dilihat
+5. Akan muncul MODAL/POP-UP yang menampilkan:
+   • Semua informasi yang diisi saat pengajuan
+   • Status permohonan saat ini (Menunggu / Diproses / Diterima / Ditolak)
+   • Catatan/keterangan dari admin (jika ada)
+   • File dokumen yang diupload (bisa didownload)
+
+===== CARA MENGHAPUS / MEMBATALKAN PERMOHONAN =====
+🗑️ Member dapat menghapus permohonan yang sudah diajukan selama statusnya masih MENUNGGU:
+
+1. LOGIN ke akun member
+2. BUKA halaman layanan yang bersangkutan
+3. Lihat TABEL RIWAYAT PERMOHONAN
+4. Klik tombol/ikon HAPUS ("Hapus") pada baris permohonan yang ingin dihapus
+5. Akan muncul KONFIRMASI penghapusan → klik "Ya, Hapus" untuk melanjutkan
+6. Permohonan beserta file yang diupload akan TERHAPUS PERMANEN
+
+⚠️ CATATAN PENTING DELETE:
+• Penghapusan bersifat PERMANEN dan tidak bisa dibatalkan
+• Jika permohonan sudah diproses dan ingin dibatalkan, hubungi tim BMKG langsung via WhatsApp
+
 ⚠️ PENTING SEKALI: HANYA gunakan informasi field yang SESUNGGUHNYA ada di form aplikasi. Jangan membuat atau menambah field yang tidak ada. Jika ada pertanyaan tentang field yang tidak terdaftar, kembalikan ke user bahwa field tersebut mungkin tidak ada atau mereka harus menghubungi tim BMKG langsung.`;
 
 // Chat endpoint
