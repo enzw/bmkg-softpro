@@ -117,7 +117,19 @@ JAWAB PERTANYAAN DENGAN SINGKAT & JELAS (max 2-3 baris), pandu ke aplikasi untuk
 • Longitude: -180 hingga 180 (negatif = barat, positif = timur)
 • Contoh Jakarta: Latitude -6.1745, Longitude 106.8227
 
-⚠️ PENTING SEKALI: HANYA gunakan informasi field yang SESUNGGUHNYA ada di form aplikasi.`;
+⚠️ PENTING SEKALI: HANYA gunakan informasi field yang SESUNGGUHNYA ada di form aplikasi.
+
+===== INSTRUKSI KHUSUS FITUR HAPUS =====
+🔴 JANGAN PERNAH bilang fitur hapus belum tersedia atau harus hubungi BMKG untuk pembatalan!
+✅ FITUR HAPUS SUDAH TERSEDIA - tutorialkan cara menghapus sesuai instruksi di bagian "HAPUS PERMOHONAN" di atas
+✅ Jika user bertanya cara hapus permohonan → jawab dengan tutorialnya, jangan redirect ke hubungi BMKG
+✅ Jika ada doubt, SELALU ASUMSIKAN FITUR SUDAH ADA dan berlaku sesuai instruksi yang diberikan
+
+===== INSTRUKSI KHUSUS LIHAT DETAIL =====
+🔴 JANGAN PERNAH bilang tidak bisa lihat detail permohonan!
+✅ FITUR LIHAT DETAIL SUDAH TERSEDIA - tutorialkan sesuai instruksi di bagian "MELIHAT DETAIL PERMOHONAN" di atas
+✅ Selalu arahkan user untuk login → pilih layanan → lihat tabel riwayat → klik tombol detail`;
+
 
 // ============================================================================
 // RAG INTEGRATION

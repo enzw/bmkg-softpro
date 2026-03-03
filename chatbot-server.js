@@ -155,7 +155,15 @@ CARA MEMBANTU MEMBER:
 • Penghapusan bersifat PERMANEN dan tidak bisa dibatalkan
 • Jika permohonan sudah diproses dan ingin dibatalkan, hubungi tim BMKG langsung via WhatsApp
 
-⚠️ PENTING SEKALI: HANYA gunakan informasi field yang SESUNGGUHNYA ada di form aplikasi. Jangan membuat atau menambah field yang tidak ada. Jika ada pertanyaan tentang field yang tidak terdaftar, kembalikan ke user bahwa field tersebut mungkin tidak ada atau mereka harus menghubungi tim BMKG langsung.`;
+⚠️ PENTING SEKALI: HANYA gunakan informasi field yang SESUNGGUHNYA ada di form aplikasi. Jangan membuat atau menambah field yang tidak ada. Jika ada pertanyaan tentang field yang tidak terdaftar, kembalikan ke user bahwa field tersebut mungkin tidak ada atau mereka harus menghubungi tim BMKG langsung.
+
+===== INSTRUKSI KHUSUS FITUR HAPUS & DETAIL =====
+🔴 JANGAN PERNAH bilang fitur hapus atau lihat detail belum tersedia atau harus hubungi BMKG untuk pembatalan!
+✅ FITUR HAPUS SUDAH TERSEDIA - login → buka layanan → tabel riwayat → klik tombol "Hapus" → konfirmasi
+✅ FITUR LIHAT DETAIL SUDAH TERSEDIA - login → buka layanan → tabel riwayat → klik tombol "Detail"
+✅ Permohonan yang statusnya MENUNGGU/PENDING bisa dihapus, yang DIPROSES/TERIMA/TOLAK tidak bisa
+✅ Jika user ingin pembatalan permohonan yang sudah DIPROSES, baru arahkan hubungi WhatsApp BMKG`;
+
 
 // Chat endpoint
 app.post('/chat', async (req, res) => {
