@@ -68,7 +68,9 @@ class AdminSurveyController extends Controller
         if ($request->hasFile('surat_permohonan')) {
             try {
                 $file = $request->file('surat_permohonan');
-                $file_name = 'survey_user:' . Auth::id() . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
+                $file_name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters
+                $file_name = str_replace([':', ' ', '(', ')'], '_', $file_name);
                 $path_permohonan = $file->storeAs('permohonan/survey', $file_name, 's3');
                 $validated['surat_permohonan'] = $path_permohonan;
             } catch (Exception $error) {
@@ -79,7 +81,9 @@ class AdminSurveyController extends Controller
         if ($request->hasFile('ktp')) {
             try {
                 $file = $request->file('ktp');
-                $file_name = 'ktp_survey_user:' . Auth::id() . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
+                $file_name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters
+                $file_name = str_replace([':', ' ', '(', ')'], '_', $file_name);
                 $path_ktp = $file->storeAs('permohonan/survey', $file_name, 's3');
                 $validated['ktp'] = $path_ktp;
             } catch (Exception $error) {
@@ -140,7 +144,9 @@ class AdminSurveyController extends Controller
             }
 
             $file = $request->file('surat_permohonan');
-            $file_name = 'survey_user:' . $survey->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
+            $file_name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+            // Ensure no special characters
+            $file_name = str_replace([':', ' ', '(', ')'], '_', $file_name);
             $path_permohonan = $file->storeAs('permohonan/survey', $file_name, 's3');
             $validated['surat_permohonan'] = $path_permohonan;
         }
@@ -151,7 +157,9 @@ class AdminSurveyController extends Controller
             }
 
             $file = $request->file('ktp');
-            $file_name = 'ktp_survey_user:' . $survey->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
+            $file_name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+            // Ensure no special characters
+            $file_name = str_replace([':', ' ', '(', ')'], '_', $file_name);
             $path_ktp = $file->storeAs('permohonan/survey', $file_name, 's3');
             $validated['ktp'] = $path_ktp;
         }
@@ -206,25 +214,33 @@ class AdminSurveyController extends Controller
      */
     public function downloadFile($id, $fileName)
     {
-        $survey = Survey::findOrFail($id);
+        try {
+            $survey = Survey::findOrFail($id);
 
-        // Authorization check - only admin or the owner can download
-        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $survey->user_id) {
-            abort(403, 'Anda tidak memiliki akses ke file ini');
+            // Authorization check - only admin or the owner can download
+            if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $survey->user_id) {
+                abort(403, 'Anda tidak memiliki akses ke file ini');
+            }
+
+            $filePath = null;
+            if ($survey->surat_permohonan && str_contains($survey->surat_permohonan, $fileName)) {
+                $filePath = $survey->surat_permohonan;
+            } elseif ($survey->ktp && str_contains($survey->ktp, $fileName)) {
+                $filePath = $survey->ktp;
+            }
+
+            if (!$filePath) {
+                \Log::warning("File matching [{$fileName}] not found in database for Survey ID [{$id}]");
+                abort(404, 'File tidak ditemukan.');
+            }
+
+            return $this->redirectToTemporaryUrl($filePath, 60);
+        } catch (\Exception $e) {
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
+                throw $e;
+            }
+            \Log::error('Error accessing survey file: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengakses file.');
         }
-
-        $filePath = null;
-
-        if ($survey->surat_permohonan && str_contains($survey->surat_permohonan, $fileName)) {
-            $filePath = $survey->surat_permohonan;
-        } elseif ($survey->ktp && str_contains($survey->ktp, $fileName)) {
-            $filePath = $survey->ktp;
-        }
-
-        if (!$filePath || !Storage::disk('s3')->exists($filePath)) {
-            abort(404, 'File tidak ditemukan.');
-        }
-
-        return $this->redirectToTemporaryUrl($filePath, 60);
     }
 }

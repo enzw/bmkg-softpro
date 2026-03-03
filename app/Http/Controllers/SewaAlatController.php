@@ -49,10 +49,9 @@ class SewaAlatController extends Controller
 
                 $file = $request->file('surat_permohonan');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters in filename (like :)
+                $fileName = str_replace([':', ' ', '(', ')'], '_', $fileName);
                 $path = $file->storeAs($directory, $fileName, 's3');
-                if ($path) {
-                    $validated['surat_permohonan'] = $path;
-                }
                 if ($path) {
                     $validated['surat_permohonan'] = $path;
                     \Log::info('File uploaded successfully: ' . $path);
@@ -71,10 +70,9 @@ class SewaAlatController extends Controller
 
                 $file = $request->file('ktp');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters in filename
+                $fileName = str_replace([':', ' ', '(', ')'], '_', $fileName);
                 $path = $file->storeAs($directory, $fileName, 's3');
-                if ($path) {
-                    $validated['ktp'] = $path;
-                }
                 if ($path) {
                     $validated['ktp'] = $path;
                     \Log::info('KTP file uploaded successfully: ' . $path);
@@ -180,16 +178,12 @@ class SewaAlatController extends Controller
     public function download(SewaAlat $sewa_alat)
     {
         // Authorize - user can only download their own files
-        if ($sewa_alat->user_id !== Auth::id()) {
+        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superuser' && $sewa_alat->user_id !== Auth::id()) {
             return back()->with('error', 'Anda tidak memiliki akses ke file ini');
         }
 
         if (!$sewa_alat->surat_permohonan) {
             return back()->with('error', 'File permohonan tidak tersedia');
-        }
-
-        if (!Storage::disk('s3')->exists($sewa_alat->surat_permohonan)) {
-            return back()->with('error', 'File permohonan tidak ditemukan di sistem');
         }
 
         return $this->redirectToTemporaryUrl($sewa_alat->surat_permohonan, 60);
@@ -198,32 +192,30 @@ class SewaAlatController extends Controller
     public function downloadFile(SewaAlat $sewaAlat, $fileName)
     {
         try {
-            // Authorize - user can only download their own files
-            if ($sewaAlat->user_id !== Auth::id()) {
+            // Authorize - user or admin
+            if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superuser' && $sewaAlat->user_id !== Auth::id()) {
                 abort(403, 'Anda tidak memiliki akses ke file ini');
             }
 
-            // Check if file is surat_permohonan
+            // Check if file is surat_permohonan or ktp by matching the filename
             $filePath = null;
-            if ($sewaAlat->surat_permohonan && basename($sewaAlat->surat_permohonan) === $fileName) {
+            if ($sewaAlat->surat_permohonan && str_contains($sewaAlat->surat_permohonan, $fileName)) {
                 $filePath = $sewaAlat->surat_permohonan;
-            }
-            // Check if file is ktp
-            elseif ($sewaAlat->ktp && basename($sewaAlat->ktp) === $fileName) {
+            } elseif ($sewaAlat->ktp && str_contains($sewaAlat->ktp, $fileName)) {
                 $filePath = $sewaAlat->ktp;
             }
 
             if (!$filePath) {
+                \Log::warning("File matching [{$fileName}] not found in database record for SewaAlat [{$sewaAlat->id}]");
                 abort(404, 'File tidak ditemukan.');
-            }
-
-            if (!Storage::disk('s3')->exists($filePath)) {
-                abort(404, 'File tidak ditemukan di sistem.');
             }
 
             return $this->redirectToTemporaryUrl($filePath, 60);
         } catch (\Exception $e) {
             \Log::error('Error download file: ' . $e->getMessage());
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
+                throw $e;
+            }
             abort(500, 'Error mengakses file.');
         }
     }
@@ -235,69 +227,43 @@ class SewaAlatController extends Controller
     public function downloadFileSimple($fileName)
     {
         try {
-            // Construct full file path in permohonan/sewa-alat folder
-            $filePath = 'permohonan/sewa-alat/' . $fileName;
-
-            // Verify that the authenticated user has a record with this file
-            $sewaAlat = SewaAlat::where('user_id', Auth::id())
-                ->where(function ($query) use ($filePath, $fileName) {
-                    $query->where('surat_permohonan', $filePath)
-                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
-                        ->orWhere('ktp', $filePath)
-                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
-                })
+            // Find the record that contains this filename
+            // This is more robust than assuming a folder structure manually
+            $sewaAlat = SewaAlat::where(function ($query) use ($fileName) {
+                $query->where('surat_permohonan', 'LIKE', '%' . $fileName)
+                    ->orWhere('ktp', 'LIKE', '%' . $fileName);
+            })
+                ->orderBy('created_at', 'desc')
                 ->first();
 
             if (!$sewaAlat) {
-                // Check if it's an admin trying to access
-                $user = Auth::user();
-                if (!$user || ($user->role !== 'admin' && $user->role !== 'superuser')) {
-                    \Log::warning('Unauthorized file access attempt', [
-                        'user_id' => Auth::id(),
-                        'fileName' => $fileName,
-                        'filePath' => $filePath
-                    ]);
-                    abort(403, 'Anda tidak memiliki akses ke file ini.');
-                }
-                
-                // Admin is accessing, find the file across all users
-                $sewaAlat = SewaAlat::where(function ($query) use ($filePath, $fileName) {
-                    $query->where('surat_permohonan', $filePath)
-                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
-                        ->orWhere('ktp', $filePath)
-                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
-                })->first();
-                
-                if (!$sewaAlat) {
-                    \Log::warning('File not found in database', [
-                        'user_id' => Auth::id(),
-                        'fileName' => $fileName,
-                        'filePath' => $filePath
-                    ]);
-                    abort(404, 'File tidak ditemukan.');
-                }
+                \Log::warning("No database record found matching filename [{$fileName}]");
+                abort(404, 'File tidak ditemukan di database.');
             }
 
-            // Check if file exists in S3
-            if (!Storage::disk('s3')->exists($filePath)) {
-                \Log::warning('File not found in S3 storage', [
+            // Authorize
+            $user = Auth::user();
+            if ($user->role !== 'admin' && $user->role !== 'superuser' && $sewaAlat->user_id !== $user->id) {
+                \Log::warning('Unauthorized file access attempt', [
                     'user_id' => Auth::id(),
                     'fileName' => $fileName,
-                    'filePath' => $filePath,
-                    'stored_path' => $sewaAlat->surat_permohonan ?? $sewaAlat->ktp
                 ]);
-                abort(404, 'File tidak ditemukan di sistem penyimpanan.');
+                abort(403, 'Anda tidak memiliki akses ke file ini.');
             }
+
+            // Use the actual path stored in database
+            $filePath = str_contains($sewaAlat->surat_permohonan ?? '', $fileName)
+                ? $sewaAlat->surat_permohonan
+                : $sewaAlat->ktp;
 
             return $this->redirectToTemporaryUrl($filePath, 60);
         } catch (\Exception $e) {
-            if (method_exists($e, 'getStatusCode') && in_array($e->getStatusCode(), [403, 404])) {
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
                 throw $e;
             }
             \Log::error('Error downloading file: ' . $e->getMessage(), [
                 'user_id' => Auth::id(),
-                'fileName' => $fileName,
-                'trace' => $e->getTraceAsString()
+                'fileName' => $fileName
             ]);
             abort(500, 'Terjadi kesalahan saat mengakses file.');
         }

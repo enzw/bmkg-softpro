@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Services\TelegramService;
 use Illuminate\Support\Facades\Storage;
+use Exception;
 
 class PermohonanKunjunganController extends Controller
 {
@@ -50,6 +51,8 @@ class PermohonanKunjunganController extends Controller
                 $file = $request->file('surat_permohonan');
                 $directory = 'permohonan/kunjungan';
                 $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters in filename (like :)
+                $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
                 $result = $file->storeAs($directory, $filename, 's3');
                 if ($result) {
                     $validated['surat_permohonan'] = $result;
@@ -65,6 +68,8 @@ class PermohonanKunjunganController extends Controller
                 $file = $request->file('ktp');
                 $directory = 'permohonan/kunjungan';
                 $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters in filename
+                $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
                 $result = $file->storeAs($directory, $filename, 's3');
                 if ($result) {
                     $validated['ktp'] = $result;
@@ -135,15 +140,15 @@ class PermohonanKunjunganController extends Controller
             try {
                 $file = $request->file('surat_permohonan');
                 $directory = 'permohonan/kunjungan';
-                
+
                 // Delete old file if exists
                 if ($kunjungan->surat_permohonan) {
                     Storage::disk('s3')->delete($kunjungan->surat_permohonan);
                 }
-                
+
                 $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
                 $result = $file->storeAs($directory, $filename, 's3');
-                
+
                 if ($result) {
                     $validated['surat_permohonan'] = $result;
                 }
@@ -158,12 +163,12 @@ class PermohonanKunjunganController extends Controller
             try {
                 $file = $request->file('ktp');
                 $directory = 'permohonan/kunjungan';
-                
+
                 // Delete old file if exists
                 if ($kunjungan->ktp) {
                     Storage::disk('s3')->delete($kunjungan->ktp);
                 }
-                
+
                 $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
                 $result = $file->storeAs($directory, $filename, 's3');
                 if ($result) {
@@ -187,15 +192,15 @@ class PermohonanKunjunganController extends Controller
             'kunjungan_id' => $kunjungan->id ?? 'null',
             'kunjungan_user_id' => $kunjungan->user_id ?? 'null',
         ]);
-        
+
         try {
             // Check authorization
             $this->authorize('delete', $kunjungan);
-            
+
             Log::info('Authorization passed', [
                 'kunjungan_id' => $kunjungan->id,
             ]);
-            
+
             // Delete the uploaded files if they exist
             if ($kunjungan->surat_permohonan) {
                 Storage::disk('s3')->delete($kunjungan->surat_permohonan);
@@ -208,7 +213,7 @@ class PermohonanKunjunganController extends Controller
 
             // Delete the record
             $deleted = $kunjungan->delete();
-            
+
             Log::info('Record deleted', [
                 'kunjungan_id' => $kunjungan->id,
                 'deleted' => $deleted,
@@ -231,14 +236,14 @@ class PermohonanKunjunganController extends Controller
                 'kunjungan_user_id' => $kunjungan->user_id,
                 'user_is_admin' => Auth::user()?->is_admin,
             ]);
-            
+
             if (request()->wantsJson()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Anda tidak memiliki izin untuk menghapus permohonan ini.'
                 ], 403);
             }
-            
+
             return redirect()->back()
                 ->with('error', 'Anda tidak memiliki izin untuk menghapus permohonan ini.');
         } catch (\Exception $e) {
@@ -247,7 +252,7 @@ class PermohonanKunjunganController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            
+
             if (request()->wantsJson()) {
                 return response()->json([
                     'success' => false,
@@ -263,25 +268,27 @@ class PermohonanKunjunganController extends Controller
     public function downloadFile($id, $fileName)
     {
         $kunjungan = Kunjungan::findOrFail($id);
-        
-        // Authorize the user
-        $this->authorize('view', $kunjungan);
 
-        // Determine which file is being requested
-        $fileField = null;
-        if ($kunjungan->surat_permohonan && str_contains($kunjungan->surat_permohonan, $fileName)) {
-            $fileField = 'surat_permohonan';
-        } elseif ($kunjungan->ktp && str_contains($kunjungan->ktp, $fileName)) {
-            $fileField = 'ktp';
+        // Authorize the user
+        $user = Auth::user();
+        if ($user->role !== 'admin' && $user->role !== 'superuser' && $kunjungan->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki izin untuk mengakses file ini.');
         }
 
-        if (!$fileField) {
+        // Determine which file is being requested
+        $filePath = null;
+        if ($kunjungan->surat_permohonan && str_contains($kunjungan->surat_permohonan, $fileName)) {
+            $filePath = $kunjungan->surat_permohonan;
+        } elseif ($kunjungan->ktp && str_contains($kunjungan->ktp, $fileName)) {
+            $filePath = $kunjungan->ktp;
+        }
+
+        if (!$filePath) {
+            \Log::warning("File matching [{$fileName}] not found in database record for Kunjungan [{$kunjungan->id}]");
             abort(404, 'File tidak ditemukan.');
         }
 
-        // Redirect to temporary presigned URL from R2 (valid for 1 hour)
-        // File downloads directly from Cloudflare R2, not through Laravel
-        return $this->redirectToTemporaryUrl($kunjungan->$fileField, 60);
+        return $this->redirectToTemporaryUrl($filePath, 60);
     }
 
     /**
@@ -291,69 +298,42 @@ class PermohonanKunjunganController extends Controller
     public function downloadFileSimple($fileName)
     {
         try {
-            // Construct full file path - uses 'permohonan/kunjungan' directory
-            $filePath = 'permohonan/kunjungan/' . $fileName;
-
-            // Verify that the authenticated user has a record with this file
-            $kunjungan = Kunjungan::where('user_id', Auth::id())
-                ->where(function ($query) use ($filePath, $fileName) {
-                    $query->where('surat_permohonan', $filePath)
-                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
-                        ->orWhere('ktp', $filePath)
-                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
-                })
+            // Find the record that contains this filename
+            $kunjungan = Kunjungan::where(function ($query) use ($fileName) {
+                $query->where('surat_permohonan', 'LIKE', '%' . $fileName)
+                    ->orWhere('ktp', 'LIKE', '%' . $fileName);
+            })
+                ->orderBy('created_at', 'desc')
                 ->first();
 
             if (!$kunjungan) {
-                // Check if it's an admin trying to access
-                $user = Auth::user();
-                if (!$user || ($user->role !== 'admin' && $user->role !== 'superuser')) {
-                    Log::warning('Unauthorized file access attempt', [
-                        'user_id' => Auth::id(),
-                        'fileName' => $fileName,
-                        'filePath' => $filePath
-                    ]);
-                    abort(403, 'Anda tidak memiliki akses ke file ini.');
-                }
-                
-                // Admin is accessing, find the file across all users
-                $kunjungan = Kunjungan::where(function ($query) use ($filePath, $fileName) {
-                    $query->where('surat_permohonan', $filePath)
-                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
-                        ->orWhere('ktp', $filePath)
-                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
-                })->first();
-                
-                if (!$kunjungan) {
-                    Log::warning('Kunjungan file not found in database', [
-                        'user_id' => Auth::id(),
-                        'fileName' => $fileName,
-                        'filePath' => $filePath
-                    ]);
-                    abort(404, 'File tidak ditemukan.');
-                }
+                \Log::warning("No database record found matching filename [{$fileName}] for Kunjungan");
+                abort(404, 'File tidak ditemukan di database.');
             }
 
-            // Check if file exists in storage
-            if (!Storage::disk('s3')->exists($filePath)) {
-                Log::warning('Kunjungan file not found in S3 storage', [
+            // Authorize
+            $user = Auth::user();
+            if ($user->role !== 'admin' && $user->role !== 'superuser' && $kunjungan->user_id !== $user->id) {
+                \Log::warning('Unauthorized file access attempt', [
                     'user_id' => Auth::id(),
                     'fileName' => $fileName,
-                    'filePath' => $filePath,
-                    'stored_path' => $kunjungan->surat_permohonan ?? $kunjungan->ktp
                 ]);
-                abort(404, 'File tidak ditemukan di sistem penyimpanan.');
+                abort(403, 'Anda tidak memiliki akses ke file ini.');
             }
+
+            // Use the actual path stored in database
+            $filePath = str_contains($kunjungan->surat_permohonan ?? '', $fileName)
+                ? $kunjungan->surat_permohonan
+                : $kunjungan->ktp;
 
             return $this->redirectToTemporaryUrl($filePath, 60);
         } catch (\Exception $e) {
-            if (method_exists($e, 'getStatusCode') && in_array($e->getStatusCode(), [403, 404])) {
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
                 throw $e;
             }
             Log::error('Error downloading kunjungan file: ' . $e->getMessage(), [
                 'user_id' => Auth::id(),
-                'fileName' => $fileName,
-                'trace' => $e->getTraceAsString()
+                'fileName' => $fileName
             ]);
             abort(500, 'Terjadi kesalahan saat mengakses file.');
         }

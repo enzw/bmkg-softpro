@@ -68,7 +68,9 @@ class AdminLayananDataController extends Controller
         if ($request->hasFile('surat_permohonan')) {
             try {
                 $file = $request->file('surat_permohonan');
-                $file_name = 'layanan-data_user:' . Auth::id() . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
+                $file_name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters
+                $file_name = str_replace([':', ' ', '(', ')'], '_', $file_name);
                 $path_permohonan = $file->storeAs('permohonan/layanan-data', $file_name, 's3');
                 $validated['surat_permohonan'] = $path_permohonan;
             } catch (Exception $error) {
@@ -79,7 +81,9 @@ class AdminLayananDataController extends Controller
         if ($request->hasFile('ktp')) {
             try {
                 $file = $request->file('ktp');
-                $file_name = 'ktp_layanan-data_user:' . Auth::id() . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
+                $file_name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters
+                $file_name = str_replace([':', ' ', '(', ')'], '_', $file_name);
                 $path_ktp = $file->storeAs('permohonan/layanan-data', $file_name, 's3');
                 $validated['ktp'] = $path_ktp;
             } catch (Exception $error) {
@@ -140,7 +144,9 @@ class AdminLayananDataController extends Controller
             }
 
             $file = $request->file('surat_permohonan');
-            $file_name = 'layanan-data_user:' . $layanan_datum->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
+            $file_name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+            // Ensure no special characters
+            $file_name = str_replace([':', ' ', '(', ')'], '_', $file_name);
             $path_permohonan = $file->storeAs('permohonan/layanan-data', $file_name, 's3');
             $validated['surat_permohonan'] = $path_permohonan;
         }
@@ -151,7 +157,9 @@ class AdminLayananDataController extends Controller
             }
 
             $file = $request->file('ktp');
-            $file_name = 'ktp_layanan-data_user:' . $layanan_datum->user_id . '_date:' . Carbon::now()->format('Y-m-d-H-i-s') . '.' . $file->getClientOriginalExtension();
+            $file_name = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+            // Ensure no special characters
+            $file_name = str_replace([':', ' ', '(', ')'], '_', $file_name);
             $path_ktp = $file->storeAs('permohonan/layanan-data', $file_name, 's3');
             $validated['ktp'] = $path_ktp;
         }
@@ -206,25 +214,33 @@ class AdminLayananDataController extends Controller
      */
     public function downloadFile($id, $fileName)
     {
-        $layananData = LayananData::findOrFail($id);
+        try {
+            $layananData = LayananData::findOrFail($id);
 
-        // Authorization check - only admin or the owner can download
-        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $layananData->user_id) {
-            abort(403, 'Anda tidak memiliki akses ke file ini');
+            // Authorization check - only admin or the owner can download
+            if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $layananData->user_id) {
+                abort(403, 'Anda tidak memiliki akses ke file ini');
+            }
+
+            $filePath = null;
+            if ($layananData->surat_permohonan && str_contains($layananData->surat_permohonan, $fileName)) {
+                $filePath = $layananData->surat_permohonan;
+            } elseif ($layananData->ktp && str_contains($layananData->ktp, $fileName)) {
+                $filePath = $layananData->ktp;
+            }
+
+            if (!$filePath) {
+                \Log::warning("File matching [{$fileName}] not found in database for LayananData ID [{$id}]");
+                abort(404, 'File tidak ditemukan.');
+            }
+
+            return $this->redirectToTemporaryUrl($filePath, 60);
+        } catch (\Exception $e) {
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
+                throw $e;
+            }
+            \Log::error('Error accessing layanan data file: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengakses file.');
         }
-
-        $filePath = null;
-
-        if ($layananData->surat_permohonan && str_contains($layananData->surat_permohonan, $fileName)) {
-            $filePath = $layananData->surat_permohonan;
-        } elseif ($layananData->ktp && str_contains($layananData->ktp, $fileName)) {
-            $filePath = $layananData->ktp;
-        }
-
-        if (!$filePath || !Storage::disk('s3')->exists($filePath)) {
-            abort(404, 'File tidak ditemukan.');
-        }
-
-        return $this->redirectToTemporaryUrl($filePath, 60);
     }
 }

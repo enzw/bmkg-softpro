@@ -135,7 +135,9 @@ class AdminPermohonanMagangController extends Controller
                 if ($request->hasFile('surat_permohonan')) {
                     try {
                         $file = $request->file('surat_permohonan');
-                        $path = $file->store('permohonan/magang', 's3');
+                        $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
+                        $path = $file->storeAs('permohonan/magang', $filename, 's3');
                         $validated['surat_permohonan'] = $path;
                     } catch (Exception $e) {
                         \Log::error('Surat Permohonan upload error: ' . $e->getMessage());
@@ -145,7 +147,9 @@ class AdminPermohonanMagangController extends Controller
                 if ($request->hasFile('kartu_mahasiswa')) {
                     try {
                         $file = $request->file('kartu_mahasiswa');
-                        $path = $file->store('permohonan/magang', 's3');
+                        $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
+                        $path = $file->storeAs('permohonan/magang', $filename, 's3');
                         $validated['kartu_mahasiswa'] = $path;
                     } catch (Exception $e) {
                         \Log::error('Kartu Mahasiswa upload error: ' . $e->getMessage());
@@ -173,7 +177,9 @@ class AdminPermohonanMagangController extends Controller
                 if ($request->hasFile('surat_permohonan')) {
                     try {
                         $file = $request->file('surat_permohonan');
-                        $path = $file->store('permohonan/asuransi', 's3');
+                        $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
+                        $path = $file->storeAs('permohonan/asuransi', $filename, 's3');
                         $validated['surat_permohonan'] = $path;
                     } catch (Exception $e) {
                         \Log::error('Surat Permohonan upload error: ' . $e->getMessage());
@@ -183,7 +189,9 @@ class AdminPermohonanMagangController extends Controller
                 if ($request->hasFile('ktp')) {
                     try {
                         $file = $request->file('ktp');
-                        $path = $file->store('permohonan/asuransi', 's3');
+                        $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
+                        $path = $file->storeAs('permohonan/asuransi', $filename, 's3');
                         $validated['ktp'] = $path;
                     } catch (Exception $e) {
                         \Log::error('KTP upload error: ' . $e->getMessage());
@@ -208,7 +216,9 @@ class AdminPermohonanMagangController extends Controller
                 if ($request->hasFile('surat_permohonan')) {
                     try {
                         $file = $request->file('surat_permohonan');
-                        $path = $file->store('permohonan/data', 's3');
+                        $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
+                        $path = $file->storeAs('permohonan/data', $filename, 's3');
                         $validated['surat_permohonan'] = $path;
                     } catch (Exception $e) {
                         \Log::error('Surat Permohonan upload error: ' . $e->getMessage());
@@ -218,7 +228,9 @@ class AdminPermohonanMagangController extends Controller
                 if ($request->hasFile('ktp')) {
                     try {
                         $file = $request->file('ktp');
-                        $path = $file->store('permohonan/data', 's3');
+                        $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
+                        $path = $file->storeAs('permohonan/data', $filename, 's3');
                         $validated['ktp'] = $path;
                     } catch (Exception $e) {
                         \Log::error('KTP upload error: ' . $e->getMessage());
@@ -243,7 +255,9 @@ class AdminPermohonanMagangController extends Controller
                 if ($request->hasFile('surat_permohonan')) {
                     try {
                         $file = $request->file('surat_permohonan');
-                        $path = $file->store('permohonan/survey', 's3');
+                        $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
+                        $path = $file->storeAs('permohonan/survey', $filename, 's3');
                         $validated['surat_permohonan'] = $path;
                     } catch (Exception $e) {
                         \Log::error('Surat Permohonan upload error: ' . $e->getMessage());
@@ -253,7 +267,9 @@ class AdminPermohonanMagangController extends Controller
                 if ($request->hasFile('ktp')) {
                     try {
                         $file = $request->file('ktp');
-                        $path = $file->store('permohonan/survey', 's3');
+                        $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
+                        $path = $file->storeAs('permohonan/survey', $filename, 's3');
                         $validated['ktp'] = $path;
                     } catch (Exception $e) {
                         \Log::error('KTP upload error: ' . $e->getMessage());
@@ -278,7 +294,9 @@ class AdminPermohonanMagangController extends Controller
                 if ($request->hasFile('surat_permohonan')) {
                     try {
                         $file = $request->file('surat_permohonan');
-                        $path = $file->store('permohonan/konsultasi', 's3');
+                        $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
+                        $path = $file->storeAs('permohonan/konsultasi', $filename, 's3');
                         $validated['surat_permohonan'] = $path;
                     } catch (Exception $e) {
                         \Log::error('Surat Permohonan upload error: ' . $e->getMessage());
@@ -288,7 +306,9 @@ class AdminPermohonanMagangController extends Controller
                 if ($request->hasFile('ktp')) {
                     try {
                         $file = $request->file('ktp');
-                        $path = $file->store('permohonan/konsultasi', 's3');
+                        $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
+                        $path = $file->storeAs('permohonan/konsultasi', $filename, 's3');
                         $validated['ktp'] = $path;
                     } catch (Exception $e) {
                         \Log::error('KTP upload error: ' . $e->getMessage());
@@ -435,7 +455,9 @@ class AdminPermohonanMagangController extends Controller
                 $file = $request->file('surat_permohonan');
                 $modelType = class_basename($permohonan);
                 $folder = strtolower(str_replace('Jasa', '', $modelType));
-                $path = $file->store('permohonan/' . $folder, 's3');
+                $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
+                $path = $file->storeAs('permohonan/' . $folder, $filename, 's3');
                 $validated['surat_permohonan'] = $path;
             }
 
@@ -448,7 +470,9 @@ class AdminPermohonanMagangController extends Controller
                 $file = $request->file('ktp');
                 $modelType = class_basename($permohonan);
                 $folder = strtolower(str_replace('Jasa', '', $modelType));
-                $path = $file->store('permohonan/' . $folder, 's3');
+                $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
+                $path = $file->storeAs('permohonan/' . $folder, $filename, 's3');
                 $validated['ktp'] = $path;
             }
 
@@ -461,7 +485,9 @@ class AdminPermohonanMagangController extends Controller
                 $file = $request->file('kartu_mahasiswa');
                 $modelType = class_basename($permohonan);
                 $folder = strtolower(str_replace('Jasa', '', $modelType));
-                $path = $file->store('permohonan/' . $folder, 's3');
+                $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
+                $path = $file->storeAs('permohonan/' . $folder, $filename, 's3');
                 $validated['kartu_mahasiswa'] = $path;
             }
 
@@ -551,85 +577,89 @@ class AdminPermohonanMagangController extends Controller
      */
     public function downloadFile($id, $fileName)
     {
-        // Search di semua 5 tabel
-        $permohonan = Magang::find($id)
-            ?? Asuransi::find($id)
-            ?? LayananData::find($id)
-            ?? Survey::find($id)
-            ?? JasaKonsultasi::find($id);
+        try {
+            // Search di semua 5 tabel
+            $permohonan = Magang::find($id)
+                ?? Asuransi::find($id)
+                ?? LayananData::find($id)
+                ?? Survey::find($id)
+                ?? JasaKonsultasi::find($id);
 
-        if (!$permohonan) {
-            return back()->with('error', 'Permohonan tidak ditemukan');
+            if (!$permohonan) {
+                abort(404, 'Permohonan tidak ditemukan');
+            }
+
+            // Authorization check - only admin or the owner can download
+            if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $permohonan->user_id) {
+                abort(403, 'Anda tidak memiliki akses ke file ini');
+            }
+
+            // Determine which file field to use based on the file name
+            $filePath = null;
+
+            if ($permohonan->surat_permohonan && str_contains($permohonan->surat_permohonan, $fileName)) {
+                $filePath = $permohonan->surat_permohonan;
+            } elseif (isset($permohonan->surat_ijin_magang) && $permohonan->surat_ijin_magang && str_contains($permohonan->surat_ijin_magang, $fileName)) {
+                $filePath = $permohonan->surat_ijin_magang;
+            } elseif (isset($permohonan->kartu_mahasiswa) && $permohonan->kartu_mahasiswa && str_contains($permohonan->kartu_mahasiswa, $fileName)) {
+                $filePath = $permohonan->kartu_mahasiswa;
+            } elseif (isset($permohonan->ktp) && $permohonan->ktp && str_contains($permohonan->ktp, $fileName)) {
+                $filePath = $permohonan->ktp;
+            }
+
+            if (!$filePath) {
+                \Log::warning("File matching [{$fileName}] not found in database for Permohonan ID [{$id}]");
+                abort(404, 'File tidak ditemukan.');
+            }
+
+            return $this->redirectToTemporaryUrl($filePath, 60);
+        } catch (\Exception $e) {
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
+                throw $e;
+            }
+            \Log::error('Error accessing permohonan file: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengakses file.');
         }
-
-        // Authorization check - only admin or the owner can download
-        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $permohonan->user_id) {
-            abort(403, 'Anda tidak memiliki akses ke file ini');
-        }
-
-        // Determine which file field to use based on the file name
-        $filePath = null;
-
-        if ($permohonan->surat_permohonan && str_contains($permohonan->surat_permohonan, $fileName)) {
-            $filePath = $permohonan->surat_permohonan;
-        } elseif (isset($permohonan->surat_ijin_magang) && $permohonan->surat_ijin_magang && str_contains($permohonan->surat_ijin_magang, $fileName)) {
-            $filePath = $permohonan->surat_ijin_magang;
-        } elseif (isset($permohonan->kartu_mahasiswa) && $permohonan->kartu_mahasiswa && str_contains($permohonan->kartu_mahasiswa, $fileName)) {
-            $filePath = $permohonan->kartu_mahasiswa;
-        } elseif (isset($permohonan->ktp) && $permohonan->ktp && str_contains($permohonan->ktp, $fileName)) {
-            $filePath = $permohonan->ktp;
-        }
-
-        if (!$filePath) {
-            return back()->with('error', 'File tidak ditemukan.');
-        }
-
-        if (!Storage::disk('s3')->exists($filePath)) {
-            return back()->with('error', 'File tidak ditemukan di sistem');
-        }
-
-        return $this->redirectToTemporaryUrl($filePath, 60);
     }
 
     /**
-     * Download surat permohonan dari magang/layanan jasa
+     * Download surat permohonan dari magang/layanan jasa (Alternative method)
      */
     public function download(Request $request, $id)
     {
-        // Search di semua 5 tabel
-        $permohonan = Magang::find($id)
-            ?? Asuransi::find($id)
-            ?? LayananData::find($id)
-            ?? Survey::find($id)
-            ?? JasaKonsultasi::find($id);
+        try {
+            // Search di semua 5 tabel
+            $permohonan = Magang::find($id)
+                ?? Asuransi::find($id)
+                ?? LayananData::find($id)
+                ?? Survey::find($id)
+                ?? JasaKonsultasi::find($id);
 
-        if (!$permohonan) {
-            abort(404, 'Permohonan tidak ditemukan');
+            if (!$permohonan) {
+                abort(404, 'Permohonan tidak ditemukan');
+            }
+
+            // Authorization check - only admin or the owner can download
+            if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $permohonan->user_id) {
+                abort(403, 'Anda tidak memiliki akses ke file ini');
+            }
+
+            $documentType = $request->query('document', 'surat_permohonan');
+
+            // Determine which file to download
+            $filePath = $permohonan->$documentType ?? null;
+
+            if (!$filePath) {
+                abort(404, 'File tidak ditemukan');
+            }
+
+            return $this->redirectToTemporaryUrl($filePath, 60);
+        } catch (\Exception $e) {
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
+                throw $e;
+            }
+            \Log::error('Error in alternative download: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengakses file.');
         }
-
-        // Authorization check - only admin or the owner can download
-        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $permohonan->user_id) {
-            abort(403, 'Anda tidak memiliki akses ke file ini');
-        }
-
-        $documentType = $request->query('document', 'surat_permohonan');
-
-        // Determine which file to download
-        $filePath = null;
-        if ($documentType === 'ktp') {
-            $filePath = $permohonan->ktp ?? null;
-        } else {
-            $filePath = $permohonan->surat_permohonan ?? null;
-        }
-
-        if (!$filePath) {
-            return back()->with('error', 'File tidak ditemukan');
-        }
-
-        if (!Storage::disk('s3')->exists($filePath)) {
-            return back()->with('error', 'File tidak ditemukan di sistem');
-        }
-
-        return $this->redirectToTemporaryUrl($filePath, 60);
     }
 }

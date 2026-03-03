@@ -12,25 +12,46 @@ trait HandlesFileDownload
      */
     protected function getTemporaryDownloadUrl($filePath, $expirationMinutes = 60)
     {
-        if (!Storage::disk('s3')->exists($filePath)) {
-            abort(404, 'File tidak ditemukan.');
-        }
+        $defaultDisk = config('filesystems.default');
+        $disk = in_array($defaultDisk, ['s3', 'r2']) ? $defaultDisk : 's3';
 
-        // Generate presigned URL valid for specified minutes
-        return Storage::disk('s3')->temporaryUrl(
-            $filePath,
-            now()->addMinutes($expirationMinutes)
-        );
+        try {
+            // Generate presigned URL valid for specified minutes
+            return Storage::disk($disk)->temporaryUrl(
+                $filePath,
+                now()->addMinutes($expirationMinutes)
+            );
+        } catch (\Exception $e) {
+            \Log::error("Error generating temporary URL on disk [{$disk}]: " . $e->getMessage());
+
+            // Fallback for local development or if S3 fails
+            if (Storage::disk('local')->exists($filePath)) {
+                \Log::info("Falling back to local storage URL for: {$filePath}");
+                // Note: local driver doesn't support temporaryUrl by default, 
+                // so we return the path to a local download route or use url()
+                // For now, let's just use url() if it's local, or return the path
+                return Storage::disk('local')->url($filePath);
+            }
+
+            throw $e;
+        }
     }
 
     /**
      * Redirect user to temporary download URL
-     * File downloads directly from R2, not through Laravel
+     * File downloads directly from cloud storage, not through Laravel
      */
     protected function redirectToTemporaryUrl($filePath, $expirationMinutes = 60)
     {
-        $url = $this->getTemporaryDownloadUrl($filePath, $expirationMinutes);
-        return redirect($url);
+        try {
+            $url = $this->getTemporaryDownloadUrl($filePath, $expirationMinutes);
+
+            // Use away() for external URLs to ensure Laravel doesn't try to resolve it locally
+            return redirect()->away($url);
+        } catch (\Exception $e) {
+            \Log::error("Failed to redirect to temporary URL: " . $e->getMessage());
+            return back()->with('error', 'Gagal mengakses file: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -39,10 +60,13 @@ trait HandlesFileDownload
      */
     protected function streamDownloadFromS3($filePath, $downloadName = null)
     {
-        if (!Storage::disk('s3')->exists($filePath)) {
+        $disk = config('filesystems.default') === 's3' || config('filesystems.default') === 'r2' ? config('filesystems.default') : 's3';
+
+        if (!Storage::disk($disk)->exists($filePath)) {
+            \Log::error("File not found for streaming on disk [{$disk}]: {$filePath}");
             abort(404, 'File tidak ditemukan.');
         }
 
-        return Storage::disk('s3')->download($filePath, $downloadName);
+        return Storage::disk($disk)->download($filePath, $downloadName);
     }
 }

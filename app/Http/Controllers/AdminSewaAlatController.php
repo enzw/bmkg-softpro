@@ -78,6 +78,8 @@ class AdminSewaAlatController extends Controller
 
                 $file = $request->file('surat_permohonan');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters
+                $fileName = str_replace([':', ' ', '(', ')'], '_', $fileName);
                 $path = $file->storeAs($directory, $fileName, 's3');
                 if ($path) {
                     $validated['surat_permohonan'] = $path;
@@ -94,6 +96,8 @@ class AdminSewaAlatController extends Controller
 
                 $file = $request->file('ktp');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters
+                $fileName = str_replace([':', ' ', '(', ')'], '_', $fileName);
                 $path = $file->storeAs($directory, $fileName, 's3');
                 if ($path) {
                     $validated['ktp'] = $path;
@@ -173,6 +177,8 @@ class AdminSewaAlatController extends Controller
 
                     $file = $request->file('surat_permohonan');
                     $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                    // Ensure no special characters
+                    $fileName = str_replace([':', ' ', '(', ')'], '_', $fileName);
                     $path = $file->storeAs($directory, $fileName, 's3');
 
                     if ($path) {
@@ -199,6 +205,8 @@ class AdminSewaAlatController extends Controller
 
                     $file = $request->file('ktp');
                     $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                    // Ensure no special characters
+                    $fileName = str_replace([':', ' ', '(', ')'], '_', $fileName);
                     $path = $file->storeAs($directory, $fileName, 's3');
 
                     if ($path) {
@@ -270,10 +278,6 @@ class AdminSewaAlatController extends Controller
             return back()->with('error', 'File permohonan tidak tersedia');
         }
 
-        if (!Storage::disk('s3')->exists($sewa_alat->surat_permohonan)) {
-            return back()->with('error', 'File permohonan tidak ditemukan di sistem');
-        }
-
         return $this->redirectToTemporaryUrl($sewa_alat->surat_permohonan, 60);
     }
 
@@ -282,29 +286,34 @@ class AdminSewaAlatController extends Controller
      */
     public function downloadFile($id, $fileName)
     {
-        $sewaAlat = SewaAlat::findOrFail($id);
+        try {
+            $sewaAlat = SewaAlat::findOrFail($id);
 
-        // Authorization check - only admin or the owner can download
-        if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $sewaAlat->user_id) {
-            abort(403, 'Anda tidak memiliki akses ke file ini');
+            // Authorization check - only admin or the owner can download
+            if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'superadmin' && Auth::user()->role !== 'superuser' && Auth::id() !== $sewaAlat->user_id) {
+                abort(403, 'Anda tidak memiliki akses ke file ini');
+            }
+
+            // Security: validate that the file belongs to this record
+            $filePath = null;
+            if ($sewaAlat->surat_permohonan && str_contains($sewaAlat->surat_permohonan, $fileName)) {
+                $filePath = $sewaAlat->surat_permohonan;
+            } elseif ($sewaAlat->ktp && str_contains($sewaAlat->ktp, $fileName)) {
+                $filePath = $sewaAlat->ktp;
+            }
+
+            if (!$filePath) {
+                \Log::warning("File matching [{$fileName}] not found in database for SewaAlat ID [{$id}]");
+                abort(404, 'File tidak ditemukan.');
+            }
+
+            return $this->redirectToTemporaryUrl($filePath, 60);
+        } catch (\Exception $e) {
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
+                throw $e;
+            }
+            \Log::error('Error accessing sewa alat file: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengakses file.');
         }
-
-        // Security: validate that the file belongs to this record
-        // Check both surat_permohonan and ktp fields
-        $filePath = null;
-
-        if ($sewaAlat->surat_permohonan && str_contains($sewaAlat->surat_permohonan, $fileName)) {
-            $filePath = $sewaAlat->surat_permohonan;
-        } elseif ($sewaAlat->ktp && str_contains($sewaAlat->ktp, $fileName)) {
-            $filePath = $sewaAlat->ktp;
-        } else {
-            abort(404, 'File tidak ditemukan.');
-        }
-
-        if (!Storage::disk('s3')->exists($filePath)) {
-            abort(404, 'File tidak ditemukan.');
-        }
-
-        return $this->redirectToTemporaryUrl($filePath, 60);
     }
 }

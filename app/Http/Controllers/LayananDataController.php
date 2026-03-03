@@ -57,11 +57,13 @@ class LayananDataController extends Controller
         if ($request->hasFile('surat_permohonan')) {
             try {
                 $directory = 'permohonan/layanan-data';
-                
+
                 $file = $request->file('surat_permohonan');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters in filename
+                $fileName = str_replace([':', ' ', '(', ')'], '_', $fileName);
                 $path = $file->storeAs($directory, $fileName, 's3');
-                
+
                 if ($path) {
                     $validated['surat_permohonan'] = $path;
                 } else {
@@ -75,11 +77,13 @@ class LayananDataController extends Controller
         if ($request->hasFile('ktp')) {
             try {
                 $directory = 'permohonan/layanan-data';
-                
+
                 $file = $request->file('ktp');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters in filename
+                $fileName = str_replace([':', ' ', '(', ')'], '_', $fileName);
                 $path = $file->storeAs($directory, $fileName, 's3');
-                
+
                 if ($path) {
                     $validated['ktp'] = $path;
                 } else {
@@ -95,11 +99,11 @@ class LayananDataController extends Controller
 
         try {
             $layananData = LayananData::create($validated);
-            
+
             // Send Telegram notification with document
             try {
                 $telegramService = new TelegramService();
-                
+
                 $telegramData = [
                     'nama_lengkap' => $validated['nama_lengkap'],
                     'email' => $validated['email'],
@@ -110,14 +114,14 @@ class LayananDataController extends Controller
                     'ktp' => $validated['ktp'] ?? null,
                     'created_at' => $layananData->created_at->format('d-m-Y H:i'),
                 ];
-                
+
                 // Send notification (documents are on S3)
                 $telegramService->sendPermohonanNotification('layanan_data', $telegramData);
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails
             }
-            
+
             return back()->with('success', 'Permohonan layanan data berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
@@ -162,7 +166,7 @@ class LayananDataController extends Controller
             if ($layanan_data->ktp) {
                 Storage::disk('s3')->delete($layanan_data->ktp);
             }
-            
+
             $layanan_data->delete();
             return back()->with('success', 'Permohonan layanan data berhasil dihapus');
         } catch (Exception $error) {
@@ -173,17 +177,14 @@ class LayananDataController extends Controller
 
     public function download(LayananData $layanan_data)
     {
-        // Authorize - user can only download their own files
-        if ($layanan_data->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
+        // Authorize - user or admin
+        $user = Auth::user();
+        if ($user->role !== 'admin' && $user->role !== 'superuser' && $layanan_data->user_id !== $user->id) {
             return back()->with('error', 'Anda tidak memiliki akses ke file ini');
         }
 
         if (!$layanan_data->surat_permohonan) {
             return back()->with('error', 'File permohonan tidak tersedia');
-        }
-
-        if (!Storage::disk('s3')->exists($layanan_data->surat_permohonan)) {
-            return back()->with('error', 'File tidak ditemukan di sistem');
         }
 
         return $this->redirectToTemporaryUrl($layanan_data->surat_permohonan, 60);
@@ -196,69 +197,42 @@ class LayananDataController extends Controller
     public function downloadFileSimple($fileName)
     {
         try {
-            // Construct full file path
-            $filePath = 'permohonan/layanan-data/' . $fileName;
-
-            // Verify that the authenticated user has a record with this file
-            $layanan_data = LayananData::where('user_id', Auth::id())
-                ->where(function ($query) use ($filePath, $fileName) {
-                    $query->where('surat_permohonan', $filePath)
-                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
-                        ->orWhere('ktp', $filePath)
-                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
-                })
+            // Find the record matching the filename
+            $layanan_data = LayananData::where(function ($query) use ($fileName) {
+                $query->where('surat_permohonan', 'LIKE', '%' . $fileName)
+                    ->orWhere('ktp', 'LIKE', '%' . $fileName);
+            })
+                ->orderBy('created_at', 'desc')
                 ->first();
 
             if (!$layanan_data) {
-                // Check if it's an admin trying to access
-                $user = Auth::user();
-                if (!$user || ($user->role !== 'admin' && $user->role !== 'superuser')) {
-                    \Log::warning('Unauthorized file access attempt', [
-                        'user_id' => Auth::id(),
-                        'fileName' => $fileName,
-                        'filePath' => $filePath
-                    ]);
-                    abort(403, 'Anda tidak memiliki akses ke file ini.');
-                }
-                
-                // Admin is accessing, find the file across all users
-                $layanan_data = LayananData::where(function ($query) use ($filePath, $fileName) {
-                    $query->where('surat_permohonan', $filePath)
-                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
-                        ->orWhere('ktp', $filePath)
-                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
-                })->first();
-                
-                if (!$layanan_data) {
-                    \Log::warning('LayananData file not found in database', [
-                        'user_id' => Auth::id(),
-                        'fileName' => $fileName,
-                        'filePath' => $filePath
-                    ]);
-                    abort(404, 'File tidak ditemukan.');
-                }
+                \Log::warning("No database record found matching filename [{$fileName}] for LayananData");
+                abort(404, 'File tidak ditemukan di database.');
             }
 
-            // Check if file exists in storage
-            if (!Storage::disk('s3')->exists($filePath)) {
-                \Log::warning('LayananData file not found in S3 storage', [
+            // Authorize
+            $user = Auth::user();
+            if ($user->role !== 'admin' && $user->role !== 'superuser' && $layanan_data->user_id !== $user->id) {
+                \Log::warning('Unauthorized file access attempt', [
                     'user_id' => Auth::id(),
                     'fileName' => $fileName,
-                    'filePath' => $filePath,
-                    'stored_path' => $layanan_data->surat_permohonan ?? $layanan_data->ktp
                 ]);
-                abort(404, 'File tidak ditemukan di sistem penyimpanan.');
+                abort(403, 'Anda tidak memiliki akses ke file ini.');
             }
+
+            // Use the actual path stored in database
+            $filePath = str_contains($layanan_data->surat_permohonan ?? '', $fileName)
+                ? $layanan_data->surat_permohonan
+                : $layanan_data->ktp;
 
             return $this->redirectToTemporaryUrl($filePath, 60);
         } catch (\Exception $e) {
-            if (method_exists($e, 'getStatusCode') && in_array($e->getStatusCode(), [403, 404])) {
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
                 throw $e;
             }
             \Log::error('Error downloading layanan data file: ' . $e->getMessage(), [
                 'user_id' => Auth::id(),
-                'fileName' => $fileName,
-                'trace' => $e->getTraceAsString()
+                'fileName' => $fileName
             ]);
             abort(500, 'Terjadi kesalahan saat mengakses file.');
         }

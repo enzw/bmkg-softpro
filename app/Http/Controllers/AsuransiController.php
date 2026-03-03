@@ -9,6 +9,7 @@ use App\Traits\HandlesFileDownload;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Exception;
 
 class AsuransiController extends Controller
 {
@@ -41,7 +42,7 @@ class AsuransiController extends Controller
     public function store(Request $request)
     {
         \Log::info('Form submission:', $request->all());
-        
+
         $validated = $request->validate([
             'nama_user' => 'required|string',
             'no_whatsapp' => 'required|string',
@@ -57,11 +58,13 @@ class AsuransiController extends Controller
         if ($request->hasFile('surat_permohonan')) {
             try {
                 $directory = 'permohonan/asuransi';
-                
+
                 $file = $request->file('surat_permohonan');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters
+                $fileName = str_replace([':', ' ', '(', ')'], '_', $fileName);
                 $path = $file->storeAs($directory, $fileName, 's3');
-                
+
                 if ($path) {
                     $validated['surat_permohonan'] = $path;
                 } else {
@@ -76,11 +79,13 @@ class AsuransiController extends Controller
         if ($request->hasFile('ktp')) {
             try {
                 $directory = 'permohonan/asuransi';
-                
+
                 $file = $request->file('ktp');
                 $fileName = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                // Ensure no special characters
+                $fileName = str_replace([':', ' ', '(', ')'], '_', $fileName);
                 $path = $file->storeAs($directory, $fileName, 's3');
-                
+
                 if ($path) {
                     $validated['ktp'] = $path;
                 } else {
@@ -96,12 +101,12 @@ class AsuransiController extends Controller
 
         try {
             $asuransi = Asuransi::create($validated);
-            
+
             // Send Telegram notification with documents
             try {
                 $telegramService = new TelegramService();
                 $user = Auth::user();
-                
+
                 $telegramData = [
                     'nama_lengkap' => $validated['nama_user'],
                     'email' => $user->email,
@@ -111,14 +116,14 @@ class AsuransiController extends Controller
                     'ktp' => $validated['ktp'] ?? null,
                     'created_at' => $asuransi->created_at->format('d-m-Y H:i'),
                 ];
-                
+
                 // Send notification (documents are on S3)
                 $telegramService->sendPermohonanNotification('asuransi', $telegramData);
             } catch (Exception $telegramError) {
                 \Log::warning('Telegram notification failed: ' . $telegramError->getMessage());
                 // Continue even if telegram fails
             }
-            
+
             return back()->with('success', 'Permohonan kunjungan berhasil dibuat');
         } catch (Exception $error) {
             report($error->getMessage());
@@ -160,14 +165,14 @@ class AsuransiController extends Controller
             $user = Auth::user();
             $isAdmin = $user && ($user->role === 'admin' || $user->role === 'superuser');
             $isOwner = $permohonan_kunjungan->user_id === $user?->id;
-            
+
             if (!($isOwner || $isAdmin)) {
                 if (request()->wantsJson()) {
                     return response()->json(['message' => 'Anda tidak memiliki akses untuk menghapus permohonan ini'], 403);
                 }
                 return back()->with('error', 'Anda tidak memiliki akses untuk menghapus permohonan ini');
             }
-            
+
             // Delete associated files from Cloudflare S3
             if ($permohonan_kunjungan->surat_permohonan) {
                 Storage::disk('s3')->delete($permohonan_kunjungan->surat_permohonan);
@@ -175,9 +180,9 @@ class AsuransiController extends Controller
             if ($permohonan_kunjungan->ktp) {
                 Storage::disk('s3')->delete($permohonan_kunjungan->ktp);
             }
-            
+
             $permohonan_kunjungan->delete();
-            
+
             if (request()->wantsJson()) {
                 return response()->json(['message' => 'Permohonan kunjungan berhasil dihapus']);
             }
@@ -193,20 +198,18 @@ class AsuransiController extends Controller
 
     public function download(Asuransi $klaim_asuransi)
     {
-        // Authorize - user can only download their own files
-        if ($klaim_asuransi->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
+        // Authorize - user or admin
+        $user = Auth::user();
+        if ($user->role !== 'admin' && $user->role !== 'superuser' && $klaim_asuransi->user_id !== $user->id) {
             return back()->with('error', 'Anda tidak memiliki akses ke file ini');
         }
 
-        if (!$klaim_asuransi->surat_permohonan_klaim) {
+        $path = $klaim_asuransi->surat_permohonan ?? $klaim_asuransi->surat_permohonan_klaim;
+        if (!$path) {
             return back()->with('error', 'File permohonan tidak tersedia');
         }
 
-        if (!Storage::disk('s3')->exists($klaim_asuransi->surat_permohonan_klaim)) {
-            return back()->with('error', 'File tidak ditemukan di sistem');
-        }
-
-        return $this->redirectToTemporaryUrl($klaim_asuransi->surat_permohonan_klaim, 60);
+        return $this->redirectToTemporaryUrl($path, 60);
     }
 
     public function downloadFile($id, $fileName)
@@ -214,34 +217,35 @@ class AsuransiController extends Controller
         try {
             $asuransi = Asuransi::findOrFail($id);
 
-            // Authorization check - only owner can download
+            // Authorization check - user or admin
             $user = Auth::user();
-            if ($asuransi->user_id !== $user?->id) {
+            $isAdmin = $user && ($user->role === 'admin' || $user->role === 'superuser');
+            if ($asuransi->user_id !== $user?->id && !$isAdmin) {
                 abort(403, 'Anda tidak memiliki akses ke file ini');
             }
 
-            // Check if file is surat_permohonan
+            // Find matching path in database
             $filePath = null;
-            if ($asuransi->surat_permohonan && basename($asuransi->surat_permohonan) === $fileName) {
+            if ($asuransi->surat_permohonan && str_contains($asuransi->surat_permohonan, $fileName)) {
                 $filePath = $asuransi->surat_permohonan;
-            }
-            // Check if file is ktp
-            elseif ($asuransi->ktp && basename($asuransi->ktp) === $fileName) {
+            } elseif ($asuransi->ktp && str_contains($asuransi->ktp, $fileName)) {
                 $filePath = $asuransi->ktp;
+            } elseif ($asuransi->surat_permohonan_klaim && str_contains($asuransi->surat_permohonan_klaim, $fileName)) {
+                $filePath = $asuransi->surat_permohonan_klaim;
             }
 
             if (!$filePath) {
+                \Log::warning("File matching [{$fileName}] not found in database for Asuransi ID [{$id}]");
                 abort(404, 'File tidak ditemukan.');
-            }
-
-            if (!Storage::disk('s3')->exists($filePath)) {
-                abort(404, 'File tidak ditemukan di sistem.');
             }
 
             return $this->redirectToTemporaryUrl($filePath, 60);
         } catch (\Exception $e) {
-            report($e);
-            abort(500, 'Error mengakses file: ' . $e->getMessage());
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
+                throw $e;
+            }
+            \Log::error('Error accessing asuransi file: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat mengakses file.');
         }
     }
 
@@ -252,69 +256,48 @@ class AsuransiController extends Controller
     public function downloadFileSimple($fileName)
     {
         try {
-            // Construct full file path
-            $filePath = 'permohonan/asuransi/' . $fileName;
-
-            // Verify that the authenticated user has a record with this file
-            $asuransi = Asuransi::where('user_id', Auth::id())
-                ->where(function ($query) use ($filePath, $fileName) {
-                    $query->where('surat_permohonan', $filePath)
-                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
-                        ->orWhere('ktp', $filePath)
-                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
-                })
+            // Find the record matching the filename
+            $asuransi = Asuransi::where(function ($query) use ($fileName) {
+                $query->where('surat_permohonan', 'LIKE', '%' . $fileName)
+                    ->orWhere('surat_permohonan_klaim', 'LIKE', '%' . $fileName)
+                    ->orWhere('ktp', 'LIKE', '%' . $fileName);
+            })
+                ->orderBy('created_at', 'desc')
                 ->first();
 
             if (!$asuransi) {
-                // Check if it's an admin trying to access
-                $user = Auth::user();
-                if (!$user || ($user->role !== 'admin' && $user->role !== 'superuser')) {
-                    \Log::warning('Unauthorized file access attempt', [
-                        'user_id' => Auth::id(),
-                        'fileName' => $fileName,
-                        'filePath' => $filePath
-                    ]);
-                    abort(403, 'Anda tidak memiliki akses ke file ini.');
-                }
-                
-                // Admin is accessing, find the file across all users
-                $asuransi = Asuransi::where(function ($query) use ($filePath, $fileName) {
-                    $query->where('surat_permohonan', $filePath)
-                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
-                        ->orWhere('ktp', $filePath)
-                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
-                })->first();
-                
-                if (!$asuransi) {
-                    \Log::warning('Asuransi file not found in database', [
-                        'user_id' => Auth::id(),
-                        'fileName' => $fileName,
-                        'filePath' => $filePath
-                    ]);
-                    abort(404, 'File tidak ditemukan.');
-                }
+                \Log::warning("No database record found matching filename [{$fileName}] for Asuransi");
+                abort(404, 'File tidak ditemukan di database.');
             }
 
-            // Check if file exists in storage
-            if (!Storage::disk('s3')->exists($filePath)) {
-                \Log::warning('Asuransi file not found in S3 storage', [
+            // Authorize
+            $user = Auth::user();
+            if ($user->role !== 'admin' && $user->role !== 'superuser' && $asuransi->user_id !== $user->id) {
+                \Log::warning('Unauthorized file access attempt', [
                     'user_id' => Auth::id(),
                     'fileName' => $fileName,
-                    'filePath' => $filePath,
-                    'stored_path' => $asuransi->surat_permohonan ?? $asuransi->ktp
                 ]);
-                abort(404, 'File tidak ditemukan di sistem penyimpanan.');
+                abort(403, 'Anda tidak memiliki akses ke file ini.');
+            }
+
+            // Use the actual path stored in database
+            $filePath = null;
+            if (str_contains($asuransi->surat_permohonan ?? '', $fileName)) {
+                $filePath = $asuransi->surat_permohonan;
+            } elseif (str_contains($asuransi->surat_permohonan_klaim ?? '', $fileName)) {
+                $filePath = $asuransi->surat_permohonan_klaim;
+            } elseif (str_contains($asuransi->ktp ?? '', $fileName)) {
+                $filePath = $asuransi->ktp;
             }
 
             return $this->redirectToTemporaryUrl($filePath, 60);
         } catch (\Exception $e) {
-            if (method_exists($e, 'getStatusCode') && in_array($e->getStatusCode(), [403, 404])) {
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
                 throw $e;
             }
             \Log::error('Error downloading asuransi file: ' . $e->getMessage(), [
                 'user_id' => Auth::id(),
-                'fileName' => $fileName,
-                'trace' => $e->getTraceAsString()
+                'fileName' => $fileName
             ]);
             abort(500, 'Terjadi kesalahan saat mengakses file.');
         }
