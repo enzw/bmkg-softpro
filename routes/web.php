@@ -128,38 +128,31 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
         // Simple direct file download routes: /permohonan/{serviceType}/{fileName}
         Route::get('/permohonan/sewa-alat/{fileName}', [SewaAlatController::class, 'downloadFileSimple'])
             ->name('permohonan.sewa-alat.download')
-            ->where('fileName', '.+')
-            ->middleware(['auth', 'verified']);
+            ->where('fileName', '.+');
 
         Route::get('/permohonan/jasa-konsultasi/{fileName}', [JasaKonsultasiController::class, 'downloadFileSimple'])
             ->name('permohonan.jasa-konsultasi.download')
-            ->where('fileName', '.+')
-            ->middleware(['auth', 'verified']);
+            ->where('fileName', '.+');
 
         Route::get('/permohonan/survey/{fileName}', [SurveyController::class, 'downloadFileSimple'])
             ->name('permohonan.survey.download')
-            ->where('fileName', '.+')
-            ->middleware(['auth', 'verified']);
+            ->where('fileName', '.+');
 
         Route::get('/permohonan/layanan-data/{fileName}', [LayananDataController::class, 'downloadFileSimple'])
             ->name('permohonan.layanan-data.download')
-            ->where('fileName', '.+')
-            ->middleware(['auth', 'verified']);
+            ->where('fileName', '.+');
 
         Route::get('/permohonan/pelayanan-jasa/{fileName}', [MagangController::class, 'downloadFileSimple'])
             ->name('permohonan.pelayanan-jasa.download')
-            ->where('fileName', '.+')
-            ->middleware(['auth', 'verified']);
+            ->where('fileName', '.+');
 
         Route::get('/permohonan/permohonan-kunjungan/{fileName}', [PermohonanKunjunganController::class, 'downloadFileSimple'])
             ->name('permohonan.permohonan-kunjungan.download')
-            ->where('fileName', '.+')
-            ->middleware(['auth', 'verified']);
+            ->where('fileName', '.+');
 
         Route::get('/permohonan/permohonan-asuransi/{fileName}', [AsuransiController::class, 'downloadFileSimple'])
             ->name('permohonan.permohonan-asuransi.download')
-            ->where('fileName', '.+')
-            ->middleware(['auth', 'verified']);
+            ->where('fileName', '.+');
 
         Route::name('sewa-alat.')
             ->prefix('sewa-alat')

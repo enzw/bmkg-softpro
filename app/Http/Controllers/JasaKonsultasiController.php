@@ -227,20 +227,35 @@ class JasaKonsultasiController extends Controller
                 ->first();
 
             if (!$jasaKonsultasi) {
+                \Log::warning('JasaKonsultasi file not found in database', [
+                    'user_id' => Auth::id(),
+                    'fileName' => $fileName,
+                    'filePath' => $filePath
+                ]);
                 abort(404, 'File tidak ditemukan atau Anda tidak memiliki akses ke file ini.');
             }
 
             // Check if file exists in storage
             if (!Storage::disk('s3')->exists($filePath)) {
+                \Log::warning('JasaKonsultasi file not found in S3 storage', [
+                    'user_id' => Auth::id(),
+                    'fileName' => $fileName,
+                    'filePath' => $filePath,
+                    'stored_path' => $jasaKonsultasi->surat_permohonan ?? $jasaKonsultasi->ktp
+                ]);
                 abort(404, 'File tidak ditemukan di sistem penyimpanan.');
             }
 
             return $this->redirectToTemporaryUrl($filePath, 60);
         } catch (\Exception $e) {
-            if ($e->getStatusCode() === 404) {
+            if (method_exists($e, 'getStatusCode') && $e->getStatusCode() === 404) {
                 throw $e;
             }
-            \Log::error('Error downloading file: ' . $e->getMessage());
+            \Log::error('Error downloading jasa konsultasi file: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'fileName' => $fileName,
+                'trace' => $e->getTraceAsString()
+            ]);
             abort(500, 'Terjadi kesalahan saat mengakses file.');
         }
     }

@@ -291,7 +291,7 @@ class PermohonanKunjunganController extends Controller
     public function downloadFileSimple($fileName)
     {
         try {
-            // Construct full file path - uses 'permohonan/kunjungan' directory not 'permohonan/permohonan-kunjungan'
+            // Construct full file path - uses 'permohonan/kunjungan' directory
             $filePath = 'permohonan/kunjungan/' . $fileName;
 
             // Verify that the authenticated user has a record with this file
@@ -305,22 +305,35 @@ class PermohonanKunjunganController extends Controller
                 ->first();
 
             if (!$kunjungan) {
+                Log::warning('Kunjungan file not found in database', [
+                    'user_id' => Auth::id(),
+                    'fileName' => $fileName,
+                    'filePath' => $filePath
+                ]);
                 abort(404, 'File tidak ditemukan atau Anda tidak memiliki akses ke file ini.');
             }
 
             // Check if file exists in storage
-            if (!Storage::disk('s3')->exists($filePath) && !Storage::disk('r2')->exists($filePath)) {
+            if (!Storage::disk('s3')->exists($filePath)) {
+                Log::warning('Kunjungan file not found in S3 storage', [
+                    'user_id' => Auth::id(),
+                    'fileName' => $fileName,
+                    'filePath' => $filePath,
+                    'stored_path' => $kunjungan->surat_permohonan ?? $kunjungan->ktp
+                ]);
                 abort(404, 'File tidak ditemukan di sistem penyimpanan.');
             }
 
-            // Try R2 first, then S3
-            $disk = Storage::disk('r2')->exists($filePath) ? 'r2' : 's3';
-            return $this->redirectToTemporaryUrl($filePath, 60, $disk);
+            return $this->redirectToTemporaryUrl($filePath, 60);
         } catch (\Exception $e) {
-            if ($e->getStatusCode() === 404) {
+            if (method_exists($e, 'getStatusCode') && $e->getStatusCode() === 404) {
                 throw $e;
             }
-            Log::error('Error downloading file: ' . $e->getMessage());
+            Log::error('Error downloading kunjungan file: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'fileName' => $fileName,
+                'trace' => $e->getTraceAsString()
+            ]);
             abort(500, 'Terjadi kesalahan saat mengakses file.');
         }
     }
