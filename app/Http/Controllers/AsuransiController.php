@@ -266,12 +266,33 @@ class AsuransiController extends Controller
                 ->first();
 
             if (!$asuransi) {
-                \Log::warning('Asuransi file not found in database', [
-                    'user_id' => Auth::id(),
-                    'fileName' => $fileName,
-                    'filePath' => $filePath
-                ]);
-                abort(404, 'File tidak ditemukan atau Anda tidak memiliki akses ke file ini.');
+                // Check if it's an admin trying to access
+                $user = Auth::user();
+                if (!$user || ($user->role !== 'admin' && $user->role !== 'superuser')) {
+                    \Log::warning('Unauthorized file access attempt', [
+                        'user_id' => Auth::id(),
+                        'fileName' => $fileName,
+                        'filePath' => $filePath
+                    ]);
+                    abort(403, 'Anda tidak memiliki akses ke file ini.');
+                }
+                
+                // Admin is accessing, find the file across all users
+                $asuransi = Asuransi::where(function ($query) use ($filePath, $fileName) {
+                    $query->where('surat_permohonan', $filePath)
+                        ->orWhere('surat_permohonan', 'LIKE', '%' . $fileName)
+                        ->orWhere('ktp', $filePath)
+                        ->orWhere('ktp', 'LIKE', '%' . $fileName);
+                })->first();
+                
+                if (!$asuransi) {
+                    \Log::warning('Asuransi file not found in database', [
+                        'user_id' => Auth::id(),
+                        'fileName' => $fileName,
+                        'filePath' => $filePath
+                    ]);
+                    abort(404, 'File tidak ditemukan.');
+                }
             }
 
             // Check if file exists in storage
@@ -287,7 +308,7 @@ class AsuransiController extends Controller
 
             return $this->redirectToTemporaryUrl($filePath, 60);
         } catch (\Exception $e) {
-            if (method_exists($e, 'getStatusCode') && $e->getStatusCode() === 404) {
+            if (method_exists($e, 'getStatusCode') && in_array($e->getStatusCode(), [403, 404])) {
                 throw $e;
             }
             \Log::error('Error downloading asuransi file: ' . $e->getMessage(), [
