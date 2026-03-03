@@ -125,32 +125,32 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
     Route::prefix('layanan')->group(function () {
         Route::get('/', [DashboardPelayananController::class, 'index'])->name('layanan');
 
-        // Simple direct file download routes: /permohonan/{serviceType}/{fileName}
-        Route::get('/permohonan/sewa-alat/{fileName}', [SewaAlatController::class, 'downloadFileSimple'])
+        // Simple direct file download routes: /permohonan/{serviceType}/{fileName}/view
+        Route::get('/permohonan/sewa-alat/{fileName}/view', [SewaAlatController::class, 'downloadFileSimple'])
             ->name('permohonan.sewa-alat.download')
             ->where('fileName', '.+');
 
-        Route::get('/permohonan/jasa-konsultasi/{fileName}', [JasaKonsultasiController::class, 'downloadFileSimple'])
+        Route::get('/permohonan/jasa-konsultasi/{fileName}/view', [JasaKonsultasiController::class, 'downloadFileSimple'])
             ->name('permohonan.jasa-konsultasi.download')
             ->where('fileName', '.+');
 
-        Route::get('/permohonan/survey/{fileName}', [SurveyController::class, 'downloadFileSimple'])
+        Route::get('/permohonan/survey/{fileName}/view', [SurveyController::class, 'downloadFileSimple'])
             ->name('permohonan.survey.download')
             ->where('fileName', '.+');
 
-        Route::get('/permohonan/layanan-data/{fileName}', [LayananDataController::class, 'downloadFileSimple'])
+        Route::get('/permohonan/layanan-data/{fileName}/view', [LayananDataController::class, 'downloadFileSimple'])
             ->name('permohonan.layanan-data.download')
             ->where('fileName', '.+');
 
-        Route::get('/permohonan/pelayanan-jasa/{fileName}', [MagangController::class, 'downloadFileSimple'])
+        Route::get('/permohonan/pelayanan-jasa/{fileName}/view', [MagangController::class, 'downloadFileSimple'])
             ->name('permohonan.pelayanan-jasa.download')
             ->where('fileName', '.+');
 
-        Route::get('/permohonan/permohonan-kunjungan/{fileName}', [PermohonanKunjunganController::class, 'downloadFileSimple'])
+        Route::get('/permohonan/permohonan-kunjungan/{fileName}/view', [PermohonanKunjunganController::class, 'downloadFileSimple'])
             ->name('permohonan.permohonan-kunjungan.download')
             ->where('fileName', '.+');
 
-        Route::get('/permohonan/permohonan-asuransi/{fileName}', [AsuransiController::class, 'downloadFileSimple'])
+        Route::get('/permohonan/permohonan-asuransi/{fileName}/view', [AsuransiController::class, 'downloadFileSimple'])
             ->name('permohonan.permohonan-asuransi.download')
             ->where('fileName', '.+');
 
@@ -163,7 +163,7 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
                 Route::post('/permohonan/tambah', 'store')->name('store'); // submit permohonan sewa alat
                 Route::delete('/permohonan/{sewa_alat}/hapus', 'destroy')->name('destroy')->where('sewa_alat', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'); // hapus data permohonan by id
                 Route::get('/permohonan/{sewa_alat}/download', 'download')->name('download-permohonan')->where('sewa_alat', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'); // download permohonan
-                Route::get('/permohonan/{sewa_alat}/download-file/{fileName}', 'downloadFile')->name('download-file')->where('sewa_alat', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')->where('fileName', '.+'); // download any file (ktp, surat, etc)
+                Route::get('/permohonan/{sewa_alat}/file/{fileName}/view', 'downloadFile')->name('download-file')->where('sewa_alat', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')->where('fileName', '.+'); // download any file (ktp, surat, etc)
             });
 
         Route::name('jasa-konsultasi.')
@@ -205,7 +205,7 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
         Route::delete('pelayanan-jasa/{permohonan_magang}', [MagangController::class, 'destroy'])->name('pelayanan-jasa.destroy');
         Route::get('permohonan-magang/{permohonan_magang}', [MagangController::class, 'download'])
             ->name('permohonan-magang.download');
-        Route::get('pelayanan-jasa/{id}/download-file/{fileName}', [MagangController::class, 'downloadFile'])
+        Route::get('pelayanan-jasa/{id}/file/{fileName}/view', [MagangController::class, 'downloadFile'])
             ->where('fileName', '.+')->name('pelayanan-jasa.download-file');
 
         Route::get('permohonan-kunjungan', function () {
@@ -214,11 +214,11 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
         Route::get('permohonan-kunjungan/create', [PermohonanKunjunganController::class, 'create'])->name('permohonan-kunjungan.create');
         Route::post('permohonan-kunjungan', [PermohonanKunjunganController::class, 'store'])->name('permohonan-kunjungan.store');
         Route::delete('permohonan-kunjungan/{kunjungan}', [PermohonanKunjunganController::class, 'destroy'])->name('permohonan-kunjungan.destroy')->where('kunjungan', '[0-9]+');
-        Route::get('permohonan-kunjungan/{id}/download-file/{fileName}', [PermohonanKunjunganController::class, 'downloadFile'])->where('fileName', '.+')->name('permohonan-kunjungan.download-file');
+        Route::get('permohonan-kunjungan/{id}/file/{fileName}/view', [PermohonanKunjunganController::class, 'downloadFile'])->where('fileName', '.+')->name('permohonan-kunjungan.download-file');
         Route::resource('permohonan-asuransi', AsuransiController::class);
         Route::get('klaim-asuransi/{klaim_asuransi}', [AsuransiController::class, 'download'])
             ->name('klaim-asuransi.download');
-        Route::get('permohonan-asuransi/{id}/download-file/{fileName}', [AsuransiController::class, 'downloadFile'])->where('fileName', '.+')->name('permohonan-asuransi.download-file');
+        Route::get('permohonan-asuransi/{id}/file/{fileName}/view', [AsuransiController::class, 'downloadFile'])->where('fileName', '.+')->name('permohonan-asuransi.download-file');
     });
 
 
@@ -232,22 +232,22 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
         Route::post('download-area/download', [AdminDownloadAreaController::class, 'download'])->name('download-area.download');
 
         Route::resource('sewa-alat', AdminSewaAlatController::class);
-        Route::get('sewa-alat/{id}/download-file/{fileName}', [AdminSewaAlatController::class, 'downloadFile'])->name('sewa-alat.download-file');
+        Route::get('sewa-alat/{id}/file/{fileName}/view', [AdminSewaAlatController::class, 'downloadFile'])->name('sewa-alat.download-file');
         Route::get('sewa-alat/{sewa_alat}/download', [AdminSewaAlatController::class, 'download'])->name('sewa-alat.download');
         // Route::resource('history-megabot', DialogflowWebhookController::class);
         Route::resource('pelayanan-jasa', AdminPermohonanMagangController::class);
         Route::get('pelayanan-jasa/{id}/download', [AdminPermohonanMagangController::class, 'download'])->name('pelayanan-jasa.download');
-        Route::get('pelayanan-jasa/{id}/download-file/{fileName}', [AdminPermohonanMagangController::class, 'downloadFile'])->name('pelayanan-jasa.download-file');
+        Route::get('pelayanan-jasa/{id}/file/{fileName}/view', [AdminPermohonanMagangController::class, 'downloadFile'])->name('pelayanan-jasa.download-file');
         Route::resource('permohonan-kunjungan', AdminPermohonanKunjunganController::class);
-        Route::get('permohonan-kunjungan/{id}/download-file/{fileName}', [AdminPermohonanKunjunganController::class, 'downloadFile'])->name('permohonan-kunjungan.download-file');
+        Route::get('permohonan-kunjungan/{id}/file/{fileName}/view', [AdminPermohonanKunjunganController::class, 'downloadFile'])->name('permohonan-kunjungan.download-file');
         Route::resource('survey', AdminSurveyController::class);
-        Route::get('survey/{id}/download-file/{fileName}', [AdminSurveyController::class, 'downloadFile'])->name('survey.download-file');
+        Route::get('survey/{id}/file/{fileName}/view', [AdminSurveyController::class, 'downloadFile'])->name('survey.download-file');
         Route::resource('layanan-data', AdminLayananDataController::class);
-        Route::get('layanan-data/{id}/download-file/{fileName}', [AdminLayananDataController::class, 'downloadFile'])->name('layanan-data.download-file');
+        Route::get('layanan-data/{id}/file/{fileName}/view', [AdminLayananDataController::class, 'downloadFile'])->name('layanan-data.download-file');
         Route::resource('jasa-konsultasi', AdminJasaKonsultasiController::class);
-        Route::get('jasa-konsultasi/{id}/download-file/{fileName}', [AdminJasaKonsultasiController::class, 'downloadFile'])->name('jasa-konsultasi.download-file');
+        Route::get('jasa-konsultasi/{id}/file/{fileName}/view', [AdminJasaKonsultasiController::class, 'downloadFile'])->name('jasa-konsultasi.download-file');
         Route::resource('klaim-asuransi', AdminKlaimAsuransiController::class);
-        Route::get('klaim-asuransi/{id}/download-file/{fileName}', [AdminKlaimAsuransiController::class, 'downloadFile'])->name('klaim-asuransi.download-file');
+        Route::get('klaim-asuransi/{id}/file/{fileName}/view', [AdminKlaimAsuransiController::class, 'downloadFile'])->name('klaim-asuransi.download-file');
         // Route::get('/download-excel', function () {
         //     return Excel::download(new ChatExport, 'data.xlsx');
         // });

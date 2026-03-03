@@ -26,7 +26,7 @@
                     'Layanan Survey' => 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800/50 text-purple-700 dark:text-purple-300',
                     'Layanan Konsultasi' => 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800/50 text-indigo-700 dark:text-indigo-300',
                 ];
-                
+
                 $serviceIcons = [
                     'Magang' => 'fa-graduation-cap',
                     'Layanan Klaim Asuransi' => 'fa-file-invoice-dollar',
@@ -220,14 +220,14 @@
                                         </p>
                                     </div>
                                     @if($item->jenis_layanan !== 'Layanan Klaim Asuransi')
-                                    <div
-                                        class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
-                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Email
-                                        </p>
-                                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
-                                            {{ $item->email ?? '-' }}
-                                        </p>
-                                    </div>
+                                        <div
+                                            class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                            <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Email
+                                            </p>
+                                            <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                                {{ $item->email ?? '-' }}
+                                            </p>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -336,21 +336,17 @@
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div
                                                 class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
-                                                <p
-                                                    class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
+                                                <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
                                                     Tanggal Kejadian</p>
-                                                <p
-                                                    class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                                <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
                                                     {{ $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d F Y') : '-' }}
                                                 </p>
                                             </div>
                                             <div
                                                 class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
-                                                <p
-                                                    class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
+                                                <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
                                                     Lokasi Kejadian</p>
-                                                <p
-                                                    class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                                <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
                                                     {{ $item->lokasi ?? '-' }}
                                                 </p>
                                             </div>
@@ -373,7 +369,9 @@
                                         <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2 text-left">
                                             Keterangan / Keperluan
                                         </p>
-                                        <p class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed selection:bg-transparent text-left w-full">{{ $item->keterangan }}</p>
+                                        <p
+                                            class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed selection:bg-transparent text-left w-full">
+                                            {{ $item->keterangan }}</p>
                                     </div>
                                 </div>
                             @endif

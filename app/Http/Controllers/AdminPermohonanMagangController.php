@@ -473,7 +473,6 @@ class AdminPermohonanMagangController extends Controller
                 $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
                 $filename = str_replace([':', ' ', '(', ')'], '_', $filename);
                 $path = $file->storeAs('permohonan/' . $folder, $filename, 's3');
-                $validated['ktp'] = $path;
             }
 
             if ($request->hasFile('kartu_mahasiswa') && $permohonan instanceof Magang) {
