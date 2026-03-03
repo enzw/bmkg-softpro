@@ -21,8 +21,8 @@ use App\Http\Controllers\BeritaController;
 Route::get('/berita', [BeritaController::class, 'api']);
 
 // Chatbot API Routes (Public)
-Route::post('/chatbot/chat', [ChatbotController::class, 'chat']);
-Route::post('/chatbot/rate', [ChatbotController::class, 'rate']); // Accept feedback from both authed and guest users
+Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');
+Route::post('/chatbot/rate', [ChatbotController::class, 'rate'])->name('chatbot.rate'); // Accept feedback from both authed and guest users
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

@@ -3,12 +3,13 @@
     <button id="open-chatbot-btn"
         class="fixed bottom-8 right-8 z-40 hover:scale-110 transition-transform duration-300 cursor-pointer focus:outline-none group"
         title="Tanya MegaBot">
-        <img src="{{ asset('images/floatingBot.png') }}" alt="Chatbot"
-            class="w-24 h-24 object-contain drop-shadow-lg">
-        
+        <img src="{{ asset('images/floatingBot.png') }}" alt="Chatbot" class="w-24 h-24 object-contain drop-shadow-lg">
+
         <!-- Tooltip -->
-        <div class="absolute bottom-full right-0 mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <div class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-semibold px-3 py-2 rounded-lg whitespace-nowrap">
+        <div
+            class="absolute bottom-full right-0 mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div
+                class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-semibold px-3 py-2 rounded-lg whitespace-nowrap">
                 Tanya MegaBot
             </div>
             <div class="absolute top-full right-3 w-2 h-2 bg-gray-900 dark:bg-white transform rotate-45"></div>
@@ -23,7 +24,8 @@
         id="chatbot-container">
 
         <!-- Header Section -->
-        <div class="p-6 border-b border-gray-50 dark:border-gray-700 flex items-center justify-between bg-gray-50/30 dark:bg-gray-900/10">
+        <div
+            class="p-6 border-b border-gray-50 dark:border-gray-700 flex items-center justify-between bg-gray-50/30 dark:bg-gray-900/10">
             <div class="flex items-center gap-4">
                 <div class="w-16 h-16 rounded-2xl bg-white dark:bg-gray-700 flex items-center justify-center p-1">
                     <img src="{{ asset('images/floatingBot.png') }}" alt="Bot" class="w-full h-full object-contain">
@@ -41,16 +43,17 @@
         </div>
 
         <!-- Messages Area -->
-        <div id="chatbot-messages"
-            class="flex-1 overflow-y-auto p-6 space-y-4 bg-white dark:bg-gray-800">
+        <div id="chatbot-messages" class="flex-1 overflow-y-auto p-6 space-y-4 bg-white dark:bg-gray-800">
             <!-- Welcome Message -->
             <div class="flex gap-3 animate-fade-in">
                 <div class="flex-shrink-0">
                     <img src="{{ asset('images/floatingBot.png') }}" alt="Bot" class="w-8 h-8 object-contain">
                 </div>
                 <div class="flex-1 flex-col">
-                    <div class="bg-gray-50 dark:bg-gray-900/40 rounded-2xl rounded-tl-none px-4 py-3 shadow-sm border border-gray-100 dark:border-gray-700">
-                        <p class="text-sm dark:text-gray-100 text-gray-700 leading-relaxed">Halo 👋 Ada yang bisa saya bantu? Tanyakan tentang layanan BMKG.</p>
+                    <div
+                        class="bg-gray-50 dark:bg-gray-900/40 rounded-2xl rounded-tl-none px-4 py-3 shadow-sm border border-gray-100 dark:border-gray-700">
+                        <p class="text-sm dark:text-gray-100 text-gray-700 leading-relaxed">Halo 👋 Ada yang bisa saya
+                            bantu? Tanyakan tentang layanan BMKG.</p>
                     </div>
                     <p class="text-xs text-gray-400 dark:text-gray-500 mt-2 ml-0">Sekarang</p>
                 </div>
@@ -62,12 +65,10 @@
             <form id="chatbot-form" class="flex gap-3">
                 <input type="text" id="chatbot-input"
                     class="flex-1 px-6 py-3 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-medium text-sm"
-                    placeholder="Ketik pertanyaan..."
-                    autocomplete="off">
+                    placeholder="Ketik pertanyaan..." autocomplete="off">
                 <button type="submit"
                     class="px-6 py-3 bg-green-600 hover:bg-green-700 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center font-semibold text-sm"
-                    id="send-btn"
-                    title="Kirim">
+                    id="send-btn" title="Kirim">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </form>
@@ -81,6 +82,7 @@
             opacity: 0;
             transform: translateY(10px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -276,10 +278,14 @@
     }
 
     @keyframes typing {
-        0%, 60%, 100% {
+
+        0%,
+        60%,
+        100% {
             transform: translateY(0);
             opacity: 0.6;
         }
+
         30% {
             transform: translateY(-8px);
             opacity: 1;
@@ -326,6 +332,7 @@
         from {
             transform: translateY(100%);
         }
+
         to {
             transform: translateY(0);
         }
@@ -340,7 +347,7 @@
         gfm: true, // GitHub Flavored Markdown
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const modal = document.getElementById('chatbot-modal');
         const openBtn = document.getElementById('open-chatbot-btn');
         const closeBtn = document.getElementById('close-chatbot-btn');
@@ -388,7 +395,7 @@
             // Check cooldown to prevent rate limiting
             const now = Date.now();
             const timeSinceLastMessage = now - lastMessageTime;
-            
+
             if (timeSinceLastMessage < COOLDOWN_MS) {
                 const remainingMs = COOLDOWN_MS - timeSinceLastMessage;
                 const remainingSeconds = Math.ceil(remainingMs / 1000);
@@ -412,7 +419,7 @@
 
             try {
                 // Send to Laravel API endpoint (which calls Gemini API)
-                const response = await fetch('/api/chatbot/chat', {
+                const response = await fetch('{{ route('chatbot.chat') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -466,11 +473,11 @@
         function addBotMessage(markdown, userMessage = null) {
             const messageDiv = document.createElement('div');
             messageDiv.className = 'flex gap-3 animate-fade-in';
-            
+
             // Parse markdown to HTML
             const htmlContent = marked.parse(markdown);
             const messageId = 'bot-msg-' + Date.now();
-            
+
             messageDiv.innerHTML = `
                 <div class="flex-shrink-0">
                     <img src="{{ asset('images/floatingBot.png') }}" alt="Bot" class="w-10 h-10 object-contain">
@@ -498,11 +505,11 @@
             messageDiv.setAttribute('data-bot-response', markdown);
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
+
             // Add star rating event listeners
             const starRating = messageDiv.querySelector('.star-rating');
             const starBtns = starRating.querySelectorAll('.star-btn');
-            
+
             // Hover effect - light up stars up to hovered star
             starBtns.forEach((btn, index) => {
                 btn.addEventListener('mouseenter', () => {
@@ -534,7 +541,7 @@
                     e.preventDefault();
                     const rating = btn.getAttribute('data-rating');
                     const ratingText = ['Tidak membantu', 'Kurang membantu', 'Cukup membantu', 'Membantu', 'Sangat membantu'];
-                    
+
                     // Mark selected stars as active - permanently
                     starBtns.forEach((b, i) => {
                         if (i < rating) {
@@ -545,32 +552,32 @@
                             b.classList.add('text-gray-300', 'dark:text-gray-500');
                         }
                     });
-                    
+
                     // Disable all buttons after rating
                     starBtns.forEach(b => {
                         b.disabled = true;
                         b.classList.add('cursor-not-allowed', 'opacity-50');
                     });
-                    
+
                     // Get message and response from messageDiv attributes
                     const userMsg = messageDiv.getAttribute('data-user-message');
                     const botResp = messageDiv.getAttribute('data-bot-response');
-                    
+
                     // Show thank you message
                     const thankYouDiv = document.createElement('div');
                     thankYouDiv.className = 'mt-2 text-xs text-green-600 dark:text-green-400 font-semibold';
-                    thankYouDiv.textContent = `✓ Rating ${rating} bintang untuk "${ratingText[rating-1]}" telah tersimpan.`;
+                    thankYouDiv.textContent = `✓ Rating ${rating} bintang untuk "${ratingText[rating - 1]}" telah tersimpan.`;
                     starRating.parentElement.replaceChild(thankYouDiv, starRating);
-                    
+
                     // Auto-send rating to server with message and response
                     try {
-                        const response = await fetch('/api/chatbot/rate', {
+                        const response = await fetch('{{ route('chatbot.rate') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-Requested-With': 'XMLHttpRequest',
                             },
-                            body: JSON.stringify({ 
+                            body: JSON.stringify({
                                 session_id: sessionId,
                                 rating: rating,
                                 message_id: messageId,
@@ -602,7 +609,7 @@
             messageDiv.className = 'flex gap-3 animate-fade-in';
             const typingId = 'typing-' + Date.now();
             messageDiv.id = typingId;
-            
+
             messageDiv.innerHTML = `
                 <div class="flex-shrink-0">
                     <img src="{{ asset('images/floatingBot.png') }}" alt="Bot" class="w-10 h-10 object-contain">
@@ -617,7 +624,7 @@
                     </div>
                 </div>
             `;
-            
+
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
             return typingId;
