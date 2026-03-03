@@ -38,13 +38,22 @@ if ($uri !== '/' && file_exists(__DIR__ . '/public' . $uri)) {
         'woff2' => 'font/woff2',
         'ttf' => 'font/ttf',
         'otf' => 'font/otf',
+        'webp' => 'image/webp',
+        'pdf' => 'application/pdf',
     ];
 
     if (isset($mimeTypes[$extension])) {
         header('Content-Type: ' . $mimeTypes[$extension]);
     }
 
-    return false;
+    // Set caching headers for production
+    if (getenv('APP_ENV') === 'production') {
+        header('Cache-Control: public, max-age=31536000');
+    }
+
+    header('Content-Length: ' . filesize($path));
+    readfile($path);
+    return true;
 }
 
 // Otherwise, route everything through Laravel's front controller.
