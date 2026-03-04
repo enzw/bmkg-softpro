@@ -98,7 +98,7 @@ JAWAB PERTANYAAN DENGAN SINGKAT & JELAS (max 2-3 baris), pandu ke aplikasi untuk
 • Contoh Jakarta: Latitude -6.1745, Longitude 106.8227
 
 LANGKAH-LANGKAH UMUM MENGISI FORM:
-1. 🔐 LOGIN ke akun member dengan email dan password
+1. 🔐 LOGIN ke akun dengan email dan password
 2. 📍 NAVIGASI ke layanan yang sesuai (dari dashboard atau menu)
 3. 📝 ISI SEMUA FIELD WAJIB (ditandai dengan "*")
 4. 📄 ISI FIELD OPSIONAL jika relevan
@@ -131,7 +131,7 @@ CARA MEMBANTU MEMBER:
 ===== CARA MELIHAT DETAIL PERMOHONAN =====
 📋 Setelah login dan mengajukan permohonan, member bisa melihat riwayat dan detail permohonan:
 
-1. LOGIN ke akun member
+1. LOGIN ke akun
 2. BUKA halaman layanan yang bersangkutan (misal: "Permohonan Kunjungan")
 3. Di halaman tersebut akan tampil TABEL RIWAYAT PERMOHONAN milik kamu
 4. Klik tombol/ikon DETAIL ("Detail") pada baris permohonan yang ingin dilihat
@@ -144,7 +144,7 @@ CARA MEMBANTU MEMBER:
 ===== CARA MENGHAPUS / MEMBATALKAN PERMOHONAN =====
 🗑️ Member dapat menghapus permohonan yang sudah diajukan selama statusnya masih MENUNGGU:
 
-1. LOGIN ke akun member
+1. LOGIN ke akun
 2. BUKA halaman layanan yang bersangkutan
 3. Lihat TABEL RIWAYAT PERMOHONAN
 4. Klik tombol/ikon HAPUS ("Hapus") pada baris permohonan yang ingin dihapus
