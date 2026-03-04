@@ -216,15 +216,10 @@
                                                         </li>
                                                         <li class="flex items-start gap-2">
                                                             <span class="text-blue-600 font-bold">4.</span>
-                                                            <span><strong>Layanan Peta Sebaran</strong> - Jasa peta sebaran
-                                                                geofisika</span>
-                                                        </li>
-                                                        <li class="flex items-start gap-2">
-                                                            <span class="text-blue-600 font-bold">5.</span>
                                                             <span><strong>Layanan Survey</strong> - Survey geofisika lapangan</span>
                                                         </li>
                                                         <li class="flex items-start gap-2">
-                                                            <span class="text-blue-600 font-bold">6.</span>
+                                                            <span class="text-blue-600 font-bold">5.</span>
                                                             <span><strong>Layanan Konsultasi</strong> - Konsultasi teknis
                                                                 geofisika</span>
                                                         </li>
