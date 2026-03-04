@@ -67,6 +67,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function hasVerifiedEmail()
     {
-        return $this->role === 'admin' || parent::hasVerifiedEmail();
+        return in_array($this->role, ['admin', 'superuser']) || parent::hasVerifiedEmail();
     }
 }
