@@ -79,7 +79,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             GuestUserSeeder::class,
-            ChatbotRatingSeeder::class,
         ]);
     }
 }
