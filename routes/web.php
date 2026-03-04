@@ -307,14 +307,15 @@ Route::get('/dbg-routes', function () {
     ]);
 });
 
-Route::any('{any}', function () {
+require __DIR__ . '/auth.php';
+
+// Debug fallback - shows what path Laravel sees for unmatched routes
+Route::fallback(function () {
     return response()->json([
-        'message' => 'Route not found in Laravel (Global Fallback)',
+        'message' => 'Route not found in Laravel',
         'requested_uri' => request()->getRequestUri(),
         'requested_path' => request()->path(),
         'requested_method' => request()->method(),
         'app_url' => config('app.url'),
     ], 404);
-})->where('any', '.*');
-
-require __DIR__ . '/auth.php';
+});
