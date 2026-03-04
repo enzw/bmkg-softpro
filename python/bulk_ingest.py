@@ -133,7 +133,7 @@ def create_sample_bmkg_documents(db_session):
             - Weather Station Portable
             
             Prosedur Penyewaan:
-            1. Isi form "Jasa Sewa Alat MKG" di aplikasi
+            1. Isi form "Jasa Sewa Alat MKG" di web ini
             2. Pilih alat yang akan disewa
             3. Tentukan periode penyewaan
             4. Siapkan dokumen pendukung (surat permohonan, KTP)

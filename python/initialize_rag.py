@@ -161,7 +161,7 @@ def create_sample_document(db):
         6. Layanan Survey
         7. Klaim Asuransi
         
-        Untuk setiap permohonan, silakan isi form yang tersedia di aplikasi dengan data yang lengkap dan akurat.
+        Untuk setiap permohonan, silakan isi form yang tersedia di web ini dengan data yang lengkap dan akurat.
         Tim kami akan menghubungi Anda melalui WhatsApp untuk follow-up.
         """
         
