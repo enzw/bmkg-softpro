@@ -13,13 +13,13 @@
                 $isEnum = $item->status instanceof \App\Enums\Status;
                 $currentStatusColor = $isEnum ? $item->status->color() : 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800/50 text-gray-700 dark:text-gray-300';
                 $statusLabel = $isEnum ? $item->status->label() : ($item->status->value ?? $item->status ?? 'Menunggu');
-                
+
                 $visitIcon = [
                     'goes to BMKG' => 'fa-building',
                     'goes to school' => 'fa-school',
                 ];
                 $currentVisitIcon = $visitIcon[$item->jenis_kunjungan] ?? 'fa-map-pin';
-                
+
                 $visitColor = [
                     'goes to BMKG' => 'bg-cyan-100 dark:bg-cyan-900/20 border-cyan-200 dark:border-cyan-800/50 text-cyan-700 dark:text-cyan-300',
                     'goes to school' => 'bg-violet-100 dark:bg-violet-900/20 border-violet-200 dark:border-violet-800/50 text-violet-700 dark:text-violet-300',
@@ -247,7 +247,9 @@
                                     <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2 text-left">
                                         Keterangan / Keperluan
                                     </p>
-                                    <p class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed text-left w-full">{{ $item->rencana_kunjungan }}</p>
+                                    <p
+                                        class="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed text-left w-full">
+                                        {{ $item->rencana_kunjungan }}</p>
                                 </div>
                             </div>
 
@@ -297,21 +299,28 @@
                             @endif
 
                             <!-- Timestamp -->
-                            <div>
-                                <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                                    <i class="fas fa-clock text-gray-600 dark:text-gray-400"></i>
-                                    Waktu
+                            <div class="relative pl-6 border-l-2 border-slate-500/30">
+                                <h4
+                                    class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                                    Waktu Pengajuan
                                 </h4>
-                                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600 dark:text-gray-400">Dibuat:</span>
-                                        <span
-                                            class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</span>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Dibuat
+                                        </p>
+                                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                            {{ \Carbon\Carbon::parse($item->created_at)->format('d F Y H:i') }} WIB
+                                        </p>
                                     </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600 dark:text-gray-400">Diperbarui:</span>
-                                        <span
-                                            class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($item->updated_at)->format('d/m/Y H:i') }}</span>
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
+                                            Terakhir Diperbarui</p>
+                                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                            {{ \Carbon\Carbon::parse($item->updated_at)->format('d F Y H:i') }} WIB
+                                        </p>
                                     </div>
                                 </div>
                             </div>

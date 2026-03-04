@@ -268,6 +268,33 @@
                                     </div>
                                 </div>
                             @endif
+                            
+                            <!-- Timestamp -->
+                            <div class="relative pl-6 border-l-2 border-slate-500/30">
+                                <h4
+                                    class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                                    Waktu Pengajuan
+                                </h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Dibuat
+                                        </p>
+                                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                            {{ \Carbon\Carbon::parse($item->created_at)->format('d F Y H:i') }} WIB
+                                        </p>
+                                    </div>
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-900/40 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
+                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">
+                                            Terakhir Diperbarui</p>
+                                        <p class="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                                            {{ \Carbon\Carbon::parse($item->updated_at)->format('d F Y H:i') }} WIB
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Footer -->
