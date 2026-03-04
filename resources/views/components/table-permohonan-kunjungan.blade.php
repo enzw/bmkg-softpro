@@ -94,7 +94,8 @@
                             <div>
                                 <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Rencana</p>
                                 <p class="font-semibold text-gray-900 dark:text-white text-sm">
-                                    {{ Str::limit($item->rencana_kunjungan, 20) }}</p>
+                                    {{ Str::limit($item->rencana_kunjungan, 20) }}
+                                </p>
                             </div>
                         </div>
 
@@ -157,12 +158,14 @@
                                             <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Nama Lengkap
                                             </p>
                                             <p class="text-sm font-semibold text-gray-900 dark:text-white">
-                                                {{ e($item->nama_lengkap) }}</p>
+                                                {{ e($item->nama_lengkap) }}
+                                            </p>
                                         </div>
                                         <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
                                             <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">No WhatsApp
                                             <p class="text-sm font-semibold text-gray-900 dark:text-white">
-                                                {{ e($item->no_whatsapp) }}</p>
+                                                {{ e($item->no_whatsapp) }}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -175,12 +178,14 @@
                                         <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
                                             <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Jenis</p>
                                             <p class="text-sm font-semibold text-gray-900 dark:text-white">
-                                                {{ e($item->jenis_kunjungan) }}</p>
+                                                {{ e($item->jenis_kunjungan) }}
+                                            </p>
                                         </div>
                                         <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
                                             <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Rombongan</p>
                                             <p class="text-sm font-semibold text-gray-900 dark:text-white">
-                                                {{ $item->jumlah_rombongan }} orang</p>
+                                                {{ $item->jumlah_rombongan }} orang
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -191,8 +196,7 @@
                                     <p
                                         class="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-widest mb-2">
                                         Rencana Kunjungan</p>
-                                    <p class="text-sm text-green-900 dark:text-green-100 whitespace-pre-wrap">
-                                        {{ e($item->rencana_kunjungan) }}</p>
+                                    <p class="text-sm text-green-900 dark:text-green-100 whitespace-pre-wrap">{{ e($item->rencana_kunjungan) }}</p>
                                 </div>
 
                                 <!-- Tanggal Permohonan -->
@@ -200,7 +204,8 @@
                                     <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Tanggal Permohonan
                                     </p>
                                     <p class="text-sm font-semibold text-gray-900 dark:text-white">
-                                        {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</p>
+                                        {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}
+                                    </p>
                                 </div>
 
                                 @if($item->surat_permohonan || $item->ktp)
@@ -244,7 +249,8 @@
                             <div class="mt-4 text-center px-6">
                                 <h3 class="text-lg font-bold text-gray-900 dark:text-white">Hapus Permohonan?</h3>
                                 <p class="text-gray-600 dark:text-gray-400 mt-2">Yakin ingin menghapus permohonan untuk
-                                    <strong>{{ $item->nama_instansi }}</strong>?</p>
+                                    <strong>{{ $item->nama_instansi }}</strong>?
+                                </p>
                                 <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">Tindakan ini tidak dapat dibatalkan.
                                 </p>
                             </div>
