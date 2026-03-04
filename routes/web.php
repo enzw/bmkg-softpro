@@ -304,4 +304,14 @@ Route::get('/dbg-routes', function () {
     ]);
 });
 
+Route::fallback(function () {
+    return response()->json([
+        'message' => 'Route not found in Laravel',
+        'requested_uri' => request()->getRequestUri(),
+        'requested_path' => request()->path(),
+        'requested_method' => request()->method(),
+        'app_url' => config('app.url'),
+    ], 404);
+});
+
 require __DIR__ . '/auth.php';
