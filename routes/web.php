@@ -221,7 +221,7 @@ Route::middleware(['auth', 'verified', 'session.timeout'])->group(function () {
         });
         Route::get('permohonan-kunjungan/create', [PermohonanKunjunganController::class, 'create'])->name('permohonan-kunjungan.create');
         Route::post('permohonan-kunjungan', [PermohonanKunjunganController::class, 'store'])->name('permohonan-kunjungan.store');
-        Route::delete('permohonan-kunjungan/{kunjungan}', [PermohonanKunjunganController::class, 'destroy'])->name('permohonan-kunjungan.destroy')->where('kunjungan', '[0-9]+');
+        Route::delete('permohonan-kunjungan/{kunjungan}', [PermohonanKunjunganController::class, 'destroy'])->name('permohonan-kunjungan.destroy')->where('kunjungan', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}');
         Route::get('permohonan-kunjungan/{id}/file/{fileName}/view', [PermohonanKunjunganController::class, 'downloadFile'])->where('fileName', '.+')->name('permohonan-kunjungan.download-file');
         Route::resource('permohonan-asuransi', AsuransiController::class);
         Route::get('klaim-asuransi/{klaim_asuransi}', [AsuransiController::class, 'download'])

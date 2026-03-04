@@ -104,7 +104,7 @@
                                 class="flex-1 px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 font-semibold text-sm transition">
                                 <i class="fas fa-eye mr-2"></i>Detail
                             </button>
-                            <button type="button" onclick="confirmDelete('{{ $item->id }}', null)"
+                            <button type="button" onclick="openModal('modal-delete-{{ $loop->index }}')"
                                 class="flex-1 px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30 font-semibold text-sm transition">
                                 <i class="fas fa-trash mr-2"></i>Hapus
                             </button>
@@ -196,7 +196,8 @@
                                     <p
                                         class="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-widest mb-2">
                                         Rencana Kunjungan</p>
-                                    <p class="text-sm text-green-900 dark:text-green-100 whitespace-pre-wrap">{{ e($item->rencana_kunjungan) }}</p>
+                                    <p class="text-sm text-green-900 dark:text-green-100 whitespace-pre-wrap">
+                                        {{ e($item->rencana_kunjungan) }}</p>
                                 </div>
 
                                 <!-- Tanggal Permohonan -->
@@ -291,6 +292,14 @@
     }
 
     function confirmDelete(recordId, modalId, buttonElement) {
+        // Capture original button state
+        const originalText = buttonElement.textContent;
+
+        // Update button state
+        buttonElement.textContent = 'Menghapus...';
+        buttonElement.disabled = true;
+        buttonElement.classList.add('opacity-70', 'cursor-not-allowed');
+
         let csrfToken = null;
         const metaTag = document.querySelector('meta[name="csrf-token"]');
         if (metaTag) {
@@ -306,25 +315,11 @@
 
         if (!csrfToken) {
             alert('Error: CSRF token tidak ditemukan');
+            buttonElement.textContent = originalText;
+            buttonElement.disabled = false;
+            buttonElement.classList.remove('opacity-70', 'cursor-not-allowed');
             return;
         }
-
-        // Capture original button state for reset on error
-        const originalText = buttonElement ? buttonElement.textContent : null;
-
-        // Update button state
-        if (buttonElement) {
-            buttonElement.textContent = 'Menghapus...';
-            buttonElement.disabled = true;
-            buttonElement.classList.add('opacity-70', 'cursor-not-allowed');
-        }
-
-        // Close the delete confirmation modal
-        if (modalId) {
-            closeModal(modalId);
-        }
-
-        console.log('Starting delete request for record:', recordId);
 
         fetch(`/layanan/permohonan-kunjungan/${recordId}`, {
             method: 'DELETE',
@@ -335,14 +330,9 @@
             }
         })
             .then(response => {
-                console.log('Delete response status:', response.status);
-                console.log('Response headers:', response.headers);
-
                 if (response.status === 403) {
                     alert('Error: Anda tidak memiliki izin untuk menghapus permohonan ini');
-                    return response.json().then(data => {
-                        console.log('Auth error details:', data);
-                    });
+                    return;
                 }
 
                 if (response.status === 404) {
@@ -351,31 +341,20 @@
                 }
 
                 if (response.ok) {
-                    console.log('Delete successful, reloading page...');
-                    // Reload immediately
                     window.location.reload();
                 } else {
-                    // Try to parse as JSON
-                    const contentType = response.headers.get('content-type');
-                    if (contentType && contentType.includes('application/json')) {
-                        return response.json().then(data => {
-                            console.log('Delete error response:', data);
-                            throw new Error(data.message || `HTTP ${response.status}: Gagal menghapus permohonan`);
-                        });
-                    } else {
-                        throw new Error(`HTTP ${response.status}: Gagal menghapus permohonan`);
-                    }
+                    return response.json().then(data => {
+                        throw new Error(data.message || `HTTP ${response.status}: Gagal menghapus permohonan`);
+                    });
                 }
             })
             .catch(error => {
                 console.error('Delete error:', error);
                 alert('Error: ' + error.message);
                 // Reset button state on error
-                if (buttonElement && originalText) {
-                    buttonElement.textContent = originalText;
-                    buttonElement.disabled = false;
-                    buttonElement.classList.remove('opacity-70', 'cursor-not-allowed');
-                }
+                buttonElement.textContent = originalText;
+                buttonElement.disabled = false;
+                buttonElement.classList.remove('opacity-70', 'cursor-not-allowed');
             });
     }
 </script>
