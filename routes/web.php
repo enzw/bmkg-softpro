@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
 // use App\Http\Controllers\DialogflowWebhookController;
 use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\DashboardPelayananController;
 use App\Http\Controllers\AdminRatingController;
 use App\Http\Controllers\AdminDownloadAreaController;
@@ -101,10 +102,12 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Temporary debugging for chatbot route
-Route::get('/api/chatbot/test-web', function () {
-    return response()->json(['status' => 'Web route test is working']);
+Route::get('/api/chatbot/test-api', function () {
+    return response()->json(['status' => 'Chatbot API via Web Routes is working']);
 });
+
+Route::post('/api/chatbot/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');
+Route::post('/api/chatbot/rate', [ChatbotController::class, 'rate'])->name('chatbot.rate');
 
 Route::get('/dashboard-pelayanan', [DashboardPelayananController::class, 'index'])
     ->middleware(['auth', 'verified', 'auth.notadmin'])->name('dashboard-pelayanan');

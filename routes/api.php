@@ -20,13 +20,7 @@ use App\Http\Controllers\BeritaController;
 
 Route::get('/berita', [BeritaController::class, 'api']);
 
-Route::get('/chatbot/test', function () {
-    return response()->json(['status' => 'API routes are working']);
-});
-
-// Chatbot API Routes (Public)
-Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');
-Route::post('/chatbot/rate', [ChatbotController::class, 'rate'])->name('chatbot.rate'); // Accept feedback from both authed and guest users
+// Chatbot routes moved to web.php to resolve production prefix issues
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

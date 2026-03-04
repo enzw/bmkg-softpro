@@ -39,6 +39,11 @@ if [ -z "$APP_KEY" ]; then
     export APP_KEY="base64:+cKsVH9wk7MLoiUzFSYW0f1/TIv5nQwDaViDN7RxDRo="
 fi
 
+# Trust proxies for Koyeb
+if [ -z "$TRUSTED_PROXIES" ]; then
+    export TRUSTED_PROXIES="*"
+fi
+
 echo "📋 Configuration:"
 echo "   PORT: $PORT"
 echo "   APP_URL: $APP_URL"
