@@ -102,12 +102,12 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/api/chatbot/test-api', function () {
-    return response()->json(['status' => 'Chatbot API via Web Routes is working']);
+Route::get('/api-chatbot/test-api', function () {
+    return response()->json(['status' => 'Chatbot API via Web Routes (Unique Path) is working']);
 });
 
-Route::post('/api/chatbot/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');
-Route::post('/api/chatbot/rate', [ChatbotController::class, 'rate'])->name('chatbot.rate');
+Route::post('/chatbot-api/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');
+Route::post('/chatbot-api/rate', [ChatbotController::class, 'rate'])->name('chatbot.rate');
 
 Route::get('/dashboard-pelayanan', [DashboardPelayananController::class, 'index'])
     ->middleware(['auth', 'verified', 'auth.notadmin'])->name('dashboard-pelayanan');
@@ -307,14 +307,14 @@ Route::get('/dbg-routes', function () {
     ]);
 });
 
-Route::fallback(function () {
+Route::any('{any}', function () {
     return response()->json([
-        'message' => 'Route not found in Laravel',
+        'message' => 'Route not found in Laravel (Global Fallback)',
         'requested_uri' => request()->getRequestUri(),
         'requested_path' => request()->path(),
         'requested_method' => request()->method(),
         'app_url' => config('app.url'),
     ], 404);
-});
+})->where('any', '.*');
 
 require __DIR__ . '/auth.php';
