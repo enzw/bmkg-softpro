@@ -58,4 +58,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->notify(new ResetPasswordNotification($token));
     }
+
+    /**
+     * Determine if the user has verified their email address.
+     * Admins bypass email verification.
+     *
+     * @return bool
+     */
+    public function hasVerifiedEmail()
+    {
+        return $this->role === 'admin' || parent::hasVerifiedEmail();
+    }
 }

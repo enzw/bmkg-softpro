@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
                 'pendidikan' => 's2',
                 'telp' => fake()->unique()->e164PhoneNumber(),
                 'alamat' => fake()->address(),
+                'email_verified_at' => now(),
             ]
         );
 
