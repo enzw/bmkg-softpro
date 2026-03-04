@@ -111,7 +111,7 @@ const SYSTEM_PROMPT = `Anda adalah asisten pelayanan Stasiun Geofisika Sleman �
 7️⃣ KLAIM ASURANSI
    Form: "Pelayanan Informasi Geofisika" → pilih "Layanan Klaim Asuransi"
    Field yang harus diisi:
-   • Nama (otomatis dari akun)
+   • Nama
    • Nomor WhatsApp
    • Perusahaan
    • Lokasi
