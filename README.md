@@ -21,6 +21,7 @@
 - Optimize project: `php artisan optimize`
 - Start projet! `php artisan serve`
 - Buka terminal baru `npm run dev`
+- Buka terminal baru `npm run chatbot`
 
 ## Kelompok:
 - Gwe sendiri
