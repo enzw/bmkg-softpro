@@ -7,7 +7,7 @@
 
             <div class="mb-16">
                 <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-                    Stasiun Geofisika Yogyakarta
+                    Stasiun Geofisika Sleman
                 </h1>
 
                 <p class="text-lg md:text-xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-3xl font-medium">
@@ -17,7 +17,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
-                <img src="{{ asset('/images/slides/0.jpeg') }}" alt="Stasiun Geofisika Yogyakarta"
+                <img src="{{ asset('/images/slides/0.jpeg') }}" alt="Stasiun Geofisika Sleman"
                     class="w-full max-w-md mx-auto lg:mx-0 rounded-xl shadow-lg object-cover aspect-square">
 
                 <div class="text-gray-700 dark:text-gray-300 leading-relaxed space-y-8">

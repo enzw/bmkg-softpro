@@ -67,7 +67,7 @@
                     <img src="{{ asset('/images/logo-bmkg.png') }}" alt="BMKG" class="w-20 h-20 relative">
                 </div>
                 <div class="text-center">
-                    <h1 class="text-3xl font-bold mb-1 text-gray-900 dark:text-white drop-shadow">Stasiun Geofisika Yogyakarta</h1>
+                    <h1 class="text-3xl font-bold mb-1 text-gray-900 dark:text-white drop-shadow">Stasiun Geofisika Sleman</h1>
                     <p class="text-gray-600 dark:text-gray-300 text-sm drop-shadow">Sistem Pelayanan Online</p>
                 </div>
             </a>

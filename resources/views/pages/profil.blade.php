@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Profil Stasiun Geofisika Yogyakarta')
+@section('title', 'Profil Stasiun Geofisika Sleman')
 
 @section('content')
 <div class="dark:bg-slate-900 dark:text-white">
@@ -36,7 +36,7 @@
                 <div class="info-card opacity-0 -translate-x-6 transition-all duration-700">
                     <div class="relative group">
                         <div class="absolute -inset-4 bg-gradient-to-br from-green-600 to-emerald-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition duration-500"></div>
-                        <img src="{{ asset('/images/slides/0.jpeg') }}" alt="Stasiun Geofisika Yogyakarta"
+                        <img src="{{ asset('/images/slides/0.jpeg') }}" alt="Stasiun Geofisika Sleman"
                             class="relative w-full rounded-2xl shadow-2xl object-cover aspect-[4/3] border border-white/20 dark:border-slate-700">
                         <div class="absolute bottom-6 left-6 right-6">
                             <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md p-3 px-5 rounded-2xl border border-white/20 shadow-xl inline-block">
