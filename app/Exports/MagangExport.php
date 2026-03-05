@@ -24,7 +24,7 @@ class MagangExport implements FromCollection, WithHeadings, WithColumnWidths, Wi
             $mulai = Carbon::parse($item->tanggal_mulai);
             $selesai = Carbon::parse($item->tanggal_selesai);
             $durasi = $selesai->diffInDays($mulai);
-            
+
             return [
                 $item->id,
                 $item->user->name ?? 'N/A',
@@ -37,7 +37,7 @@ class MagangExport implements FromCollection, WithHeadings, WithColumnWidths, Wi
                 $mulai->format('Y-m-d'),
                 $selesai->format('Y-m-d'),
                 $durasi . ' hari',
-                $item->status,
+                $item->status->value,
                 $item->created_at?->format('Y-m-d H:i:s'),
                 $item->updated_at?->format('Y-m-d H:i:s'),
             ];

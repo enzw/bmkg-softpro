@@ -29,7 +29,7 @@ class AsuransiExport implements FromCollection, WithHeadings, WithColumnWidths, 
                 $item->perusahaan,
                 $item->kejadian,
                 $item->no_whatsapp,
-                $item->status,
+                $item->status->value,
                 $item->created_at?->format('Y-m-d H:i:s'),
                 $item->updated_at?->format('Y-m-d H:i:s'),
             ];

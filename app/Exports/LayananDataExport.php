@@ -27,7 +27,7 @@ class LayananDataExport implements FromCollection, WithHeadings, WithColumnWidth
                 $item->email,
                 $item->no_whatsapp,
                 $item->keterangan,
-                $item->status,
+                $item->status->value,
                 $item->created_at?->format('Y-m-d H:i:s'),
                 $item->updated_at?->format('Y-m-d H:i:s'),
             ];

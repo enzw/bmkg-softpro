@@ -24,7 +24,7 @@ class SewaAlatExport implements FromCollection, WithHeadings, WithColumnWidths, 
             $sewa_mulai = Carbon::parse($item->sewa_mulai);
             $sewa_berakhir = Carbon::parse($item->sewa_berakhir);
             $durasi = $sewa_berakhir->diffInDays($sewa_mulai);
-            
+
             return [
                 $item->id,
                 $item->user->name ?? 'N/A',
@@ -35,7 +35,7 @@ class SewaAlatExport implements FromCollection, WithHeadings, WithColumnWidths, 
                 $sewa_berakhir->format('Y-m-d'),
                 $durasi . ' hari',
                 $item->keterangan,
-                $item->status,
+                $item->status->value,
                 $item->created_at?->format('Y-m-d H:i:s'),
                 $item->updated_at?->format('Y-m-d H:i:s'),
             ];
