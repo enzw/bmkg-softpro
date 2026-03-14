@@ -82,7 +82,7 @@
         </div>
 
         <!-- Footer -->
-        <p class="text-gray-600 dark:text-gray-400 text-sm mt-8 text-center">© {{ date('Y') }} Stasiun Geofisika Yogyakarta. All rights reserved.</p>
+        <p class="text-gray-600 dark:text-gray-400 text-sm mt-8 text-center">© {{ date('Y') }} Stasiun Geofisika Sleman. All rights reserved.</p>
     </div>
 
     <script>

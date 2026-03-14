@@ -7,20 +7,29 @@
     <div class="container px-4 mx-auto py-12">
         <!-- Header Section -->
         <div class="mt-12 mb-12">
-            <div class="flex items-center gap-2 mb-4">
+            <div class="flex items-start justify-between">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <a href="{{ route('layanan') }}"
+                            class="text-sm text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition">
+                            Layanan
+                        </a>
+                        <span class="text-gray-300 dark:text-gray-600">/</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Pelayanan Informasi Geofisika</span>
+                    </div>
+                    <div class="mb-2">
+                        <h1 class="text-5xl font-bold text-gray-900 dark:text-white">Pelayanan Informasi Geofisika</h1>
+                    </div>
+                    <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">
+                        Ajukan permohonan berbagai layanan informasi geofisika termasuk magang, klaim asuransi, data, survey, dan konsultasi.
+                    </p>
+                </div>
                 <a href="{{ route('layanan') }}"
-                    class="text-sm text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition">
-                    Layanan
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-lg transition duration-300 shadow-md hover:shadow-lg shrink-0">
+                    <i class="fas fa-arrow-left"></i>
+                    Kembali
                 </a>
-                <span class="text-gray-300 dark:text-gray-600">/</span>
-                <span class="text-sm text-gray-600 dark:text-gray-400">Pelayanan Informasi Geofisika</span>
             </div>
-            <div class="mb-2">
-                <h1 class="text-5xl font-bold text-gray-900 dark:text-white">Pelayanan Informasi Geofisika</h1>
-            </div>
-            <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">
-                Ajukan permohonan berbagai layanan informasi geofisika termasuk magang, klaim asuransi, data, survey, dan konsultasi.
-            </p>
         </div>
 
         <!-- Main Content Grid -->

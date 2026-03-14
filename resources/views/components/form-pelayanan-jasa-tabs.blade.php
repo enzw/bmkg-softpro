@@ -633,7 +633,14 @@ function switchTab(tabName, buttonElement) {
     buttonElement.setAttribute('aria-selected', 'true');
 }
 
-function toggleServiceType(serviceType) {
-    // Peta Sebaran removed - no longer needed
-}
+// Tab switching based on URL Hash
+window.addEventListener('load', () => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+        const tabButton = document.querySelector(`button[onclick*="'${hash}'"]`);
+        if (tabButton) {
+            switchTab(hash, tabButton);
+        }
+    }
+});
 </script>

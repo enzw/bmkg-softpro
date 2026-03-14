@@ -62,6 +62,7 @@
     @auth
         <script src="{{ asset('js/session-timeout.js') }}"></script>
     @endauth
+    @stack('scripts')
 </body>
 
 </html>

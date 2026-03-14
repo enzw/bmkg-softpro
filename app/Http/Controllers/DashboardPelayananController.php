@@ -20,12 +20,19 @@ class DashboardPelayananController extends Controller
 
     public function index()
     {
+        $search = request()->input('search');
         $layanan = LayananService::getLayanan();
-        $permohonan = $this->getPermohonanList();
+        
+        // Get all permohonan for original count
+        $allPermohonan = $this->getPermohonanList();
+        $totalPermohonan = count($allPermohonan);
+
+        // Get filtered permohonan
+        $permohonan = $search ? $this->getPermohonanList($search) : $allPermohonan;
+        $resultCount = count($permohonan);
 
         // Ambil hanya 5 data pertama untuk view pertama kali
         $displayedPermohonan = array_slice($permohonan, 0, self::ITEMS_PER_PAGE);
-        $totalPermohonan = count($permohonan);
 
         $pendingRating = $this->getPendingRating();
 
@@ -33,7 +40,9 @@ class DashboardPelayananController extends Controller
             'layanan' => $layanan,
             'permohonan' => $displayedPermohonan,
             'totalPermohonan' => $totalPermohonan,
+            'resultCount' => $resultCount,
             'pendingRating' => $pendingRating,
+            'search' => $search,
         ]);
     }
 
@@ -103,7 +112,8 @@ class DashboardPelayananController extends Controller
     public function loadMore()
     {
         $offset = request()->input('offset', 0);
-        $permohonan = $this->getPermohonanList();
+        $search = request()->input('search');
+        $permohonan = $this->getPermohonanList($search);
 
         // Ambil data berdasarkan offset
         $morePermohonan = array_slice($permohonan, $offset, self::ITEMS_PER_PAGE);
@@ -113,24 +123,36 @@ class DashboardPelayananController extends Controller
             'permohonan' => $morePermohonan,
             'hasMore' => $hasMore,
             'count' => count($morePermohonan),
+            'total' => count($permohonan), // results count after search
         ]);
     }
 
     /**
      * Get all user's permohonan
      */
-    private function getPermohonanList()
+    private function getPermohonanList($search = null)
     {
         $userId = Auth::id();
         $permohonan = [];
 
         // Dari SewaAlat (Jasa Sewa Alat)
-        $sewaAlat = SewaAlat::where('user_id', $userId)->get();
+        $sewaAlat = SewaAlat::with('alat')->where('user_id', $userId)->get();
         foreach ($sewaAlat as $item) {
             $permohonan[] = [
-                'jenis' => 'Jasa Sewa Alat MKG',
-                'status' => $item->status?->label() ?? 'Menunggu',
-                'tanggal' => $item->created_at,
+                'id'         => $item->id,
+                'model_type' => 'sewa_alat',
+                'delete_url' => "/layanan/sewa-alat/permohonan/{$item->id}/hapus",
+                'jenis'      => 'Jasa Sewa Alat MKG',
+                'status'     => $item->status?->label() ?? 'Menunggu',
+                'tanggal'    => $item->created_at,
+                'detail'     => [
+                    'Nama'          => $item->nama ?? '-',
+                    'No WhatsApp'   => $item->no_whatsapp ?? '-',
+                    'Alat'          => $item->alat?->nama ?? '-',
+                    'Jumlah Unit'   => ($item->banyak_unit ?? 0) . ' unit',
+                    'Mulai Sewa'    => $item->sewa_mulai ? \Carbon\Carbon::parse($item->sewa_mulai)->format('d/m/Y') : '-',
+                    'Akhir Sewa'    => $item->sewa_berakhir ? \Carbon\Carbon::parse($item->sewa_berakhir)->format('d/m/Y') : '-',
+                ],
             ];
         }
 
@@ -138,9 +160,21 @@ class DashboardPelayananController extends Controller
         $magang = Magang::where('user_id', $userId)->get();
         foreach ($magang as $item) {
             $permohonan[] = [
-                'jenis' => 'Magang',
-                'status' => $item->status?->label() ?? 'Menunggu',
-                'tanggal' => $item->created_at,
+                'id'         => $item->id,
+                'model_type' => 'magang',
+                'delete_url' => "/layanan/pelayanan-jasa/{$item->id}",
+                'jenis'      => 'Magang',
+                'status'     => $item->status?->label() ?? 'Menunggu',
+                'tanggal'    => $item->created_at,
+                'detail'     => [
+                    'Nama'           => $item->nama_lengkap ?? '-',
+                    'No WhatsApp'    => $item->no_whatsapp ?? '-',
+                    'Universitas'    => $item->universitas ?? '-',
+                    'Fakultas'       => $item->fakultas ?? '-',
+                    'Program Studi'  => $item->prodi ?? '-',
+                    'Mulai Magang'   => $item->tanggal_mulai ? \Carbon\Carbon::parse($item->tanggal_mulai)->format('d/m/Y') : '-',
+                    'Selesai Magang' => $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-',
+                ],
             ];
         }
 
@@ -148,9 +182,18 @@ class DashboardPelayananController extends Controller
         $asuransi = Asuransi::where('user_id', $userId)->get();
         foreach ($asuransi as $item) {
             $permohonan[] = [
-                'jenis' => 'Klaim Asuransi',
-                'status' => $item->status?->label() ?? 'Menunggu',
-                'tanggal' => $item->created_at,
+                'id'         => $item->id,
+                'model_type' => 'asuransi',
+                'delete_url' => "/layanan/pelayanan-jasa/{$item->id}",
+                'jenis'      => 'Klaim Asuransi',
+                'status'     => $item->status?->label() ?? 'Menunggu',
+                'tanggal'    => $item->created_at,
+                'detail'     => [
+                    'Perusahaan'  => $item->perusahaan ?? '-',
+                    'No WhatsApp' => $item->no_whatsapp ?? '-',
+                    'Lokasi'      => $item->lokasi ?? '-',
+                    'Tanggal'     => $item->tanggal ? \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') : '-',
+                ],
             ];
         }
 
@@ -158,9 +201,20 @@ class DashboardPelayananController extends Controller
         $kunjungan = Kunjungan::where('user_id', $userId)->get();
         foreach ($kunjungan as $item) {
             $permohonan[] = [
-                'jenis' => 'Permohonan Kunjungan Teknis',
-                'status' => $item->status?->label() ?? 'Menunggu',
-                'tanggal' => $item->created_at,
+                'id'         => $item->id,
+                'model_type' => 'kunjungan',
+                'delete_url' => "/layanan/permohonan-kunjungan/{$item->id}",
+                'jenis'      => 'Permohonan Kunjungan Teknis',
+                'status'     => $item->status?->label() ?? 'Menunggu',
+                'tanggal'    => $item->created_at,
+                'detail'     => [
+                    'Nama Lengkap'     => $item->nama_lengkap ?? '-',
+                    'Instansi'         => $item->nama_instansi ?? '-',
+                    'No WhatsApp'      => $item->no_whatsapp ?? '-',
+                    'Jenis Kunjungan'  => $item->jenis_kunjungan ?? '-',
+                    'Jumlah Rombongan' => ($item->jumlah_rombongan ?? 0) . ' orang',
+                    'Rencana'          => \Str::limit($item->rencana_kunjungan ?? '-', 80),
+                ],
             ];
         }
 
@@ -168,9 +222,18 @@ class DashboardPelayananController extends Controller
         $jasaKonsultasi = JasaKonsultasi::where('user_id', $userId)->get();
         foreach ($jasaKonsultasi as $item) {
             $permohonan[] = [
-                'jenis' => 'Jasa Konsultasi',
-                'status' => $item->status?->label() ?? 'Menunggu',
-                'tanggal' => $item->created_at,
+                'id'         => $item->id,
+                'model_type' => 'jasa_konsultasi',
+                'delete_url' => "/layanan/pelayanan-jasa/{$item->id}",
+                'jenis'      => 'Jasa Konsultasi',
+                'status'     => $item->status?->label() ?? 'Menunggu',
+                'tanggal'    => $item->created_at,
+                'detail'     => [
+                    'Nama'        => $item->nama_lengkap ?? '-',
+                    'No WhatsApp' => $item->no_whatsapp ?? '-',
+                    'Email'       => $item->email ?? '-',
+                    'Keterangan'  => \Str::limit($item->keterangan ?? '-', 100),
+                ],
             ];
         }
 
@@ -178,9 +241,18 @@ class DashboardPelayananController extends Controller
         $survey = Survey::where('user_id', $userId)->get();
         foreach ($survey as $item) {
             $permohonan[] = [
-                'jenis' => 'Layanan Survey',
-                'status' => $item->status?->label() ?? 'Menunggu',
-                'tanggal' => $item->created_at,
+                'id'         => $item->id,
+                'model_type' => 'survey',
+                'delete_url' => "/layanan/pelayanan-jasa/{$item->id}",
+                'jenis'      => 'Layanan Survey',
+                'status'     => $item->status?->label() ?? 'Menunggu',
+                'tanggal'    => $item->created_at,
+                'detail'     => [
+                    'Nama'        => $item->nama_lengkap ?? '-',
+                    'No WhatsApp' => $item->no_whatsapp ?? '-',
+                    'Email'       => $item->email ?? '-',
+                    'Keterangan'  => \Str::limit($item->keterangan ?? '-', 100),
+                ],
             ];
         }
 
@@ -188,10 +260,38 @@ class DashboardPelayananController extends Controller
         $layananData = LayananData::where('user_id', $userId)->get();
         foreach ($layananData as $item) {
             $permohonan[] = [
-                'jenis' => 'Layanan Data',
-                'status' => $item->status?->label() ?? 'Menunggu',
-                'tanggal' => $item->created_at,
+                'id'         => $item->id,
+                'model_type' => 'layanan_data',
+                'delete_url' => "/layanan/pelayanan-jasa/{$item->id}",
+                'jenis'      => 'Layanan Data',
+                'status'     => $item->status?->label() ?? 'Menunggu',
+                'tanggal'    => $item->created_at,
+                'detail'     => [
+                    'Nama'        => $item->nama_lengkap ?? '-',
+                    'No WhatsApp' => $item->no_whatsapp ?? '-',
+                    'Email'       => $item->email ?? '-',
+                    'Keterangan'  => \Str::limit($item->keterangan ?? '-', 100),
+                ],
             ];
+        }
+
+        // Filter by search if provided
+        if ($search) {
+            $search = strtolower($search);
+            $permohonan = array_filter($permohonan, function ($item) use ($search) {
+                // Check in jenis
+                if (str_contains(strtolower($item['jenis']), $search)) return true;
+                
+                // Check in status
+                if (str_contains(strtolower($item['status']), $search)) return true;
+                
+                // Check in detail values
+                foreach ($item['detail'] as $value) {
+                    if (str_contains(strtolower((string)$value), $search)) return true;
+                }
+                
+                return false;
+            });
         }
 
         // Sort by tanggal terbaru
