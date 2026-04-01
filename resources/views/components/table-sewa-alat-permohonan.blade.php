@@ -172,14 +172,28 @@
                                 <!-- Rincian Pemesanan -->
                                 <div class="space-y-3">
                                     <h4 class="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest">Rincian Pemesanan</h4>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
-                                            <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Jumlah Unit</p>
-                                            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->banyak_unit }} unit</p>
+                                    <div class="space-y-2">
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Harga Per Unit/Hari</p>
+                                                <p class="text-sm font-semibold text-gray-900 dark:text-white">Rp{{ number_format($item->alat->harga, 0, ',', '.') }}</p>
+                                            </div>
+                                            <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Jumlah Unit</p>
+                                                <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $item->banyak_unit }} unit</p>
+                                            </div>
+                                            <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                                                <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Durasi Sewa</p>
+                                                <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $lama_sewa }} hari</p>
+                                            </div>
+                                            <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+                                                <p class="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-1">Subtotal</p>
+                                                <p class="text-sm font-bold text-blue-700 dark:text-blue-300">Rp{{ number_format($item->alat->harga * $lama_sewa * $item->banyak_unit, 0, ',', '.') }}</p>
+                                            </div>
                                         </div>
-                                        <div class="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800">
-                                            <p class="text-xs text-green-600 dark:text-green-400 font-semibold mb-1">Total Biaya</p>
-                                            <p class="text-sm font-bold text-green-700 dark:text-green-300">{{ $total }}</p>
+                                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-4 rounded-lg border-2 border-green-200 dark:border-green-800">
+                                            <p class="text-xs text-green-600 dark:text-green-400 font-bold uppercase tracking-widest mb-2">Total Harga Yang Harus Dibayar</p>
+                                            <p class="text-2xl font-bold text-green-700 dark:text-green-300">{{ $total }}</p>
                                         </div>
                                     </div>
                                 </div>

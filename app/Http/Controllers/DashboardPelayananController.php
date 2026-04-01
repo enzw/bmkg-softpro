@@ -138,6 +138,14 @@ class DashboardPelayananController extends Controller
         // Dari SewaAlat (Jasa Sewa Alat)
         $sewaAlat = SewaAlat::with('alat')->where('user_id', $userId)->get();
         foreach ($sewaAlat as $item) {
+            // Calculate rental duration and total price
+            $mulai = \Carbon\Carbon::parse($item->sewa_mulai);
+            $akhir = \Carbon\Carbon::parse($item->sewa_berakhir);
+            $durasi = $mulai->diffInDays($akhir);
+            $lama_sewa = $durasi == 0 ? 1 : $durasi;
+            $harga_per_unit = $item->alat?->harga ?? 0;
+            $total_harga = $harga_per_unit * $lama_sewa * ($item->banyak_unit ?? 1);
+            
             $permohonan[] = [
                 'id'         => $item->id,
                 'model_type' => 'sewa_alat',
@@ -146,12 +154,15 @@ class DashboardPelayananController extends Controller
                 'status'     => $item->status?->label() ?? 'Menunggu',
                 'tanggal'    => $item->created_at,
                 'detail'     => [
-                    'Nama'          => $item->nama ?? '-',
-                    'No WhatsApp'   => $item->no_whatsapp ?? '-',
-                    'Alat'          => $item->alat?->nama ?? '-',
-                    'Jumlah Unit'   => ($item->banyak_unit ?? 0) . ' unit',
-                    'Mulai Sewa'    => $item->sewa_mulai ? \Carbon\Carbon::parse($item->sewa_mulai)->format('d/m/Y') : '-',
-                    'Akhir Sewa'    => $item->sewa_berakhir ? \Carbon\Carbon::parse($item->sewa_berakhir)->format('d/m/Y') : '-',
+                    'Nama'               => $item->nama ?? '-',
+                    'No WhatsApp'        => $item->no_whatsapp ?? '-',
+                    'Alat'               => $item->alat?->nama ?? '-',
+                    'Harga Per Unit/Hari' => 'Rp' . number_format($harga_per_unit, 0, ',', '.'),
+                    'Jumlah Unit'        => ($item->banyak_unit ?? 0) . ' unit',
+                    'Durasi Sewa'        => $lama_sewa . ' hari',
+                    'Mulai Sewa'         => $item->sewa_mulai ? \Carbon\Carbon::parse($item->sewa_mulai)->format('d/m/Y') : '-',
+                    'Akhir Sewa'         => $item->sewa_berakhir ? \Carbon\Carbon::parse($item->sewa_berakhir)->format('d/m/Y') : '-',
+                    'Total Harga'        => 'Rp' . number_format($total_harga, 0, ',', '.'),
                 ],
             ];
         }
