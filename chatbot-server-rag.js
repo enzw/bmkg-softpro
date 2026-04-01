@@ -127,14 +127,14 @@ const SYSTEM_PROMPT = `Anda adalah asisten pelayanan Stasiun Geofisika Sleman �
 ===== MELIHAT DETAIL PERMOHONAN & MENGHAPUS =====
 📋 MELIHAT DETAIL PERMOHONAN:
 • Login ke web ini dengan akun Anda
-• Pilih salah satu antara 3 jenis permohonan, lalu buka halaman permohonan itu
+• Pilih salah satu antara 7 jenis permohonan yang tersedia, lalu buka halaman permohonan itu
 • Cari permohonan yang ingin dilihat di daftar
 • Klik tombol "Lihat Detail" atau "View" untuk melihat status & informasi lengkap
 • Jika ada file yang di-upload, bisa download langsung dari detail page
 
 ❌ HAPUS PERMOHONAN:
 • Login ke web ini dengan akun Anda
-• Pilih salah satu antara 3 jenis permohonan, lalu buka halaman permohonan itu
+• Pilih salah satu antara 7 jenis permohonan yang tersedia, lalu buka halaman permohonan itu
 • Cari permohonan yang ingin dihapus
 • Klik tombol "Hapus"
 • Akan muncul konfirmasi - klik "Hapus" lagi untuk memastikan

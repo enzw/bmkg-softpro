@@ -53,27 +53,36 @@
                     {{-- @dd($layanan[0]['images']) --}}
                     @foreach ($layanan as $item)
                         <div
-                            class="group overflow-hidden flex flex-col transition duration-500 bg-white dark:bg-slate-800 rounded-xl shadow-lg dark:shadow-slate-900/50 hover:-translate-y-3 hover:shadow-2xl dark:hover:shadow-green-900/30 border border-gray-100 dark:border-slate-700 hover:border-green-200 dark:hover:border-green-800">
-                            <div class="relative overflow-hidden h-52 bg-gray-200 dark:bg-slate-700">
-                                <img src="{{ asset($item['images']) }}" alt="{{ $item['nama'] }}" height="200"
-                                    class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
-                                <div
-                                    class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
+                            class="group p-8 flex flex-col transition duration-500 bg-white dark:bg-slate-800 rounded-xl shadow-lg dark:shadow-slate-900/50 hover:-translate-y-3 hover:shadow-2xl dark:hover:shadow-green-900/30 border border-gray-100 dark:border-slate-700 hover:border-green-200 dark:hover:border-green-800">
+                            @php
+                                $color = $item['color'] ?? 'green';
+                                $iconBgClass = match($color) {
+                                    'blue' => 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
+                                    'purple' => 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
+                                    'amber' => 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400',
+                                    'indigo' => 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400',
+                                    'red' => 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400',
+                                    'yellow' => 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400',
+                                    'orange' => 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400',
+                                    default => 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
+                                };
+                            @endphp
+                            <div class="mb-6">
+                                <div class="w-16 h-16 {{ $iconBgClass }} rounded-2xl flex items-center justify-center group-hover:scale-110 transition duration-300">
+                                    <i class="{{ $item['icon'] }} text-3xl"></i>
                                 </div>
                             </div>
-                            <div class="px-6 py-5 flex flex-col flex-grow">
+                            <div class="flex flex-col flex-grow">
                                 <h4
-                                    class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-green-600 dark:group-hover:text-green-400 transition duration-300">
+                                    class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-green-600 dark:group-hover:text-green-400 transition duration-300">
                                     {{ $item['nama'] }}
                                 </h4>
-                                <p class="hidden md:block text-gray-600 dark:text-gray-400 text-sm flex-grow leading-relaxed">
+                                <p class="text-gray-600 dark:text-gray-400 text-sm flex-grow leading-relaxed mb-6">
                                     {{ $item['deskripsi'] }}
                                 </p>
                                 <a href="{{ $item['url'] }}"
-                                    class="mt-5 inline-block px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-lg transition duration-300 text-center shadow-lg hover:shadow-green-600/50 group/btn">
-                                    <i
-                                        class="fa-solid fa-arrow-right mr-2 group-hover/btn:translate-x-1 transition-transform inline-block"></i>Lihat
-                                    Layanan
+                                    class="mt-auto inline-block px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-lg transition duration-300 text-center shadow-lg hover:shadow-green-600/50 group/btn">
+                                    <i class="fa-solid fa-arrow-right mr-2 group-hover/btn:translate-x-1 transition-transform inline-block"></i>Lihat Layanan
                                 </a>
                             </div>
                         </div>
@@ -195,43 +204,8 @@
                                                     <span>Upload surat permohonan (opsional)</span>
                                                 </li>
                                             @elseif (str_contains($item['url'], 'pelayanan-jasa'))
-                                                {{-- Pelayanan Informasi Geofisika --}}
-                                                <div
-                                                    class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded p-3 mb-4">
-                                                    <p class="text-sm text-blue-800 dark:text-blue-200 font-semibold mb-2">Ada 6 jenis
-                                                        layanan yang tersedia:</p>
-                                                    <ul class="space-y-1 text-sm text-blue-700 dark:text-blue-300">
-                                                        <li class="flex items-start gap-2">
-                                                            <span class="text-blue-600 font-bold">1.</span>
-                                                            <span><strong>Magang</strong> - Program pelatihan di BMKG</span>
-                                                        </li>
-                                                        <li class="flex items-start gap-2">
-                                                            <span class="text-blue-600 font-bold">2.</span>
-                                                            <span><strong>Layanan Klaim Asuransi</strong> - Informasi untuk klaim
-                                                                asuransi bencana alam</span>
-                                                        </li>
-                                                        <li class="flex items-start gap-2">
-                                                            <span class="text-blue-600 font-bold">3.</span>
-                                                            <span><strong>Layanan Data</strong> - Permintaan data geofisika</span>
-                                                        </li>
-                                                        <li class="flex items-start gap-2">
-                                                            <span class="text-blue-600 font-bold">4.</span>
-                                                            <span><strong>Layanan Survey</strong> - Survey geofisika lapangan</span>
-                                                        </li>
-                                                        <li class="flex items-start gap-2">
-                                                            <span class="text-blue-600 font-bold">5.</span>
-                                                            <span><strong>Layanan Konsultasi</strong> - Konsultasi teknis
-                                                                geofisika</span>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-
                                                 <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Informasi umum
-                                                    yang diperlukan untuk semua layanan:</p>
-                                                <li class="flex items-start gap-3">
-                                                    <span class="text-green-600 font-bold">•</span>
-                                                    <span>Pilih jenis layanan yang Anda butuhkan</span>
-                                                </li>
+                                                    yang diperlukan untuk layanan ini:</p>
                                                 <li class="flex items-start gap-3">
                                                     <span class="text-green-600 font-bold">•</span>
                                                     <span>Data pribadi atau instansi lengkap (nama, email, telepon)</span>

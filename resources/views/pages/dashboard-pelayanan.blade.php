@@ -29,35 +29,25 @@
                         @foreach ($layanan as $item)
                             <div
                                 class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 hover:-translate-y-2 flex flex-col h-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
-                                <!-- Image Section -->
-                                <div
-                                    class="relative overflow-hidden h-56 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600">
-                                    <img src="{{ asset($item['images']) }}" alt="{{ $item['nama'] }}"
-                                        class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                                    <div
-                                        class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300">
-                                    </div>
-                                </div>
-
                                 <!-- Content Section -->
                                 <div class="p-6 flex flex-col flex-grow">
-                                    <div class="mb-3 flex items-center gap-2">
-                                        @if (str_contains($item['url'], 'sewa-alat'))
-                                            <span
-                                                class="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-semibold rounded-full">
-                                                <i class="fas fa-tools mr-1"></i> Sewa Alat
-                                            </span>
-                                        @elseif (str_contains($item['url'], 'pelayanan-jasa'))
-                                            <span
-                                                class="inline-block px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-semibold rounded-full">
-                                                <i class="fas fa-briefcase mr-1"></i> Layanan Jasa
-                                            </span>
-                                        @else
-                                            <span
-                                                class="inline-block px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 text-xs font-semibold rounded-full">
-                                                <i class="fas fa-users mr-1"></i> Kunjungan
-                                            </span>
-                                        @endif
+                                    @php
+                                        $color = $item['color'] ?? 'green';
+                                        $iconBgClass = match($color) {
+                                            'blue' => 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
+                                            'purple' => 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
+                                            'amber' => 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400',
+                                            'indigo' => 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400',
+                                            'red' => 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400',
+                                            'yellow' => 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400',
+                                            'orange' => 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400',
+                                            default => 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
+                                        };
+                                    @endphp
+                                    <div class="mb-5">
+                                        <div class="w-14 h-14 {{ $iconBgClass }} rounded-xl flex items-center justify-center group-hover:scale-110 transition duration-300">
+                                            <i class="{{ $item['icon'] }} text-2xl"></i>
+                                        </div>
                                     </div>
 
                                     <h3
@@ -70,7 +60,7 @@
                                     </p>
 
                                     <a href="{{ $item['url'] }}"
-                                        class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-lg transition duration-300 shadow-md hover:shadow-lg transform hover:scale-105 text-center">
+                                        class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-lg transition duration-300 shadow-md hover:shadow-lg transform hover:scale-105 text-center mt-auto">
                                         <i class="fas fa-arrow-right mr-2"></i> {{ $item['cta'] ?? 'Ajukan Permohonan' }}
                                     </a>
                                 </div>
